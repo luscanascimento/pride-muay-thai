@@ -46,6 +46,7 @@ export const Footer: React.FC = () => {
               Atividades
             </span>
             <span className="text-sm text-zinc-300">Jacareí — SP</span>
+            <span className="text-sm text-zinc-300">São José dos Campos — SP</span>
             <span className="text-sm text-zinc-300">Santa Branca — SP</span>
             <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
               Consulte com o Renan a unidade e os horários mais convenientes.

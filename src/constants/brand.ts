@@ -2,7 +2,7 @@ export const BRAND = {
   name: "PRIDE MUAY THAI",
   coach: "Renan Hulkinho",
   tagline: "Tradição. Técnica. Disciplina.",
-  subtagline: "Treine Muay Thai em Jacareí e Santa Branca com acompanhamento dedicado, respeito e evolução constante.",
+  subtagline: "Treine Muay Thai em Jacareí, São José dos Campos e Santa Branca com acompanhamento dedicado, respeito e evolução constante.",
   instagramUrl: "https://www.instagram.com/prideemuaythai/",
   instagramHandle: "@prideemuaythai",
   phoneDisplay: "+55 (12) 99174-6964",
@@ -14,6 +14,13 @@ export const BRAND = {
       state: "SP",
       region: "Vale do Paraíba",
       highlight: "Unidades com estrutura completa para treino técnico e condicionamento",
+      guidance: "Fale com o Renan para saber a unidade e grade de horários mais convenientes para você.",
+    },
+    {
+      city: "São José dos Campos",
+      state: "SP",
+      region: "Vale do Paraíba",
+      highlight: "Treinos com foco técnico, condicionamento de alta intensidade e evolução constante",
       guidance: "Fale com o Renan para saber a unidade e grade de horários mais convenientes para você.",
     },
     {

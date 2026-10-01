@@ -53,10 +53,14 @@ export const Hero: React.FC = () => {
           </p>
 
           {/* Location Badges */}
-          <div className="mt-4 sm:mt-5 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-2 text-xs sm:text-sm font-medium text-zinc-300 w-full sm:w-auto">
+          <div className="mt-4 sm:mt-5 flex flex-wrap items-center justify-center lg:justify-start gap-2 text-xs sm:text-sm font-medium text-zinc-300 w-full sm:w-auto">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-zinc-900/90 border border-zinc-800/80">
               <MapPin size={13} className="text-red-500 flex-shrink-0" />
               <span>Jacareí — SP</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-zinc-900/90 border border-zinc-800/80">
+              <MapPin size={13} className="text-red-500 flex-shrink-0" />
+              <span>São José dos Campos — SP</span>
             </div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-zinc-900/90 border border-zinc-800/80">
               <MapPin size={13} className="text-red-500 flex-shrink-0" />
