@@ -70,7 +70,7 @@ export const TigerEmblem: React.FC<TigerEmblemProps> = ({
             {/* Left Tiger Eye */}
             <div
               className="absolute pointer-events-none transform -translate-x-1/2 -translate-y-1/2"
-              style={{ left: '27.96%', top: '65.77%' }}
+              style={{ left: '29.65%', top: '47.41%' }}
             >
               <span className="block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500 shadow-[0_0_8px_#ff1e27,0_0_16px_#ff1e27] animate-pulse" />
             </div>
@@ -78,7 +78,7 @@ export const TigerEmblem: React.FC<TigerEmblemProps> = ({
             {/* Right Tiger Eye */}
             <div
               className="absolute pointer-events-none transform -translate-x-1/2 -translate-y-1/2"
-              style={{ left: '72.04%', top: '65.77%' }}
+              style={{ left: '69.90%', top: '46.16%' }}
             >
               <span className="block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500 shadow-[0_0_8px_#ff1e27,0_0_16px_#ff1e27] animate-pulse" />
             </div>
