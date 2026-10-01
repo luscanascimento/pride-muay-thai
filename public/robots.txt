@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://luscanascimento.github.io/pride-muay-thai/sitemap.xml
