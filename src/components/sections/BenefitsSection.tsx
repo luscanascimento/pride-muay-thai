@@ -132,7 +132,7 @@ export const BenefitsSection: React.FC = () => {
             <div className="rounded-xl overflow-hidden border border-zinc-800 shadow-2xl relative min-h-[380px] lg:min-h-[440px] flex items-end">
               <img
                 src={activeTab === 'martial' ? padImg : bagImg}
-                alt="Treinamento intenso no Pride Muay Thai"
+                alt={activeTab === 'martial' ? "Treinamento de manoplas e joelhada no Muay Thai" : "Treino intenso de chute circular no saco pesado de Muay Thai"}
                 className="absolute inset-0 w-full h-full object-cover filter contrast-125 brightness-80 transition-all duration-700"
                 loading="lazy"
               />

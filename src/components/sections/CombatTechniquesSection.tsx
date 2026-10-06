@@ -244,7 +244,7 @@ export const CombatTechniquesSection: React.FC = () => {
             <div className="relative rounded-xl overflow-hidden border border-zinc-800 shadow-2xl flex flex-col justify-end min-h-[340px] group">
               <img
                 src={selectedTech.id === 'clinch' ? clinchImg : kickImg}
-                alt="Treino prático de Muay Thai"
+                alt={selectedTech.id === 'clinch' ? "Clinch e combate corporal no ringue de Muay Thai" : "Golpe de impacto e chute em combate de Muay Thai"}
                 className="absolute inset-0 w-full h-full object-cover filter contrast-125 brightness-75 transition-transform duration-700 group-hover:scale-105"
                 loading="lazy"
               />

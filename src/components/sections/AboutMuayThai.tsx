@@ -20,7 +20,7 @@ export const AboutMuayThai: React.FC = () => {
               <div className="relative rounded-lg overflow-hidden border border-zinc-800 shadow-2xl group">
                 <img
                   src={wrapsImg}
-                  alt="Bandagens e luvas de Muay Thai tradicional"
+                  alt="Lutador com bandagens e prajiad preparando-se com o mongkhon para o ringue"
                   className="w-full h-80 sm:h-96 object-cover filter contrast-125 brightness-90 transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                 />

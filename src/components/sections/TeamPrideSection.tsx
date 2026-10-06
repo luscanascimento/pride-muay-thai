@@ -37,7 +37,7 @@ export const TeamPrideSection: React.FC = () => {
             <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-red-950/40 border border-red-800/40 text-red-400 text-xs font-semibold tracking-wider uppercase mb-3">
                 <Shield size={14} />
-                <span>Nossa Identidade</span>
+                <span>Uma das maiores equipes do Vale do Paraíba</span>
               </div>
 
               <h2 className="font-fight text-4xl sm:text-5xl lg:text-6xl text-white uppercase leading-none">
@@ -46,7 +46,7 @@ export const TeamPrideSection: React.FC = () => {
               </h2>
 
               <p className="mt-5 text-zinc-300 text-base sm:text-lg leading-relaxed">
-                Sob a liderança do treinador <strong>{BRAND.coach}</strong>, o Pride Muay Thai nasceu para levar a arte marcial tailandesa com autenticidade, seriedade e dedicação técnica às cidades de <strong>Jacareí</strong>, <strong>São José dos Campos</strong> e <strong>Santa Branca</strong>.
+                Sob a liderança do treinador <strong>{BRAND.coach}</strong>, a Pride consolidou-se como <strong>uma das maiores equipes do Vale do Paraíba de Muay Thai</strong>, levando a arte marcial tailandesa com autenticidade, seriedade e dedicação técnica às cidades de <strong>Jacareí</strong>, <strong>São José dos Campos</strong> e <strong>Santa Branca</strong>.
               </p>
 
               <p className="mt-3 text-zinc-400 text-sm sm:text-base leading-relaxed">

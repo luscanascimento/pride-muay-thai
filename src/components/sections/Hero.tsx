@@ -28,7 +28,7 @@ export const Hero: React.FC = () => {
           {/* Top Thai martial badge */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/50 border border-red-800/60 text-red-400 text-[11px] sm:text-xs font-semibold tracking-wider uppercase mb-4 sm:mb-5 backdrop-blur-sm max-w-full">
             <Flame size={13} className="text-red-500 fill-red-500/30 animate-pulse flex-shrink-0" />
-            <span>Tradição • Força & Honra</span>
+            <span>Uma das maiores equipes do Vale do Paraíba</span>
           </div>
 
           {/* Main Title */}
@@ -49,7 +49,7 @@ export const Hero: React.FC = () => {
 
           {/* Description */}
           <p className="mt-4 sm:mt-5 text-sm sm:text-base md:text-lg text-zinc-300 max-w-xl font-normal leading-relaxed">
-            A Arte das Oito Armas ensinada com técnica autêntica, condicionamento físico de alta performance e respeito mútuo. Do iniciante ao atleta, construa força, foco e disciplina.
+            Hoje reconhecida como <strong>uma das maiores equipes do Vale do Paraíba de Muay Thai</strong>. A Arte das Oito Armas ensinada com técnica autêntica, condicionamento físico de alta performance e respeito mútuo. Do iniciante ao atleta, construa força, foco e disciplina.
           </p>
 
           {/* Location Badges */}

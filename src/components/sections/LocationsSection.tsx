@@ -22,7 +22,7 @@ export const LocationsSection: React.FC = () => {
             ONDE <span className="text-red-500 text-glow-red">TREINAR?</span>
           </h2>
           <p className="mt-4 text-zinc-400 text-sm sm:text-base leading-relaxed">
-            O Pride Muay Thai atende alunos nas principais cidades do Vale do Paraíba. Encontre o polo ideal para o seu dia a dia.
+            Hoje somos <strong>uma das maiores equipes do Vale do Paraíba de Muay Thai</strong>, atendendo alunos com excelência técnica e estrutura em Jacareí, São José dos Campos e Santa Branca. Encontre o polo ideal para o seu dia a dia.
           </p>
         </div>
 
