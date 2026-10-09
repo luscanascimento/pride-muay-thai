@@ -133,12 +133,6 @@ export const Hero: React.FC = () => {
             {/* Living Tiger Emblem with eyes glow and roar interaction */}
             <div className="relative z-10 py-4">
               <TigerEmblem size="hero" showEyesGlow={true} interactive={true} />
-              
-              <div className="text-center mt-2">
-                <span className="text-[11px] uppercase tracking-widest text-zinc-500 block">
-                  Toque no emblema para despertar os tigres
-                </span>
-              </div>
             </div>
           </div>
 
