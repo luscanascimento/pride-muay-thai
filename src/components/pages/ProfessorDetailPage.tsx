@@ -17,8 +17,10 @@ import {
   getGymsForProfessor, 
   getGymWhatsAppUrl, 
   getGymExternalMapsUrl, 
-  getAdjacentProfessors 
+  getAdjacentProfessors,
+  getKhanRank
 } from '../../data/gymsAndTeamData';
+import { PrajiedBadge, PrajiedRope } from '../ui/PrajiedBadge';
 import { getWhatsAppUrl } from '../../constants/brand';
 
 interface ProfessorDetailPageProps {
@@ -34,6 +36,7 @@ export const ProfessorDetailPage: React.FC<ProfessorDetailPageProps> = ({
 }) => {
   const gyms = getGymsForProfessor(professor.gymIds);
   const adjacent = getAdjacentProfessors(professor.id);
+  const rank = getKhanRank(professor.khan);
 
   // Scroll to top on mount or when professor changes
   useEffect(() => {
@@ -131,6 +134,11 @@ export const ProfessorDetailPage: React.FC<ProfessorDetailPageProps> = ({
               <div className="absolute inset-0 bg-gradient-to-t from-[#09090c] via-transparent to-transparent pointer-events-none" />
               <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-red-700" />
 
+              {/* Khan Prajied badge on top-left of photo */}
+              <div className="absolute top-4 left-4 z-10">
+                <PrajiedBadge level={professor.khan} size="sm" />
+              </div>
+
               {/* Status Badge */}
               <div className="absolute top-4 right-4">
                 <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-fight tracking-wider uppercase shadow-xl border backdrop-blur-md ${
@@ -176,8 +184,26 @@ export const ProfessorDetailPage: React.FC<ProfessorDetailPageProps> = ({
                 )}
               </h1>
 
-              <div className="text-sm sm:text-base font-mono uppercase tracking-wider text-red-400 font-semibold mb-6">
+              <div className="text-sm sm:text-base font-mono uppercase tracking-wider text-red-400 font-semibold mb-4">
                 {professor.roleTitle}
+              </div>
+
+              {/* Khan Graduation Banner */}
+              <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-[#14141a] via-[#101015] to-[#0c0c10] border border-zinc-800/90 shadow-xl flex items-center gap-4">
+                <PrajiedRope level={professor.khan} size="md" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-fight text-xl sm:text-2xl text-white uppercase tracking-wider leading-none">
+                      {rank.level}º KHAN • {rank.colorName}
+                    </span>
+                  </div>
+                  <span className="text-xs font-mono uppercase tracking-wider text-red-400 font-semibold block mt-0.5">
+                    {rank.title} • Graduação Marcial Tradicional
+                  </span>
+                  <p className="text-xs text-zinc-400 mt-1 leading-snug">
+                    {rank.description}
+                  </p>
+                </div>
               </div>
 
               {professor.bio && (

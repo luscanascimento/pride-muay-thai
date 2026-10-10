@@ -1,4 +1,4 @@
-import { Gym, Professor } from '../types/gymsAndTeam';
+import { Gym, Professor, KhanRank } from '../types/gymsAndTeam';
 
 export const GYMS_DATA: Gym[] = [
   {
@@ -171,6 +171,72 @@ export const GYMS_DATA: Gym[] = [
 const basePath = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) ? import.meta.env.BASE_URL : './';
 const resolvePhotoUrl = (filename: string) => `${basePath}professores/${filename}`;
 
+export const KHAN_RANKS_DATA: Record<number, KhanRank> = {
+  13: {
+    level: 13,
+    title: 'Mestre / Kru Yai',
+    colorName: 'Preta Ponta Branca',
+    primaryColor: '#18181b',
+    tipColor: '#ffffff',
+    description: 'Nível máximo de liderança técnica e marcial. Fundador e formador de mestres e instrutores.',
+  },
+  12: {
+    level: 12,
+    title: 'Professor Docente / Mestre',
+    colorName: 'Preta',
+    primaryColor: '#18181b',
+    description: 'Grau pleno de maestria e docência avançada no Muay Thai tradicional.',
+  },
+  11: {
+    level: 11,
+    title: 'Professor',
+    colorName: 'Vermelha Ponta Branca',
+    primaryColor: '#dc2626',
+    tipColor: '#ffffff',
+    description: 'Professor formado e habilitado para condução técnica de academias e graduação de praticantes.',
+  },
+  10: {
+    level: 10,
+    title: 'Instrutor Sênior',
+    colorName: 'Vermelha',
+    primaryColor: '#dc2626',
+    description: 'Instrutor avançado com pleno domínio dos fundamentos, estratégias de combate e didática marcial.',
+  },
+  9: {
+    level: 9,
+    title: 'Instrutor',
+    colorName: 'Marrom Ponta Branca',
+    primaryColor: '#78350f',
+    tipColor: '#ffffff',
+    description: 'Instrutor em consolidação pedagógica e aperfeiçoamento constante da arte das oito armas.',
+  },
+  8: {
+    level: 8,
+    title: 'Instrutor / Monitor',
+    colorName: 'Marrom',
+    primaryColor: '#854d0e',
+    description: 'Monitor e assistente técnico qualificado com sólida vivência prática nos tatames.',
+  },
+  7: {
+    level: 7,
+    title: 'Graduado / Instrutor',
+    colorName: 'Azul Ponta Branca',
+    primaryColor: '#2563eb',
+    tipColor: '#ffffff',
+    description: 'Graduado experiente, atuante no suporte e acompanhamento técnico de novos praticantes.',
+  },
+};
+
+export function getKhanRank(level: number): KhanRank {
+  return KHAN_RANKS_DATA[level] || {
+    level,
+    title: 'Graduado',
+    colorName: 'Graduação Pride',
+    primaryColor: '#dc2626',
+    description: 'Graduação marcial Pride Muay Thai',
+  };
+}
+
 export const PROFESSORS_DATA: Professor[] = [
   {
     id: 'paulo-roberto',
@@ -184,6 +250,7 @@ export const PROFESSORS_DATA: Professor[] = [
       'arena-41-old-school',
     ],
     roleTitle: 'Professor de Muay Thai • Braço Direito da Pride',
+    khan: 11,
     bio: 'Na Pride desde 2018 com o Mestre Renan Hulkinho, árbitro certificado, professor e braço direito da equipe, construindo sua história com dedicação, lealdade e amor ao esporte.',
     storyTitle: 'Paulo Roberto | Professor de Muay Thai & Braço Direito da Pride',
     storyParagraphs: [
@@ -195,7 +262,47 @@ export const PROFESSORS_DATA: Professor[] = [
       'Sigo hoje, carregando com muito orgulho a responsabilidade de fazer parte dessa grande família, sendo professor de Muay-Thai e braço direito da Equipe Pride Muay-Thai.',
     ],
     quote: 'O Muay-Thai vai muito além das técnicas de luta: ele ensina respeito, humildade, disciplina e a perseverança de nunca desistir diante das dificuldades.',
-    highlightBadges: ['Braço Direito da Pride', 'Na Equipe desde 2018', 'Árbitro Certificado', 'Formado por Renan Hulkinho', '4 Unidades no Vale'],
+    highlightBadges: ['11º Khan • Vermelha Ponta Branca', 'Braço Direito da Pride', 'Na Equipe desde 2018', 'Árbitro Certificado', '4 Unidades no Vale'],
+  },
+  {
+    id: 'simone-osses',
+    name: 'Simone Osses',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('simone-osses.jpeg'),
+    gymIds: [
+      'ct3-artes-marciais',
+    ],
+    roleTitle: 'Professora de Muay Thai • 11º Khan',
+    khan: 11,
+    bio: 'Referência no tatame, incentiva a superação diária, postura marcial consciente e a construção de autoconfiança para todas as idades.',
+    storyTitle: 'Simone Osses | Professora de Muay Thai',
+    storyParagraphs: [
+      'A Professora Simone Osses é um dos grandes símbolos de força, dedicação e liderança marcial feminina dentro da Pride Muay Thai.',
+      'Atuando no CT3 Artes Marciais, Simone inspira mulheres, homens e jovens a quebrarem barreiras e descobrirem uma autoconfiança inabalável através da prática do esporte.',
+      'Seu trabalho enfatiza a precisão técnica, a resistência cardiorrespiratória e o desenvolvimento de uma mentalidade focada na vitória pessoal sobre medos e limites.',
+      'No tatame da Professora Simone, o respeito é mútuo e a energia é contagiante, mostrando que o Muay Thai é um espaço acolhedor e transformador para qualquer pessoa disposta a evoluir.',
+    ],
+    quote: 'A sua única limitação real é aquela que você aceita na sua mente. No tatame, descobrimos que somos infinitamente mais fortes.',
+    highlightBadges: ['11º Khan • Vermelha Ponta Branca', 'Liderança & Inspiração', 'Autoconfiança', 'CT3 Artes Marciais'],
+  },
+  {
+    id: 'jean',
+    name: 'Jean',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('jean.jpeg'),
+    gymIds: [],
+    roleTitle: 'Professor de Muay Thai • 11º Khan',
+    khan: 11,
+    bio: 'Professor graduado 11º Khan (Vermelha Ponta Branca), dedicado à formação técnica, física e ao espírito de disciplina e lealdade da Pride Muay Thai.',
+    storyTitle: 'Jean | Professor de Muay Thai',
+    storyParagraphs: [
+      'Graduado 11º Khan (Vermelha Ponta Branca) na Pride Muay Thai, o Professor Jean construiu sua jornada marcial fundamentada na disciplina inabalável, na técnica apurada e no respeito às tradições tailandesas.',
+      'Sua atuação na equipe é marcada pelo incentivo constante aos alunos, auxiliando tanto quem busca condicionamento físico e defesa pessoal quanto aqueles que desejam aprofundar o conhecimento técnico do esporte.',
+      'Para Jean, o tatame é uma escola para a vida, onde cada round ensina paciência, resiliência e a humildade necessária para nunca parar de aprender e evoluir.',
+    ],
+    quote: 'A disciplina forjada no tatame é a força que te mantém firme em qualquer desafio da vida.',
+    highlightBadges: ['11º Khan • Vermelha Ponta Branca', 'Professor Pride', 'Tradição & Disciplina'],
+    photoPosition: 'center 10%',
   },
   {
     id: 'rafael-lobinho',
@@ -206,7 +313,8 @@ export const PROFESSORS_DATA: Professor[] = [
       'calasans-camargo',
       'yukon-dojo',
     ],
-    roleTitle: 'Professor de Muay Thai',
+    roleTitle: 'Professor de Muay Thai • 10º Khan',
+    khan: 10,
     bio: 'Especialista em biomecânica de combate, movimentação inteligente de ringue e preservação da tradição tailandesa em São José dos Campos.',
     storyTitle: 'Rafael (Lobinho) | Professor de Muay Thai',
     storyParagraphs: [
@@ -216,7 +324,7 @@ export const PROFESSORS_DATA: Professor[] = [
       'Com atenção personalizada a cada praticante, Lobinho constrói um ambiente acolhedor e motivador, onde iniciantes descobrem seu potencial e atletas aprimoram sua eficiência marcial.',
     ],
     quote: 'A técnica supera a força bruta quando a mente permanece calma e atenta ao momento presente.',
-    highlightBadges: ['Biomecânica & Estratégia', 'São José dos Campos', 'Calasans & Yukon'],
+    highlightBadges: ['10º Khan • Vermelha', 'Biomecânica & Estratégia', 'São José dos Campos', 'Calasans & Yukon'],
   },
   {
     id: 'eduardo',
@@ -227,7 +335,8 @@ export const PROFESSORS_DATA: Professor[] = [
       'arena-viking-itamaraty',
       'ct3-artes-marciais',
     ],
-    roleTitle: 'Professor de Muay Thai',
+    roleTitle: 'Professor de Muay Thai • 10º Khan',
+    khan: 10,
     bio: 'Dedicado ao acolhimento e evolução progressiva dos alunos, combinando condicionamento dinâmico e fundamentos sólidos das 8 armas.',
     storyTitle: 'Eduardo | Professor de Muay Thai',
     storyParagraphs: [
@@ -238,68 +347,7 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     quote: 'Cada treino concluído é mais um tijolo firme na construção da sua melhor versão.',
     photoPosition: 'center 0%',
-    highlightBadges: ['Fundamentos Sólidos', 'Jacareí', 'Viking Itamaraty & CT3'],
-  },
-  {
-    id: 'simone-osses',
-    name: 'Simone Osses',
-    nickname: null,
-    photoUrl: resolvePhotoUrl('simone-osses.jpeg'),
-    gymIds: [
-      'ct3-artes-marciais',
-    ],
-    roleTitle: 'Professora de Muay Thai',
-    bio: 'Referência no tatame, incentiva a superação diária, postura marcial consciente e a construção de autoconfiança para todas as idades.',
-    storyTitle: 'Simone Osses | Professora de Muay Thai',
-    storyParagraphs: [
-      'A Professora Simone Osses é um dos grandes símbolos de força, dedicação e liderança marcial feminina dentro da Pride Muay Thai.',
-      'Atuando no CT3 Artes Marciais, Simone inspira mulheres, homens e jovens a quebrarem barreiras e descobrirem uma autoconfiança inabalável através da prática do esporte.',
-      'Seu trabalho enfatiza a precisão técnica, a resistência cardiorrespiratória e o desenvolvimento de uma mentalidade focada na vitória pessoal sobre medos e limites.',
-      'No tatame da Professora Simone, o respeito é mútuo e a energia é contagiante, mostrando que o Muay Thai é um espaço acolhedor e transformador para qualquer pessoa disposta a evoluir.',
-    ],
-    quote: 'A sua única limitação real é aquela que você aceita na sua mente. No tatame, descobrimos que somos infinitamente mais fortes.',
-    highlightBadges: ['Liderança & Inspiração', 'Autoconfiança', 'CT3 Artes Marciais'],
-  },
-  {
-    id: 'rafael-japones',
-    name: 'Rafael',
-    nickname: 'Japonês',
-    photoUrl: resolvePhotoUrl('rafael-japones.jpeg'),
-    gymIds: [
-      'studio-m',
-    ],
-    roleTitle: 'Professor de Muay Thai',
-    bio: 'Instrutor responsável pela unidade de Santa Branca, focado na marcialidade autêntica, precisão de golpes e respeito à linhagem do esporte.',
-    storyTitle: 'Rafael (Japonês) | Professor de Muay Thai',
-    storyParagraphs: [
-      'À frente das aulas no Studio M em Santa Branca, o Professor Rafael Japonês é o embaixador dos valores da Pride Muay Thai no Alto Vale do Paraíba.',
-      'Com um olhar apurado para os detalhes e uma paixão declarada pela arte das oito armas, Rafael transmite as técnicas tradicionais com disciplina rígida e camaradagem fraterna.',
-      'Suas aulas desafiam os limites físicos dos alunos enquanto constroem uma base marcial sólida em defesa pessoal, velocidade de punhos e potência nos chutes.',
-      'Para Rafael, preservar a identidade da Pride significa honrar cada treino como uma oportunidade de aprendizado e crescimento com os irmãos de equipe.',
-    ],
-    quote: 'Respeito aos mestres, lealdade à equipe e dedicação incansável em cada golpe desferido.',
-    highlightBadges: ['Pioneirismo em Santa Branca', 'Studio M', 'Técnica Tradicional'],
-  },
-  {
-    id: 'pedro',
-    name: 'Pedro',
-    nickname: null,
-    photoUrl: resolvePhotoUrl('pedro.jpeg'),
-    gymIds: [
-      'arena-viking-itamaraty',
-      'unciclo',
-    ],
-    roleTitle: 'Professor de Muay Thai',
-    bio: 'Entusiasta da energia marcial e do trabalho de clinch e manoplas, auxiliando os alunos a desenvolverem força física e mental constante.',
-    storyTitle: 'Pedro | Professor de Muay Thai',
-    storyParagraphs: [
-      'Com energia contagiante e paixão vibrante pelo esporte, o Professor Pedro dedica-se à formação de novos talentos e ao desenvolvimento de praticantes na Arena Viking Parque Itamaraty e Unciclo.',
-      'Especialista na intensidade das manoplas, na cadência de combinações e no estudo das posições de clinch, Pedro busca extrair a melhor performance física e mental de cada aluno.',
-      'Para ele, o treino é um momento sagrado de renovação de energias, onde o esforço coletivo empurra cada praticante para além dos seus supostos limites.',
-      'Sua metodologia incentiva a camaradagem, a escuta atenta aos princípios do Muay Thai e o cultivo de hábitos saudáveis que perduram para a vida inteira.',
-    ],
-    quote: 'A intensidade que você entrega ao tatame se transforma na energia que move a sua vida lá fora.',
-    highlightBadges: ['Energia & Dinâmica', 'Clinch & Manoplas', 'Viking Itamaraty & Unciclo'],
+    highlightBadges: ['10º Khan • Vermelha', 'Fundamentos Sólidos', 'Jacareí', 'Viking Itamaraty & CT3'],
   },
   {
     id: 'gustavo-arantes',
@@ -310,7 +358,8 @@ export const PROFESSORS_DATA: Professor[] = [
       'vg',
       'projeto-vg',
     ],
-    roleTitle: 'Professor de Muay Thai • 12 Anos de Vivência',
+    roleTitle: 'Professor de Muay Thai • 9º Khan',
+    khan: 9,
     bio: 'Instrutor na Academia VG e Projeto VG com 12 anos de trajetória marcial, conciliando a essência do Muay Thai com valores de família, equilíbrio e perseverança.',
     storyTitle: 'Gustavo Arantes | Professor de Muay Thai',
     storyParagraphs: [
@@ -327,7 +376,69 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     quote: 'Porque, para mim, a verdadeira força não está apenas em saber lutar, mas em aprender a permanecer de pé diante das adversidades. Não importa a intensidade da tempestade. O importante é continuar firme, respeitando o processo e nunca abandonando o caminho.',
     experienceYears: 12,
-    highlightBadges: ['12 Anos de Muay Thai', '33 Anos de Idade', 'Pioneiro Pride desde 2016', 'Academia VG & Projeto VG', 'Família & Disciplina'],
+    highlightBadges: ['9º Khan • Marrom Ponta Branca', '12 Anos de Muay Thai', '33 Anos de Idade', 'Pioneiro Pride desde 2016', 'Academia VG & Projeto VG'],
+  },
+  {
+    id: 'rafael-japones',
+    name: 'Rafael',
+    nickname: 'Japonês',
+    photoUrl: resolvePhotoUrl('rafael-japones.jpeg'),
+    gymIds: [
+      'studio-m',
+    ],
+    roleTitle: 'Professor de Muay Thai • 8º Khan',
+    khan: 8,
+    bio: 'Instrutor responsável pela unidade de Santa Branca, focado na marcialidade autêntica, precisão de golpes e respeito à linhagem do esporte.',
+    storyTitle: 'Rafael (Japonês) | Professor de Muay Thai',
+    storyParagraphs: [
+      'À frente das aulas no Studio M em Santa Branca, o Professor Rafael Japonês é o embaixador dos valores da Pride Muay Thai no Alto Vale do Paraíba.',
+      'Com um olhar apurado para os detalhes e uma paixão declarada pela arte das oito armas, Rafael transmite as técnicas tradicionais com disciplina rígida e camaradagem fraterna.',
+      'Suas aulas desafiam os limites físicos dos alunos enquanto constroem uma base marcial sólida em defesa pessoal, velocidade de punhos e potência nos chutes.',
+      'Para Rafael, preservar a identidade da Pride significa honrar cada treino como uma oportunidade de aprendizado e crescimento com os irmãos de equipe.',
+    ],
+    quote: 'Respeito aos mestres, lealdade à equipe e dedicação incansável em cada golpe desferido.',
+    highlightBadges: ['8º Khan • Marrom', 'Pioneirismo em Santa Branca', 'Studio M', 'Técnica Tradicional'],
+  },
+  {
+    id: 'augusto',
+    name: 'Augusto',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('augusto.jpeg'),
+    gymIds: [],
+    roleTitle: 'Instrutor de Muay Thai • 7º Khan',
+    khan: 7,
+    bio: 'Graduado 7º Khan (Azul Ponta Branca), entusiasta da essência do Muay Thai, focado no dinamismo dos treinos, condicionamento físico e acolhimento dos novos alunos.',
+    storyTitle: 'Augusto | Instrutor de Muay Thai',
+    storyParagraphs: [
+      'Graduado 7º Khan (Azul Ponta Branca) pela Pride Muay Thai, o Instrutor Augusto representa a nova geração de dedicação marcial e energia da equipe.',
+      'Com um trabalho focado na dinâmica dos treinos, na preparação corporal e na correta execução dos fundamentos básicos das oito armas, Augusto orienta novos praticantes com paciência e dedicação.',
+      'Seu compromisso com o Muay Thai reflete a busca contínua por superação, motivando cada aluno a encontrar confiança na superação de seus próprios limites round a round.',
+    ],
+    quote: 'Cada passo respeitado na caminhada constrói a firmeza do verdadeiro praticante de Muay Thai.',
+    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Instrutor Pride', 'Fundamentos & Superação'],
+    photoPosition: 'center 10%',
+  },
+  {
+    id: 'pedro',
+    name: 'Pedro',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('pedro.jpeg'),
+    gymIds: [
+      'arena-viking-itamaraty',
+      'unciclo',
+    ],
+    roleTitle: 'Professor de Muay Thai • 7º Khan',
+    khan: 7,
+    bio: 'Entusiasta da energia marcial e do trabalho de clinch e manoplas, auxiliando os alunos a desenvolverem força física e mental constante.',
+    storyTitle: 'Pedro | Professor de Muay Thai',
+    storyParagraphs: [
+      'Com energia contagiante e paixão vibrante pelo esporte, o Professor Pedro dedica-se à formação de novos talentos e ao desenvolvimento de praticantes na Arena Viking Parque Itamaraty e Unciclo.',
+      'Especialista na intensidade das manoplas, na cadência de combinações e no estudo das posições de clinch, Pedro busca extrair a melhor performance física e mental de cada aluno.',
+      'Para ele, o treino é um momento sagrado de renovação de energias, onde o esforço coletivo empurra cada praticante para além dos seus supostos limites.',
+      'Sua metodologia incentiva a camaradagem, a escuta atenta aos princípios do Muay Thai e o cultivo de hábitos saudáveis que perduram para a vida inteira.',
+    ],
+    quote: 'A intensidade que você entrega ao tatame se transforma na energia que move a sua vida lá fora.',
+    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Energia & Dinâmica', 'Clinch & Manoplas', 'Viking Itamaraty & Unciclo'],
   },
   {
     id: 'renan-hulkinho',
@@ -335,7 +446,8 @@ export const PROFESSORS_DATA: Professor[] = [
     nickname: 'Hulkinho',
     photoUrl: resolvePhotoUrl('renan-hulkinho.jpeg'),
     gymIds: [],
-    roleTitle: 'Líder & Fundador da Pride • 14 Anos de Muay Thai',
+    roleTitle: 'Líder & Fundador da Pride • 13º Khan',
+    khan: 13,
     bio: 'Com 14 anos de vivência no Muay Thai, Renan encontrou na arte marcial um caminho de evolução contínua, amadurecimento e superação diária. Como líder da Pride, conduz a formação de instrutores e alunos em todo o Vale do Paraíba, inspirando através da honra, disciplina e amor ao esporte.',
     storyTitle: 'Renan (Hulkinho) | Líder & Fundador da Pride Muay Thai',
     storyParagraphs: [
@@ -350,7 +462,7 @@ export const PROFESSORS_DATA: Professor[] = [
     experienceYears: 14,
     photoPosition: 'center 5%',
     isLeader: true,
-    highlightBadges: ['Líder & Fundador da Pride', '14 Anos de Muay Thai', 'Coordenação Técnica Geral', 'Vale do Paraíba'],
+    highlightBadges: ['13º Khan • Preta Ponta Branca', 'Líder & Fundador da Pride', '14 Anos de Muay Thai', 'Coordenação Técnica Geral', 'Vale do Paraíba'],
   },
 ];
 

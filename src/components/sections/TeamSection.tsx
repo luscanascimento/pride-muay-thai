@@ -1,6 +1,8 @@
-import React from 'react';
-import { Users, MapPin, ChevronRight, Award, Crown, Shield, ArrowRight } from 'lucide-react';
-import { PROFESSORS_DATA, getGymsForProfessor } from '../../data/gymsAndTeamData';
+import React, { useState, useMemo } from 'react';
+import { Users, MapPin, ChevronRight, Award, Crown, Shield, ArrowRight, X } from 'lucide-react';
+import { PROFESSORS_DATA, getGymsForProfessor, getKhanRank } from '../../data/gymsAndTeamData';
+import { PrajiedBadge } from '../ui/PrajiedBadge';
+import { KhanGraduationShowcase } from './KhanGraduationShowcase';
 
 interface TeamSectionProps {
   onSelectGym?: (gymId: string) => void;
@@ -8,6 +10,21 @@ interface TeamSectionProps {
 }
 
 export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewProfessor }) => {
+  const [selectedKhan, setSelectedKhan] = useState<number | null>(null);
+
+  const memberCountsByKhan = useMemo(() => {
+    const counts: Record<number, number> = {};
+    PROFESSORS_DATA.forEach((p) => {
+      counts[p.khan] = (counts[p.khan] || 0) + 1;
+    });
+    return counts;
+  }, []);
+
+  const displayedProfessors = useMemo(() => {
+    if (selectedKhan === null) return PROFESSORS_DATA;
+    return PROFESSORS_DATA.filter((p) => p.khan === selectedKhan);
+  }, [selectedKhan]);
+
   const handleGymClick = (e: React.MouseEvent, gymId: string) => {
     e.preventDefault();
     if (onSelectGym) {
@@ -35,7 +52,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-red-950/40 border border-red-800/40 text-red-400 text-xs font-semibold tracking-wider uppercase mb-3">
             <Users size={14} />
             <span>Instrutores & Formadores Pride</span>
@@ -59,10 +76,38 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
           </div>
         </div>
 
+        {/* Interactive Khan Graduation Showcase (Prajied Scale) */}
+        <KhanGraduationShowcase
+          selectedKhan={selectedKhan}
+          onSelectKhan={setSelectedKhan}
+          memberCountsByKhan={memberCountsByKhan}
+        />
+
+        {/* Active Filter Notification Bar */}
+        {selectedKhan !== null && (
+          <div className="mb-8 p-3 sm:p-4 rounded-xl bg-red-950/40 border border-red-800/60 flex items-center justify-between gap-3 text-xs sm:text-sm text-zinc-200">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+              <span>
+                Exibindo <strong>{displayedProfessors.length} {displayedProfessors.length === 1 ? 'membro' : 'membros'}</strong> com graduação <strong>{selectedKhan}º Khan ({getKhanRank(selectedKhan).colorName})</strong>
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedKhan(null)}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 hover:text-white text-xs transition-colors"
+            >
+              <X size={13} />
+              <span>Limpar filtro</span>
+            </button>
+          </div>
+        )}
+
         {/* Standardized Professors Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 items-stretch">
-          {PROFESSORS_DATA.map((prof) => {
+          {displayedProfessors.map((prof) => {
             const gyms = getGymsForProfessor(prof.gymIds);
+            const rank = getKhanRank(prof.khan);
 
             return (
               <article
@@ -86,31 +131,39 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
                   />
 
                   {/* Gradient overlays for contrast and elegance */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f13] via-transparent to-black/30 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f13] via-transparent to-black/40 pointer-events-none" />
 
                   {/* Thai decorative border line on image base */}
                   <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-red-600/70 to-transparent" />
 
-                  {/* Nickname pill on image */}
-                  {prof.nickname && (
+                  {/* Khan Prajied badge on top-left of photo */}
+                  <div className="absolute top-3 left-3 z-10">
+                    <PrajiedBadge level={prof.khan} showRankTitle={false} size="sm" />
+                  </div>
+
+                  {/* Nickname or Leader pill on top-right of photo */}
+                  {prof.isLeader ? (
                     <div className="absolute top-3 right-3 z-10">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded text-white font-fight text-xs tracking-wider uppercase shadow-lg border backdrop-blur-sm ${
-                        prof.isLeader
-                          ? 'bg-gradient-to-r from-red-600 to-red-700 border-red-400/60 shadow-red-600/30'
-                          : 'bg-red-600/90 border-red-400/40'
-                      }`}>
-                        {prof.isLeader ? <Crown size={12} className="text-yellow-400" /> : <Award size={12} />}
-                        {prof.isLeader ? `LÍDER • ${prof.nickname}` : prof.nickname}
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-white font-fight text-xs tracking-wider uppercase shadow-lg border border-red-400/60 bg-gradient-to-r from-red-600 to-red-700 shadow-red-600/30 backdrop-blur-sm">
+                        <Crown size={12} className="text-yellow-400" />
+                        LÍDER • {prof.nickname || prof.name}
                       </span>
                     </div>
-                  )}
+                  ) : prof.nickname ? (
+                    <div className="absolute top-3 right-3 z-10">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-white font-fight text-xs tracking-wider uppercase shadow-lg border border-red-400/40 bg-red-600/90 backdrop-blur-sm">
+                        <Award size={12} />
+                        {prof.nickname}
+                      </span>
+                    </div>
+                  ) : null}
                 </div>
 
                 {/* Card Content - standardized flex distribution */}
                 <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
                   <div>
                     {/* Professor name & title */}
-                    <div className="mb-2">
+                    <div className="mb-3">
                       <h3 className="font-fight text-2xl sm:text-3xl text-white uppercase tracking-wide group-hover:text-red-400 transition-colors leading-tight">
                         {prof.name}
                         {prof.nickname && (
@@ -119,9 +172,21 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
                           </span>
                         )}
                       </h3>
-                      <span className="text-xs font-mono uppercase tracking-wider text-red-400 font-semibold block mt-0.5">
-                        {prof.roleTitle}
-                      </span>
+
+                      <div className="mt-1 flex items-center justify-between gap-2">
+                        <span className="text-xs font-mono uppercase tracking-wider text-red-400 font-semibold block">
+                          {prof.roleTitle}
+                        </span>
+                      </div>
+
+                      {/* Khan subtle rank subtitle */}
+                      <div className="mt-1 flex items-center gap-1.5 text-[11px] font-mono text-zinc-400">
+                        <span 
+                          className="w-2 h-2 rounded-full inline-block flex-shrink-0" 
+                          style={{ backgroundColor: rank.primaryColor === '#18181b' ? '#71717a' : rank.primaryColor }} 
+                        />
+                        <span>{rank.level}º Khan • {rank.colorName}</span>
+                      </div>
                     </div>
 
                     {/* Bio snippet */}
@@ -153,7 +218,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
                           <ChevronRight size={13} className="text-zinc-500 group-hover/gym:text-red-400 group-hover/gym:translate-x-0.5 transition-all flex-shrink-0 ml-1" />
                         </a>
                       </div>
-                    ) : (
+                    ) : gyms.length > 0 ? (
                       <div>
                         <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-semibold flex items-center gap-1.5 mb-2.5">
                           <MapPin size={12} className="text-red-500" />
@@ -175,6 +240,16 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
                             </li>
                           ))}
                         </ul>
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-semibold flex items-center gap-1.5 mb-1.5">
+                          <Shield size={12} className="text-red-500" />
+                          Corpo Docente Pride:
+                        </span>
+                        <div className="p-2 rounded-md bg-zinc-900/60 border border-zinc-800/80 text-[11px] text-zinc-400 leading-snug">
+                          Instrutor atuante na preparação física e técnica da equipe.
+                        </div>
                       </div>
                     )}
                   </div>

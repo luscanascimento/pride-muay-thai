@@ -25,6 +25,15 @@ export interface Gym {
   isPending?: boolean;
 }
 
+export interface KhanRank {
+  level: number;
+  title: string;
+  colorName: string;
+  primaryColor: string;
+  tipColor?: string;
+  description: string;
+}
+
 export interface Professor {
   id: string;
   name: string;
@@ -33,6 +42,7 @@ export interface Professor {
   gymIds: string[];
   roleTitle?: string;
   bio?: string;
+  khan: number;
   photoPosition?: string;
   isLeader?: boolean;
   storyTitle?: string;
