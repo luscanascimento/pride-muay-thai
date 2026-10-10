@@ -49,7 +49,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
       {/* Background ambient lighting */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 sm:w-[650px] h-96 sm:h-[650px] bg-red-600/5 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto relative z-10">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
@@ -103,8 +103,8 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
           </div>
         )}
 
-        {/* Standardized Professors Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 items-stretch">
+        {/* Standardized Professors Grid: 2 rows of 5 on desktop (5 cards top, 5 cards bottom) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5 lg:gap-4 xl:gap-5 items-stretch">
           {displayedProfessors.map((prof) => {
             const gyms = getGymsForProfessor(prof.gymIds);
             const rank = getKhanRank(prof.khan);
@@ -137,22 +137,22 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
                   <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-red-600/70 to-transparent" />
 
                   {/* Khan Prajied badge on top-left of photo */}
-                  <div className="absolute top-3 left-3 z-10">
+                  <div className="absolute top-2.5 left-2.5 z-10">
                     <PrajiedBadge level={prof.khan} showRankTitle={false} size="sm" />
                   </div>
 
                   {/* Nickname or Leader pill on top-right of photo */}
                   {prof.isLeader ? (
-                    <div className="absolute top-3 right-3 z-10">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-white font-fight text-xs tracking-wider uppercase shadow-lg border border-red-400/60 bg-gradient-to-r from-red-600 to-red-700 shadow-red-600/30 backdrop-blur-sm">
-                        <Crown size={12} className="text-yellow-400" />
+                    <div className="absolute top-2.5 right-2.5 z-10">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded text-white font-fight text-[11px] sm:text-xs tracking-wider uppercase shadow-lg border border-red-400/60 bg-gradient-to-r from-red-600 to-red-700 shadow-red-600/30 backdrop-blur-sm">
+                        <Crown size={11} className="text-yellow-400" />
                         LÍDER • {prof.nickname || prof.name}
                       </span>
                     </div>
                   ) : prof.nickname ? (
-                    <div className="absolute top-3 right-3 z-10">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-white font-fight text-xs tracking-wider uppercase shadow-lg border border-red-400/40 bg-red-600/90 backdrop-blur-sm">
-                        <Award size={12} />
+                    <div className="absolute top-2.5 right-2.5 z-10">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded text-white font-fight text-[11px] sm:text-xs tracking-wider uppercase shadow-lg border border-red-400/40 bg-red-600/90 backdrop-blur-sm">
+                        <Award size={11} />
                         {prof.nickname}
                       </span>
                     </div>
@@ -160,14 +160,14 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
                 </div>
 
                 {/* Card Content - standardized flex distribution */}
-                <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
+                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
                   <div>
                     {/* Professor name & title */}
                     <div className="mb-3">
-                      <h3 className="font-fight text-2xl sm:text-3xl text-white uppercase tracking-wide group-hover:text-red-400 transition-colors leading-tight">
+                      <h3 className="font-fight text-xl sm:text-2xl text-white uppercase tracking-wide group-hover:text-red-400 transition-colors leading-tight">
                         {prof.name}
                         {prof.nickname && (
-                          <span className="text-red-500 ml-1.5 text-xl font-normal">
+                          <span className="text-red-500 ml-1.5 text-lg sm:text-xl font-normal">
                             ({prof.nickname})
                           </span>
                         )}
