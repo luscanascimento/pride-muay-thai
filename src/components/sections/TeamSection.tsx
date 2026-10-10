@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, MapPin, ChevronRight, Award } from 'lucide-react';
+import { Users, MapPin, ChevronRight, Award, Crown, Shield } from 'lucide-react';
 import { PROFESSORS_DATA, getGymsForProfessor } from '../../data/gymsAndTeamData';
 
 interface TeamSectionProps {
@@ -67,7 +67,11 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym }) => {
               <article
                 key={prof.id}
                 id={`professor-${prof.id}`}
-                className="flex flex-col h-full rounded-2xl bg-gradient-to-b from-[#131318] via-[#0f0f13] to-[#0a0a0d] border border-zinc-800 hover:border-red-600/60 shadow-xl hover:shadow-2xl hover:shadow-red-950/30 transition-all duration-300 group overflow-hidden focus-within:ring-2 focus-within:ring-red-500"
+                className={`flex flex-col h-full rounded-2xl bg-gradient-to-b from-[#131318] via-[#0f0f13] to-[#0a0a0d] border ${
+                  prof.isLeader
+                    ? 'border-red-900/80 shadow-red-950/40 ring-1 ring-red-500/30 hover:border-red-500'
+                    : 'border-zinc-800 hover:border-red-600/60'
+                } shadow-xl hover:shadow-2xl transition-all duration-300 group overflow-hidden focus-within:ring-2 focus-within:ring-red-500`}
               >
                 {/* Photo container with strictly standardized aspect ratio */}
                 <div className="relative w-full aspect-[4/5] bg-zinc-950 overflow-hidden flex-shrink-0">
@@ -89,9 +93,13 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym }) => {
                   {/* Nickname pill on image */}
                   {prof.nickname && (
                     <div className="absolute top-3 right-3 z-10">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-red-600/90 text-white font-fight text-xs tracking-wider uppercase shadow-lg border border-red-400/40 backdrop-blur-sm">
-                        <Award size={12} />
-                        {prof.nickname}
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded text-white font-fight text-xs tracking-wider uppercase shadow-lg border backdrop-blur-sm ${
+                        prof.isLeader
+                          ? 'bg-gradient-to-r from-red-600 to-red-700 border-red-400/60 shadow-red-600/30'
+                          : 'bg-red-600/90 border-red-400/40'
+                      }`}>
+                        {prof.isLeader ? <Crown size={12} className="text-yellow-400" /> : <Award size={12} />}
+                        {prof.isLeader ? `LÍDER • ${prof.nickname}` : prof.nickname}
                       </span>
                     </div>
                   )}
@@ -123,28 +131,51 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym }) => {
                     )}
                   </div>
 
-                  {/* Associated Academies */}
+                  {/* Associated Academies / Leadership Scope */}
                   <div className="pt-3 border-t border-zinc-800/80 mt-auto">
-                    <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-semibold flex items-center gap-1.5 mb-2.5">
-                      <MapPin size={12} className="text-red-500" />
-                      Onde ministra aulas:
-                    </span>
+                    {prof.isLeader ? (
+                      <div>
+                        <span className="text-[11px] font-mono uppercase tracking-widest text-red-400 font-semibold flex items-center gap-1.5 mb-2">
+                          <Shield size={12} className="text-red-500" />
+                          Liderança & Coordenação:
+                        </span>
+                        <div className="p-2.5 rounded-lg bg-red-950/30 border border-red-900/40 text-xs text-zinc-300 mb-2">
+                          <p className="text-[11px] text-zinc-400 leading-snug">
+                            Supervisão técnica, formação de professores e graduação em todas as unidades do Vale do Paraíba.
+                          </p>
+                        </div>
+                        <a
+                          href="#onde-treinar"
+                          className="w-full inline-flex items-center justify-between px-2.5 py-1.5 rounded-md bg-zinc-900/90 border border-zinc-800/80 hover:border-red-600/70 hover:bg-red-950/30 text-zinc-300 hover:text-white text-xs transition-colors group/gym"
+                        >
+                          <span className="truncate font-medium">Ver unidades da equipe</span>
+                          <ChevronRight size={13} className="text-zinc-500 group-hover/gym:text-red-400 group-hover/gym:translate-x-0.5 transition-all flex-shrink-0 ml-1" />
+                        </a>
+                      </div>
+                    ) : (
+                      <div>
+                        <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-semibold flex items-center gap-1.5 mb-2.5">
+                          <MapPin size={12} className="text-red-500" />
+                          Onde ministra aulas:
+                        </span>
 
-                    <ul className="flex flex-col gap-1.5" aria-label={`Academias onde ${prof.name} dá aula`}>
-                      {gyms.map((gym) => (
-                        <li key={gym.id}>
-                          <a
-                            href={`#gym-card-${gym.id}`}
-                            onClick={(e) => handleGymClick(e, gym.id)}
-                            className="w-full inline-flex items-center justify-between px-2.5 py-1.5 rounded-md bg-zinc-900/90 border border-zinc-800/80 hover:border-red-600/70 hover:bg-red-950/30 text-zinc-300 hover:text-white text-xs transition-colors group/gym"
-                            title={`Ver horários e contato de ${gym.name}`}
-                          >
-                            <span className="truncate font-medium">{gym.name}</span>
-                            <ChevronRight size={13} className="text-zinc-500 group-hover/gym:text-red-400 group-hover/gym:translate-x-0.5 transition-all flex-shrink-0 ml-1" />
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
+                        <ul className="flex flex-col gap-1.5" aria-label={`Academias onde ${prof.name} dá aula`}>
+                          {gyms.map((gym) => (
+                            <li key={gym.id}>
+                              <a
+                                href={`#gym-card-${gym.id}`}
+                                onClick={(e) => handleGymClick(e, gym.id)}
+                                className="w-full inline-flex items-center justify-between px-2.5 py-1.5 rounded-md bg-zinc-900/90 border border-zinc-800/80 hover:border-red-600/70 hover:bg-red-950/30 text-zinc-300 hover:text-white text-xs transition-colors group/gym"
+                                title={`Ver horários e contato de ${gym.name}`}
+                              >
+                                <span className="truncate font-medium">{gym.name}</span>
+                                <ChevronRight size={13} className="text-zinc-500 group-hover/gym:text-red-400 group-hover/gym:translate-x-0.5 transition-all flex-shrink-0 ml-1" />
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
 
                 </div>

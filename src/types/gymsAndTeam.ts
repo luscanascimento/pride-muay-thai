@@ -34,4 +34,5 @@ export interface Professor {
   roleTitle?: string;
   bio?: string;
   photoPosition?: string;
+  isLeader?: boolean;
 }

@@ -257,6 +257,17 @@ export const PROFESSORS_DATA: Professor[] = [
     roleTitle: 'Professor de Muay Thai',
     bio: 'Instrutor na Academia VG e Projeto VG, dedicado à disseminação do Muay Thai e ao fortalecimento da equipe no Vale do Paraíba.',
   },
+  {
+    id: 'renan-hulkinho',
+    name: 'Renan',
+    nickname: 'Hulkinho',
+    photoUrl: resolvePhotoUrl('renan-hulkinho.jpeg'),
+    gymIds: [],
+    roleTitle: 'Líder & Fundador da Pride • 14 Anos de Muay Thai',
+    bio: 'Com 14 anos de vivência no Muay Thai, Renan encontrou na arte marcial um caminho de evolução contínua, amadurecimento e superação diária. Como líder da Pride, conduz a formação de instrutores e alunos em todo o Vale do Paraíba, inspirando através da honra, disciplina e amor ao esporte.',
+    photoPosition: 'center 5%',
+    isLeader: true,
+  },
 ];
 
 // Helper functions for DRY cross-referencing and WhatsApp generation
