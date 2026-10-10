@@ -81,8 +81,22 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
-          <p>© {new Date().getFullYear()} {BRAND.name} • {BRAND.coach}. Todos os direitos reservados.</p>
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left">
+            <p>© {new Date().getFullYear()} {BRAND.name} • {BRAND.coach}. Todos os direitos reservados.</p>
+            <span className="hidden sm:inline text-zinc-700">•</span>
+            <p className="text-zinc-400">
+              Site desenvolvido por:{' '}
+              <a
+                href="https://github.com/luscanascimento"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-zinc-400 hover:text-zinc-200 transition-colors underline decoration-zinc-700/60 hover:decoration-red-500 underline-offset-4"
+              >
+                Lucas Nascimento
+              </a>
+            </p>
+          </div>
           
           <button
             onClick={scrollToTop}
