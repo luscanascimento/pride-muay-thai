@@ -35,4 +35,9 @@ export interface Professor {
   bio?: string;
   photoPosition?: string;
   isLeader?: boolean;
+  storyTitle?: string;
+  storyParagraphs?: string[];
+  quote?: string;
+  experienceYears?: number;
+  highlightBadges?: string[];
 }

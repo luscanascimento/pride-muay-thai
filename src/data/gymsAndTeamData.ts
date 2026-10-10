@@ -183,8 +183,17 @@ export const PROFESSORS_DATA: Professor[] = [
       'arena-muv',
       'arena-41-old-school',
     ],
-    roleTitle: 'Professor de Muay Thai',
+    roleTitle: 'Professor de Muay Thai • Referência Técnica',
     bio: 'Instrutor com ampla vivência em técnicas tradicionais, desenvolvimento atlético e formação de praticantes com rigor técnico e disciplina.',
+    storyTitle: 'Paulo Roberto | Professor de Muay Thai',
+    storyParagraphs: [
+      'Com uma trajetória sólida dedicada às artes marciais, o Professor Paulo Roberto é reconhecido como uma das principais referências técnicas e disciplinares da Pride Muay Thai no Vale do Paraíba.',
+      'Sua atuação nas unidades Arena Viking (São João e Santa Maria), Arena MUV e Arena 41 Old School tem formado gerações de alunos focados na técnica apurada, no respeito à linhagem tradicional e no desenvolvimento físico e mental.',
+      'Além de orientar alunos desde os primeiros passos até o nível avançado, Paulo atua como mentor contínuo para os próprios instrutores da equipe, transmitindo a precisão dos golpes, a solidez defensiva e a filosofia tailandesa autêntica.',
+      'Sua metodologia valoriza a constância nos treinos, a paciência com o processo de aprendizagem e a busca incessante pelo aperfeiçoamento de cada detalhe das oito armas.',
+    ],
+    quote: 'O Muay Thai é forjado na repetição com propósito e na disciplina inegociável de cada dia.',
+    highlightBadges: ['Referência Técnica Pride', 'Tradição & Linhagem', '4 Unidades no Vale'],
   },
   {
     id: 'rafael-lobinho',
@@ -197,6 +206,15 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     roleTitle: 'Professor de Muay Thai',
     bio: 'Especialista em biomecânica de combate, movimentação inteligente de ringue e preservação da tradição tailandesa em São José dos Campos.',
+    storyTitle: 'Rafael (Lobinho) | Professor de Muay Thai',
+    storyParagraphs: [
+      'Conhecido carinhosamente como Lobinho, o Professor Rafael é especialista na dinâmica do combate inteligente e na leitura estratégica de luta.',
+      'À frente das turmas na Calasans Camargo e no Yukon Dojo em São José dos Campos, sua didática foca na biomecânica dos golpes, na movimentação fluida de pernas e no ritmo característico do Muay Thai de alto rendimento.',
+      'Para Rafael, o ringue e o tatame são extensões da mente: a inteligência tática, a calma sob pressão e o respeito aos companheiros de treino são os maiores legados que a arte marcial proporciona.',
+      'Com atenção personalizada a cada praticante, Lobinho constrói um ambiente acolhedor e motivador, onde iniciantes descobrem seu potencial e atletas aprimoram sua eficiência marcial.',
+    ],
+    quote: 'A técnica supera a força bruta quando a mente permanece calma e atenta ao momento presente.',
+    highlightBadges: ['Biomecânica & Estratégia', 'São José dos Campos', 'Calasans & Yukon'],
   },
   {
     id: 'eduardo',
@@ -209,7 +227,16 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     roleTitle: 'Professor de Muay Thai',
     bio: 'Dedicado ao acolhimento e evolução progressiva dos alunos, combinando condicionamento dinâmico e fundamentos sólidos das 8 armas.',
+    storyTitle: 'Eduardo | Professor de Muay Thai',
+    storyParagraphs: [
+      'Com um compromisso permanente com a evolução de cada praticante, o Professor Eduardo conduz aulas dinâmicas na Arena Viking Parque Itamaraty e no CT3 Artes Marciais em Jacareí.',
+      'Sua filosofia de ensino equilibra o condicionamento físico intenso com a construção cuidadosa da postura marcial, garantindo que os alunos aprendam com segurança, firmeza e entusiasmo.',
+      'Eduardo acredita que o Muay Thai tem o poder de transformar a rotina, aliviar o estresse diário e construir amizades verdadeiras dentro do tatame.',
+      'Seu trabalho destaca a importância da persistência: superar a si mesmo a cada round e transformar pequenas vitórias no treino em grandes conquistas pessoais fora dele.',
+    ],
+    quote: 'Cada treino concluído é mais um tijolo firme na construção da sua melhor versão.',
     photoPosition: 'center 0%',
+    highlightBadges: ['Fundamentos Sólidos', 'Jacareí', 'Viking Itamaraty & CT3'],
   },
   {
     id: 'simone-osses',
@@ -221,6 +248,15 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     roleTitle: 'Professora de Muay Thai',
     bio: 'Referência no tatame, incentiva a superação diária, postura marcial consciente e a construção de autoconfiança para todas as idades.',
+    storyTitle: 'Simone Osses | Professora de Muay Thai',
+    storyParagraphs: [
+      'A Professora Simone Osses é um dos grandes símbolos de força, dedicação e liderança marcial feminina dentro da Pride Muay Thai.',
+      'Atuando no CT3 Artes Marciais, Simone inspira mulheres, homens e jovens a quebrarem barreiras e descobrirem uma autoconfiança inabalável através da prática do esporte.',
+      'Seu trabalho enfatiza a precisão técnica, a resistência cardiorrespiratória e o desenvolvimento de uma mentalidade focada na vitória pessoal sobre medos e limites.',
+      'No tatame da Professora Simone, o respeito é mútuo e a energia é contagiante, mostrando que o Muay Thai é um espaço acolhedor e transformador para qualquer pessoa disposta a evoluir.',
+    ],
+    quote: 'A sua única limitação real é aquela que você aceita na sua mente. No tatame, descobrimos que somos infinitamente mais fortes.',
+    highlightBadges: ['Liderança & Inspiração', 'Autoconfiança', 'CT3 Artes Marciais'],
   },
   {
     id: 'rafael-japones',
@@ -232,6 +268,15 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     roleTitle: 'Professor de Muay Thai',
     bio: 'Instrutor responsável pela unidade de Santa Branca, focado na marcialidade autêntica, precisão de golpes e respeito à linhagem do esporte.',
+    storyTitle: 'Rafael (Japonês) | Professor de Muay Thai',
+    storyParagraphs: [
+      'À frente das aulas no Studio M em Santa Branca, o Professor Rafael Japonês é o embaixador dos valores da Pride Muay Thai no Alto Vale do Paraíba.',
+      'Com um olhar apurado para os detalhes e uma paixão declarada pela arte das oito armas, Rafael transmite as técnicas tradicionais com disciplina rígida e camaradagem fraterna.',
+      'Suas aulas desafiam os limites físicos dos alunos enquanto constroem uma base marcial sólida em defesa pessoal, velocidade de punhos e potência nos chutes.',
+      'Para Rafael, preservar a identidade da Pride significa honrar cada treino como uma oportunidade de aprendizado e crescimento com os irmãos de equipe.',
+    ],
+    quote: 'Respeito aos mestres, lealdade à equipe e dedicação incansável em cada golpe desferido.',
+    highlightBadges: ['Pioneirismo em Santa Branca', 'Studio M', 'Técnica Tradicional'],
   },
   {
     id: 'pedro',
@@ -244,6 +289,15 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     roleTitle: 'Professor de Muay Thai',
     bio: 'Entusiasta da energia marcial e do trabalho de clinch e manoplas, auxiliando os alunos a desenvolverem força física e mental constante.',
+    storyTitle: 'Pedro | Professor de Muay Thai',
+    storyParagraphs: [
+      'Com energia contagiante e paixão vibrante pelo esporte, o Professor Pedro dedica-se à formação de novos talentos e ao desenvolvimento de praticantes na Arena Viking Parque Itamaraty e Unciclo.',
+      'Especialista na intensidade das manoplas, na cadência de combinações e no estudo das posições de clinch, Pedro busca extrair a melhor performance física e mental de cada aluno.',
+      'Para ele, o treino é um momento sagrado de renovação de energias, onde o esforço coletivo empurra cada praticante para além dos seus supostos limites.',
+      'Sua metodologia incentiva a camaradagem, a escuta atenta aos princípios do Muay Thai e o cultivo de hábitos saudáveis que perduram para a vida inteira.',
+    ],
+    quote: 'A intensidade que você entrega ao tatame se transforma na energia que move a sua vida lá fora.',
+    highlightBadges: ['Energia & Dinâmica', 'Clinch & Manoplas', 'Viking Itamaraty & Unciclo'],
   },
   {
     id: 'gustavo-arantes',
@@ -254,8 +308,24 @@ export const PROFESSORS_DATA: Professor[] = [
       'vg',
       'projeto-vg',
     ],
-    roleTitle: 'Professor de Muay Thai',
-    bio: 'Instrutor na Academia VG e Projeto VG, dedicado à disseminação do Muay Thai e ao fortalecimento da equipe no Vale do Paraíba.',
+    roleTitle: 'Professor de Muay Thai • 12 Anos de Vivência',
+    bio: 'Instrutor na Academia VG e Projeto VG com 12 anos de trajetória marcial, conciliando a essência do Muay Thai com valores de família, equilíbrio e perseverança.',
+    storyTitle: 'Gustavo Arantes | Professor de Muay Thai',
+    storyParagraphs: [
+      'Minha história nas artes marciais começou aos 15 anos, quando tive meus primeiros contatos com o Wing Chun e o Boxe, sob orientação da professora Rosa, uma veterana e referência do boxe em nossa cidade.',
+      'Aos 18 anos, iniciei minha trajetória no Kickboxing com o professor Juliano, ao lado de Renan, o Hulkinho, que naquela época era meu parceiro de treino e que, anos depois, se tornaria nosso mestre.',
+      'Entre os 18 e 19 anos, também tive a oportunidade de vivenciar o Hapkido sob orientação do renomado Mestre Machuca, uma grande referência das artes marciais em nossa cidade. Embora tenha sido uma experiência breve, foi um período de muito aprendizado, que me proporcionou inclusive a oportunidade de participar de um campeonato amador de MMA, ampliando minha visão sobre o combate e as diferentes filosofias marciais.',
+      'Em 2014, fizemos a transição para o Muay Thai. O que começou como uma atividade de lazer foi, aos poucos, se tornando parte essencial da minha vida. Em 2016, nasceu oficialmente nossa equipe, a Pride Muay Thai, sob a liderança do Mestre Renan Hulkinho, consolidando uma história construída com amizade, respeito, dedicação e perseverança.',
+      'Hoje, aos 33 anos, carrego 12 anos de vivência no Muay Thai, conciliando os treinos com minhas responsabilidades como marido, pai e profissional. Essa jornada me ensinou que não é necessário abrir mão de uma vida familiar e profissional para viver a essência das artes marciais. Pelo contrário: o equilíbrio, a disciplina e a constância fazem parte do caminho.',
+      'Acredito profundamente que o Muay Thai vai muito além de golpes, técnicas e condicionamento físico. É uma filosofia capaz de transformar pessoas, fortalecer o caráter e nos ensinar a enfrentar os desafios da vida com coragem, humildade e determinação.',
+      'E acredito também que ensinar exige nunca deixar de aprender. Por isso, sempre que tenho a oportunidade, continuo treinando e aperfeiçoando meus conhecimentos com o Professor Paulo, uma grande referência dentro da nossa equipe. Busco estar em constante evolução, acompanhando o desenvolvimento técnico do Muay Thai para proporcionar aos meus alunos um ensino cada vez mais atualizado, completo e de qualidade.',
+      'Como professor, meu propósito é compartilhar não apenas aquilo que aprendi dentro dos treinos, mas também os valores que as artes marciais me ensinaram ao longo dos anos.',
+      'Porque, para mim, a verdadeira força não está apenas em saber lutar, mas em aprender a permanecer de pé diante das adversidades.',
+      'Não importa a intensidade da tempestade. O importante é continuar firme, respeitando o processo e nunca abandonando o caminho.',
+    ],
+    quote: 'Porque, para mim, a verdadeira força não está apenas em saber lutar, mas em aprender a permanecer de pé diante das adversidades. Não importa a intensidade da tempestade. O importante é continuar firme, respeitando o processo e nunca abandonando o caminho.',
+    experienceYears: 12,
+    highlightBadges: ['12 Anos de Muay Thai', '33 Anos de Idade', 'Pioneiro Pride desde 2016', 'Academia VG & Projeto VG', 'Família & Disciplina'],
   },
   {
     id: 'renan-hulkinho',
@@ -265,12 +335,39 @@ export const PROFESSORS_DATA: Professor[] = [
     gymIds: [],
     roleTitle: 'Líder & Fundador da Pride • 14 Anos de Muay Thai',
     bio: 'Com 14 anos de vivência no Muay Thai, Renan encontrou na arte marcial um caminho de evolução contínua, amadurecimento e superação diária. Como líder da Pride, conduz a formação de instrutores e alunos em todo o Vale do Paraíba, inspirando através da honra, disciplina e amor ao esporte.',
+    storyTitle: 'Renan (Hulkinho) | Líder & Fundador da Pride Muay Thai',
+    storyParagraphs: [
+      'Com mais de 14 anos dedicados de corpo e alma às artes marciais, Renan "Hulkinho" é o fundador e o coração da equipe Pride Muay Thai.',
+      'Sua caminhada começou nos tatames de kickboxing ainda na juventude, compartilhando rounds e sonhos com grandes companheiros como o Professor Gustavo Arantes, sob a mentoria de experientes mestres da nossa região.',
+      'Com a transição para o Muay Thai em 2014 e a fundação oficial da Pride em 2016, Renan abraçou a nobre missão de construir não apenas uma academia, mas uma verdadeira irmandade baseada na disciplina férrea, na humildade, no respeito e na superação pessoal.',
+      'Ao longo de mais de uma década, Renan amadureceu com o esporte e viu o Muay Thai transformar sua vida e a vida de centenas de alunos por todo o Vale do Paraíba — em Jacareí, São José dos Campos e Santa Branca.',
+      'Como líder da Pride, Renan supervisiona pessoalmente a formação contínua dos professores da equipe, assegurando que o padrão técnico mais rigoroso caminhe sempre lado a lado com os valores éticos que definem a verdadeira arte das oito armas.',
+      'Sua liderança inspira pelo exemplo diário: estar presente, treinar junto, acolher o iniciante com respeito e exigir do graduado o mais alto nível de conduta dentro e fora do ringue.',
+    ],
+    quote: 'A Pride não é apenas uma equipe de luta. É uma família forjada no respeito, na honra e na superação diária de cada um dos nossos irmãos.',
+    experienceYears: 14,
     photoPosition: 'center 5%',
     isLeader: true,
+    highlightBadges: ['Líder & Fundador da Pride', '14 Anos de Muay Thai', 'Coordenação Técnica Geral', 'Vale do Paraíba'],
   },
 ];
 
 // Helper functions for DRY cross-referencing and WhatsApp generation
+export function getProfessorById(id: string): Professor | undefined {
+  return PROFESSORS_DATA.find((p) => p.id === id);
+}
+
+export function getAdjacentProfessors(currentId: string): { prev: Professor; next: Professor } | null {
+  const index = PROFESSORS_DATA.findIndex((p) => p.id === currentId);
+  if (index === -1) return null;
+  const prevIndex = (index - 1 + PROFESSORS_DATA.length) % PROFESSORS_DATA.length;
+  const nextIndex = (index + 1) % PROFESSORS_DATA.length;
+  return {
+    prev: PROFESSORS_DATA[prevIndex],
+    next: PROFESSORS_DATA[nextIndex],
+  };
+}
+
 export function getGymsForProfessor(gymIds: string[]): Gym[] {
   return gymIds
     .map((id) => GYMS_DATA.find((gym) => gym.id === id))

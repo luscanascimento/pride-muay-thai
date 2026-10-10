@@ -1,12 +1,13 @@
 import React from 'react';
-import { Users, MapPin, ChevronRight, Award, Crown, Shield } from 'lucide-react';
+import { Users, MapPin, ChevronRight, Award, Crown, Shield, ArrowRight } from 'lucide-react';
 import { PROFESSORS_DATA, getGymsForProfessor } from '../../data/gymsAndTeamData';
 
 interface TeamSectionProps {
   onSelectGym?: (gymId: string) => void;
+  onViewProfessor?: (professorId: string) => void;
 }
 
-export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym }) => {
+export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewProfessor }) => {
   const handleGymClick = (e: React.MouseEvent, gymId: string) => {
     e.preventDefault();
     if (onSelectGym) {
@@ -176,6 +177,25 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym }) => {
                         </ul>
                       </div>
                     )}
+                  </div>
+
+                  {/* Botão Ver mais... para a página do professor */}
+                  <div className="pt-3 border-t border-zinc-800/80 mt-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (onViewProfessor) {
+                          onViewProfessor(prof.id);
+                        } else {
+                          window.location.hash = `#/professores/${prof.id}`;
+                        }
+                      }}
+                      className="w-full inline-flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-zinc-900/90 hover:bg-red-600 text-zinc-300 hover:text-white border border-zinc-800 hover:border-red-500 text-xs font-semibold tracking-wider uppercase transition-all duration-200 group/btn shadow-sm"
+                      aria-label={`Ver mais sobre o professor ${prof.name}`}
+                    >
+                      <span>Ver mais...</span>
+                      <ArrowRight size={13} className="text-red-400 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-transform" />
+                    </button>
                   </div>
 
                 </div>
