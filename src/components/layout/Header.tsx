@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, X, MessageCircle } from 'lucide-react';
-import { BRAND, getWhatsAppUrl } from '../../constants/brand';
+import { Menu, X, MapPin } from 'lucide-react';
+import { BRAND } from '../../constants/brand';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
 import { Button } from '../ui/Button';
 import prideLogoCutout from '../../assets/pride-muay-thai-cutout.png';
@@ -72,13 +72,12 @@ export const Header: React.FC = () => {
         <div className="hidden lg:flex items-center gap-3">
           <Button
             as="a"
-            href={getWhatsAppUrl()}
-            target="_blank"
+            href="#onde-treinar"
             variant="primary"
             size="sm"
             className="rounded-sm"
           >
-            <MessageCircle size={18} />
+            <MapPin size={18} />
             Comece a Treinar
           </Button>
         </div>
@@ -114,15 +113,14 @@ export const Header: React.FC = () => {
             <div className="pt-4 flex flex-col gap-3">
               <Button
                 as="a"
-                href={getWhatsAppUrl()}
-                target="_blank"
+                href="#onde-treinar"
                 variant="primary"
                 size="lg"
                 onClick={closeMenu}
                 className="w-full justify-center"
               >
-                <MessageCircle size={20} />
-                Comece a Treinar no WhatsApp
+                <MapPin size={20} />
+                Comece a Treinar
               </Button>
             </div>
           </nav>

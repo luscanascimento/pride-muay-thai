@@ -72,13 +72,12 @@ export const Hero: React.FC = () => {
           <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 sm:gap-4 w-full max-w-sm sm:max-w-none">
             <Button
               as="a"
-              href={getWhatsAppUrl("Olá, Renan! Gostaria de agendar uma aula experimental e começar a treinar no Pride Muay Thai.")}
-              target="_blank"
+              href="#onde-treinar"
               variant="primary"
               size="lg"
               className="w-full sm:w-auto shadow-red-glow hover:shadow-red-glow-lg text-center"
             >
-              <MessageCircle size={20} />
+              <MapPin size={20} />
               Comece a Treinar
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Button>
@@ -91,6 +90,7 @@ export const Hero: React.FC = () => {
               size="lg"
               className="w-full sm:w-auto"
             >
+              <MessageCircle size={18} />
               Fale com o Renan
             </Button>
           </div>
