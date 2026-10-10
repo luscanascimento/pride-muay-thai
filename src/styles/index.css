@@ -1,4 +1,4 @@
-@import 'leaflet/dist/leaflet.css';
+@import 'mapbox-gl/dist/mapbox-gl.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -100,8 +100,8 @@ canvas {
   box-shadow: 0 0 25px rgba(220, 38, 38, 0.25);
 }
 
-/* Custom Leaflet Map styling for Pride Muay Thai */
-.leaflet-container {
+/* Custom Mapbox GL styling for Pride Muay Thai */
+.mapboxgl-map {
   font-family: inherit !important;
   background-color: #0c0c10 !important;
 }
@@ -109,9 +109,10 @@ canvas {
 .custom-pride-pin {
   background: transparent !important;
   border: none !important;
+  cursor: pointer;
 }
 
-.leaflet-popup.pride-leaflet-popup .leaflet-popup-content-wrapper {
+.mapboxgl-popup.pride-mapbox-popup .mapboxgl-popup-content {
   background: #121217 !important;
   color: #f4f4f5 !important;
   border: 1px solid rgba(220, 38, 38, 0.45) !important;
@@ -121,25 +122,52 @@ canvas {
   overflow: hidden;
 }
 
-.leaflet-popup.pride-leaflet-popup .leaflet-popup-content {
-  margin: 0 !important;
-  line-height: 1.4 !important;
+.mapboxgl-popup.pride-mapbox-popup .mapboxgl-popup-tip {
+  border-top-color: #121217 !important;
+  border-bottom-color: #121217 !important;
 }
 
-.leaflet-popup.pride-leaflet-popup .leaflet-popup-tip {
-  background: #121217 !important;
-  border: 1px solid rgba(220, 38, 38, 0.45) !important;
-}
-
-.leaflet-container a.leaflet-popup-close-button {
+.mapboxgl-popup-close-button {
   color: #a1a1aa !important;
-  padding: 8px !important;
-  top: 6px !important;
-  right: 6px !important;
+  font-size: 18px !important;
+  padding: 6px 10px !important;
+  top: 4px !important;
+  right: 4px !important;
+  outline: none !important;
 }
 
-.leaflet-container a.leaflet-popup-close-button:hover {
+.mapboxgl-popup-close-button:hover {
   color: #ef4444 !important;
+  background: transparent !important;
+}
+
+.mapboxgl-ctrl-group {
+  background: #121217 !important;
+  border: 1px solid #27272a !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.mapboxgl-ctrl-group button {
+  border-bottom: 1px solid #27272a !important;
+}
+
+.mapboxgl-ctrl-group button:last-child {
+  border-bottom: none !important;
+}
+
+.mapboxgl-ctrl-icon {
+  filter: invert(1) hue-rotate(180deg) !important;
+}
+
+.mapboxgl-ctrl-attrib {
+  background-color: rgba(10, 10, 13, 0.8) !important;
+  color: #71717a !important;
+  font-size: 10px !important;
+}
+
+.mapboxgl-ctrl-attrib a {
+  color: #a1a1aa !important;
 }
 
 /* Reduced motion preference support */

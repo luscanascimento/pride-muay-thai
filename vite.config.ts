@@ -12,13 +12,14 @@ export default defineConfig({
   },
   build: {
     sourcemap: false,
+    chunkSizeWarningLimit: 2200,
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
           animation: ['gsap', 'lenis'],
           three: ['three'],
-          leaflet: ['leaflet'],
+          mapbox: ['mapbox-gl'],
         },
       },
     },
