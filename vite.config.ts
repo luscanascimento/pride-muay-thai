@@ -18,6 +18,7 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           animation: ['gsap', 'lenis'],
           three: ['three'],
+          leaflet: ['leaflet'],
         },
       },
     },
