@@ -2,7 +2,9 @@ import React from 'react';
 import { getKhanRank } from '../../data/gymsAndTeamData';
 
 interface PrajiedRopeProps {
-  level: number;
+  level?: number;
+  customPrimary?: string;
+  customTip?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   className?: string;
 }
@@ -11,9 +13,17 @@ interface PrajiedRopeProps {
  * Authentic Muay Thai Prajied (sacred braided armband) SVG representation.
  * Accurately displays the primary cord color and the white tip ("ponta branca") when applicable.
  */
-export const PrajiedRope: React.FC<PrajiedRopeProps> = ({ level, size = 'sm', className = '' }) => {
+export const PrajiedRope: React.FC<PrajiedRopeProps> = ({ 
+  level = 1, 
+  customPrimary,
+  customTip,
+  size = 'sm', 
+  className = '' 
+}) => {
   const rank = getKhanRank(level);
-  const isWhiteTip = Boolean(rank.tipColor);
+  const primary = customPrimary || rank.primaryColor;
+  const tip = customTip !== undefined ? customTip : (rank.tipColor || primary);
+  const isWhiteTip = Boolean(customTip || rank.tipColor);
 
   const sizeMap = {
     xs: { width: 18, height: 26 },
@@ -23,12 +33,10 @@ export const PrajiedRope: React.FC<PrajiedRopeProps> = ({ level, size = 'sm', cl
   };
 
   const { width, height } = sizeMap[size];
-  const primary = rank.primaryColor;
-  const tip = rank.tipColor || primary;
 
-  // Unique gradient IDs per level
-  const cordGradId = `cord-grad-${level}-${size}`;
-  const knotGradId = `knot-grad-${level}-${size}`;
+  // Unique gradient IDs per level/color
+  const cordGradId = `cord-grad-${level}-${size}-${(customPrimary || '').replace('#', '')}`;
+  const knotGradId = `knot-grad-${level}-${size}-${(customPrimary || '').replace('#', '')}`;
 
   return (
     <svg

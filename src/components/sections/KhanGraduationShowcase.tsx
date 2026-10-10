@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award, Shield, Check } from 'lucide-react';
+import { Award, Shield, Check, ChevronRight } from 'lucide-react';
 import { PrajiedRope } from '../ui/PrajiedBadge';
 import { KHAN_RANKS_DATA } from '../../data/gymsAndTeamData';
 
@@ -123,8 +123,14 @@ export const KhanGraduationShowcase: React.FC<KhanGraduationShowcaseProps> = ({
             Clique em qualquer graduação acima para filtrar e visualizar os instrutores correspondentes.
           </span>
         </div>
-        <div className="italic text-zinc-400">
-          Tradição reconhecida de graduação em Muay Thai
+        <div className="flex items-center gap-3">
+          <a
+            href="#curiosidades-khans"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900/90 hover:bg-red-950/60 border border-zinc-700/80 hover:border-red-500/80 text-zinc-300 hover:text-white transition-colors text-xs font-semibold"
+          >
+            <span>Curiosidade: Ver a ordem dos 16 Khans</span>
+            <ChevronRight size={13} className="text-red-400" />
+          </a>
         </div>
       </div>
     </div>

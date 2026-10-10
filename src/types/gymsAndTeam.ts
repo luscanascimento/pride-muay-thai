@@ -34,6 +34,17 @@ export interface KhanRank {
   description: string;
 }
 
+export interface FullKhanLevel {
+  level: number;
+  colorName: string;
+  category: 'Aluno' | 'Graduado & Instrutor' | 'Professor & Mestre' | 'Mestre de Honra';
+  title: string;
+  primaryColor: string;
+  tipColor?: string;
+  description: string;
+  teamMembers?: string[];
+}
+
 export interface Professor {
   id: string;
   name: string;

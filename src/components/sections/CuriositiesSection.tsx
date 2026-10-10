@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BookOpen, ScrollText, ChevronDown } from 'lucide-react';
 import traditionImg from '../../assets/images/thailand-tradition.jpg';
+import { AllKhansCuriosityTable } from '../ui/AllKhansCuriosityTable';
 
 interface CuriosityItem {
   id: string;
@@ -49,17 +50,26 @@ const CURIOSITIES: CuriosityItem[] = [
     summary: 'No Muay Thai autêntico, arrogância é sinal de fraqueza. A reverência Wai marca o início e o fim de cada treino.',
     fullStory: 'Mesmo nos estádios mais lendários de Bangkok (Lumpinee e Rajadamnern), após rounds de combate intenso, os adversários abraçam-se, agradecem aos treinadores opostos e demonstram fraternidade incondicional. Essa é a conduta que cultivamos diariamente no Pride Muay Thai.',
   },
+  {
+    id: 'khans-system',
+    number: '05',
+    title: 'A Escala de Khans: A Ordem Sagrada das Cores do Prajied',
+    thai: 'ลำดับขั้นมวยไทย',
+    tag: 'Curiosidade & Graduação',
+    summary: 'Ao contrário de outras artes marciais que utilizam faixas na cintura, no Muay Thai a graduação é indicada pelas cores do Prajied (cordão no braço), dividida em graus chamados Khans.',
+    fullStory: 'O sistema tradicional é estruturado em 16 Khans, partindo da corda branca para os iniciantes até as cores escuras e nobres para mestres e fundadores. Veja abaixo a tabela completa com a ordem exata de cada graduação!',
+  },
 ];
 
 export const CuriositiesSection: React.FC = () => {
-  const [expandedId, setExpandedId] = useState<string | null>('history');
+  const [expandedId, setExpandedId] = useState<string | null>('khans-system');
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
   };
 
   return (
-    <section className="relative py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-[#080809] overflow-hidden">
+    <section id="curiosidades" className="scroll-mt-24 relative py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-[#080809] overflow-hidden">
       
       {/* Decorative background grid pattern */}
       <div className="absolute inset-0 bg-canvas-texture opacity-30 pointer-events-none" />
@@ -173,6 +183,9 @@ export const CuriositiesSection: React.FC = () => {
           </div>
 
         </div>
+
+        {/* Complete Khans Hierarchy Curiosity Table */}
+        <AllKhansCuriosityTable />
 
       </div>
     </section>
