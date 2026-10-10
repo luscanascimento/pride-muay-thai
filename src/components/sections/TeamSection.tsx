@@ -141,16 +141,16 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
                     <PrajiedBadge level={prof.khan} showRankTitle={false} size="sm" />
                   </div>
 
-                  {/* Nickname or Leader pill on top-right of photo */}
+                  {/* Nickname or Leader pill on bottom-right of photo */}
                   {prof.isLeader ? (
-                    <div className="absolute top-2.5 right-2.5 z-10">
+                    <div className="absolute bottom-2.5 right-2.5 z-10">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded text-white font-fight text-[11px] sm:text-xs tracking-wider uppercase shadow-lg border border-red-400/60 bg-gradient-to-r from-red-600 to-red-700 shadow-red-600/30 backdrop-blur-sm">
                         <Crown size={11} className="text-yellow-400" />
                         LÍDER • {prof.nickname || prof.name}
                       </span>
                     </div>
                   ) : prof.nickname ? (
-                    <div className="absolute top-2.5 right-2.5 z-10">
+                    <div className="absolute bottom-2.5 right-2.5 z-10">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded text-white font-fight text-[11px] sm:text-xs tracking-wider uppercase shadow-lg border border-red-400/40 bg-red-600/90 backdrop-blur-sm">
                         <Award size={11} />
                         {prof.nickname}
