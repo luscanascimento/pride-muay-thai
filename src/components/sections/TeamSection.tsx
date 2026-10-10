@@ -76,7 +76,8 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym }) => {
                     alt={`Foto do professor ${prof.name}${prof.nickname ? ` (${prof.nickname})` : ''}`}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover object-[center_18%] transition-transform duration-500 ease-out group-hover:scale-105"
+                    style={{ objectPosition: prof.photoPosition || 'center 15%' }}
+                    className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                   />
 
                   {/* Gradient overlays for contrast and elegance */}

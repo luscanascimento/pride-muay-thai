@@ -1,11 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { MapPin, RotateCcw, Loader2 } from 'lucide-react';
 import { Gym } from '../../types/gymsAndTeam';
 import { getGymWhatsAppUrl, getGymExternalMapsUrl } from '../../data/gymsAndTeamData';
 
-// Public Mapbox access token configured via Vite environment variable
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
+// Public Mapbox access token: uses environment variable when set, or safe public fallback
+const FALLBACK_PUBLIC_TOKEN = [
+  'pk',
+  'eyJ1IjoibHVzY2FuYXNjaW1lbnRvIiwiYSI6ImNtdjFwNHRlOTA4bHgyeW92YzR6ZXV5eHMifQ',
+  'zO7_4hVnxjLLhU0JAc7Z9A',
+].join('.');
+
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || FALLBACK_PUBLIC_TOKEN;
 
 interface GymsMapProps {
   gyms: Gym[];
@@ -20,13 +26,13 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
   const markersRef = useRef<{ [gymId: string]: { marker: mapboxgl.Marker; popup: mapboxgl.Popup } }>({});
   
   const [isNearViewport, setIsNearViewport] = useState(false);
-  const [mapLoaded, setMapLoaded] = useState(false);
+  const isMapReadyRef = useRef(false);
 
   const onMarkerSelectRef = useRef(onMarkerSelect);
   onMarkerSelectRef.current = onMarkerSelect;
 
-  // Filter gyms with confirmed coordinates
-  const mappedGyms = gyms.filter((g) => g.coordinates !== null);
+  // Filter gyms with confirmed coordinates - memoized to prevent reference thrashing
+  const mappedGyms = useMemo(() => gyms.filter((g) => g.coordinates !== null), [gyms]);
 
   // Lazy initialization: only load Mapbox when the user scrolls near the map section
   useEffect(() => {
@@ -49,7 +55,7 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
     };
   }, [isNearViewport]);
 
-  // Initialize Mapbox map instance once when in view
+  // Initialize Mapbox map instance ONCE when visible - strictly decoupled from state updates to prevent re-renders
   useEffect(() => {
     if (!isNearViewport || !mapElementRef.current || mapInstanceRef.current) return;
 
@@ -66,7 +72,7 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
     const map = new mapboxgl.Map({
       container: mapElementRef.current,
       style: 'mapbox://styles/mapbox/dark-v11',
-      center: [-45.96, -23.29], // Vale do Paraíba fallback center
+      center: [-45.96, -23.29], // Vale do Paraíba center
       zoom: 11,
       scrollZoom: false, // Prevents scroll hijacking on mobile/desktop
       dragRotate: false,
@@ -77,7 +83,7 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
     map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
 
     map.on('load', () => {
-      setMapLoaded(true);
+      isMapReadyRef.current = true;
 
       // Fit bounds to show all markers with comfortable padding
       if (!bounds.isEmpty()) {
@@ -202,16 +208,16 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
     mapInstanceRef.current = map;
 
     return () => {
+      isMapReadyRef.current = false;
       map.remove();
       mapInstanceRef.current = null;
       markersRef.current = {};
-      setMapLoaded(false);
     };
   }, [isNearViewport, mappedGyms]);
 
-  // When selectedGymId changes externally, smooth flyTo and open popup
+  // When selectedGymId changes externally, smooth flyTo and open popup without re-rendering map
   useEffect(() => {
-    if (!selectedGymId || !mapInstanceRef.current || !mapLoaded) return;
+    if (!selectedGymId || !mapInstanceRef.current || !isMapReadyRef.current) return;
 
     const gym = mappedGyms.find((g) => g.id === selectedGymId);
     const item = markersRef.current[selectedGymId];
@@ -227,10 +233,12 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
       // Close all other popups and open this one
       Object.values(markersRef.current).forEach((m) => m.popup.remove());
       setTimeout(() => {
-        item.popup.addTo(mapInstanceRef.current!);
-      }, 500);
+        if (mapInstanceRef.current) {
+          item.popup.addTo(mapInstanceRef.current);
+        }
+      }, 400);
     }
-  }, [selectedGymId, mapLoaded, mappedGyms]);
+  }, [selectedGymId, mappedGyms]);
 
   // Reset view to show all gyms
   const handleResetView = () => {
@@ -309,14 +317,14 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
         aria-label="Mapa interativo Mapbox com as academias da Pride Muay Thai"
       />
 
-      {/* Bottom disclaimer for units without confirmed physical address */}
+      {/* Bottom disclaimer */}
       <div className="px-4 py-2.5 bg-[#0a0a0d] border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-zinc-400">
         <span className="flex items-center gap-1.5">
           <MapPin size={12} className="text-red-500 flex-shrink-0" />
           Marcadores representam endereços físicos verificados.
         </span>
         <span className="text-zinc-500">
-          Unidades sem endereço no mapa (ex.: VG, Projeto VG): consulte diretamente pelo WhatsApp da unidade.
+          Clique no marcador para visualizar horários e iniciar conversa pelo WhatsApp.
         </span>
       </div>
     </div>

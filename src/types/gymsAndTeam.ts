@@ -33,4 +33,5 @@ export interface Professor {
   gymIds: string[];
   roleTitle?: string;
   bio?: string;
+  photoPosition?: string;
 }

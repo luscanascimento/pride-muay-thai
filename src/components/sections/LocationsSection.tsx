@@ -141,15 +141,15 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
             <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
               <span className="font-fight text-xl text-white block">JACAREÍ</span>
-              <span className="text-xs text-zinc-400">7 unidades ativas</span>
+              <span className="text-xs text-zinc-400">{cityCounts.jacarei} unidades ativas</span>
             </div>
             <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
               <span className="font-fight text-xl text-white block">SÃO JOSÉ DOS CAMPOS</span>
-              <span className="text-xs text-zinc-400">2 unidades ativas</span>
+              <span className="text-xs text-zinc-400">{cityCounts.sjc} unidades ativas</span>
             </div>
             <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
               <span className="font-fight text-xl text-white block">SANTA BRANCA</span>
-              <span className="text-xs text-zinc-400">1 unidade ativa</span>
+              <span className="text-xs text-zinc-400">{cityCounts.santaBranca} unidade ativa</span>
             </div>
           </div>
         </div>
