@@ -15,7 +15,8 @@ export const Header: React.FC = () => {
     { label: '8 Armas', href: '#oito-armas' },
     { label: 'Benefícios', href: '#beneficios' },
     { label: 'O Treino', href: '#treino' },
-    { label: 'Unidades', href: '#unidades' },
+    { label: 'Nossa Equipe', href: '#nossa-equipe' },
+    { label: 'Onde Treinar', href: '#onde-treinar' },
     { label: 'Contato', href: '#contato' },
   ];
 
@@ -55,12 +56,12 @@ export const Header: React.FC = () => {
         </a>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-7" aria-label="Navegação principal">
+        <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6" aria-label="Navegação principal">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="font-fight text-lg uppercase tracking-wider text-zinc-300 hover:text-white transition-colors relative py-1 hover:after:w-full after:w-0 after:h-[2px] after:bg-red-600 after:absolute after:bottom-0 after:left-0 after:transition-all"
+              className="font-fight text-base xl:text-lg uppercase tracking-wider text-zinc-300 hover:text-white transition-colors relative py-1 hover:after:w-full after:w-0 after:h-[2px] after:bg-red-600 after:absolute after:bottom-0 after:left-0 after:transition-all whitespace-nowrap"
             >
               {link.label}
             </a>

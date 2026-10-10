@@ -12,11 +12,14 @@ import { BenefitsSection } from './components/sections/BenefitsSection';
 import { TrainingExperienceSection } from './components/sections/TrainingExperienceSection';
 import { WhoIsItForSection } from './components/sections/WhoIsItForSection';
 import { TeamPrideSection } from './components/sections/TeamPrideSection';
+import { TeamSection } from './components/sections/TeamSection';
 import { LocationsSection } from './components/sections/LocationsSection';
 import { ContactCtaSection } from './components/sections/ContactCtaSection';
 import { WhatsAppFloat } from './components/ui/WhatsAppFloat';
 
 export const App: React.FC = () => {
+  const [selectedGymId, setSelectedGymId] = React.useState<string | null>(null);
+
   return (
     <SmoothScrollProvider>
       <div className="min-h-screen bg-[#080809] text-zinc-100 overflow-x-hidden w-full max-w-full relative">
@@ -33,7 +36,8 @@ export const App: React.FC = () => {
           <TrainingExperienceSection />
           <WhoIsItForSection />
           <TeamPrideSection />
-          <LocationsSection />
+          <TeamSection onSelectGym={(gymId) => setSelectedGymId(gymId)} />
+          <LocationsSection selectedGymId={selectedGymId} onSelectGym={setSelectedGymId} />
           <ContactCtaSection />
         </main>
 
