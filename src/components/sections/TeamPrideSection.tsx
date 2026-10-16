@@ -1,7 +1,7 @@
 import React from 'react';
-import { Shield, MessageCircle } from 'lucide-react';
+import { Shield, MapPin } from 'lucide-react';
 import { InstagramIcon } from '../ui/Icons';
-import { BRAND, getWhatsAppUrl } from '../../constants/brand';
+import { BRAND } from '../../constants/brand';
 import { TigerEmblem } from '../brand/TigerEmblem';
 import { Button } from '../ui/Button';
 
@@ -77,13 +77,12 @@ export const TeamPrideSection: React.FC = () => {
               <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4">
                 <Button
                   as="a"
-                  href={getWhatsAppUrl()}
-                  target="_blank"
+                  href="#onde-treinar"
                   variant="primary"
                   size="md"
                 >
-                  <MessageCircle size={18} />
-                  Falar com {BRAND.coach}
+                  <MapPin size={18} />
+                  Escolher Minha Academia
                 </Button>
 
                 <Button

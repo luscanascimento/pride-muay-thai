@@ -1,4 +1,4 @@
-import { Gym, Professor, KhanRank, FullKhanLevel } from '../types/gymsAndTeam';
+import { Gym, Professor, PersonalFighter, KhanRank, FullKhanLevel } from '../types/gymsAndTeam';
 
 export const GYMS_DATA: Gym[] = [
   {
@@ -41,6 +41,7 @@ export const GYMS_DATA: Gym[] = [
     phoneDisplay: '(12) 99117-0787',
     phoneRaw: '5512991170787',
     schedules: [
+      { days: 'Segunda e quarta', hours: '19h' },
       { days: 'Terça e quinta', hours: '7h, 18h e 20h' },
     ],
     notes: 'Grade de horários consolidada conforme confirmação da unidade.',
@@ -296,7 +297,7 @@ export const ALL_KHANS_SYSTEM: FullKhanLevel[] = [
     primaryColor: '#2563eb',
     tipColor: '#ffffff',
     description: 'Início da formação pedagógica. Auxílio na orientação de novos alunos e liderança de tatame.',
-    teamMembers: ['Augusto', 'Pedro'],
+    teamMembers: ['Augusto', 'Pedro', 'Marina'],
   },
   {
     level: 8,
@@ -305,7 +306,7 @@ export const ALL_KHANS_SYSTEM: FullKhanLevel[] = [
     title: 'Instrutor / Monitor',
     primaryColor: '#78350f',
     description: 'Precisão biomecânica, trabalho refinado de manoplas e acompanhamento de atletas.',
-    teamMembers: ['Rafael Japonês'],
+    teamMembers: ['Rafael Japonês', 'Gabriel Silva Soares'],
   },
   {
     level: 9,
@@ -547,6 +548,27 @@ export const PROFESSORS_DATA: Professor[] = [
     highlightBadges: ['8º Khan • Marrom', 'Pioneirismo em Santa Branca', 'Studio M', 'Técnica Tradicional'],
   },
   {
+    id: 'gabriel-silva',
+    name: 'Gabriel Silva Soares',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('gabriel-silva.jpeg'),
+    gymIds: [
+      'calasans-camargo',
+    ],
+    roleTitle: 'Instrutor de Muay Thai • 8º Khan',
+    khan: 8,
+    bio: 'Iniciou no Muay Thai aos 15 anos e encontrou na disciplina marcial a força para superar qualquer obstáculo. Graduado 8º Khan, atua na Academia Calasans Camargo formando bons atletas e boas pessoas para a vida.',
+    storyTitle: 'Gabriel Silva Soares | Instrutor de Muay Thai',
+    storyParagraphs: [
+      'Sempre fui muito ativo desde pequeno e sempre gostei de luta. Minha primeira arte marcial foi o jiu-jitsu, depois passei pelo judô e, aos 15 anos, comecei no Muay Thai. Gostei de treinar e fui me envolvendo cada vez mais com a modalidade, que acabou se tornando uma parte importante da minha vida.',
+      'Uma das coisas que mais aprendi com o Muay Thai foi a disciplina. Tem dia em que a gente está cansado, com a cabeça cheia ou simplesmente sem vontade de treinar. É nesses dias que a gente aprende a não depender só da vontade para fazer aquilo com que se comprometeu. Isso é algo que levo para a minha vida pessoal também. Nem sempre vou estar animado ou as coisas vão acontecer como eu espero, mas preciso continuar fazendo a minha parte e aprender a lidar com as dificuldades.',
+      'Muitas vezes, fui treinar abalado por algum problema pessoal, e o Renan percebia no meu olhar que eu não estava bem. No final dos treinos, ele sempre dirigia algumas palavras à turma sobre superar as dificuldades, não desistir e continuar tentando. Em vários desses dias, aquilo era justamente o que eu precisava ouvir. Essas palavras ficaram comigo e me ajudaram em situações que ele talvez nem soubesse que eu estava passando. O que aprendi com ele ajudou a formar quem eu sou hoje, tanto no tatame quanto na vida.',
+      'Hoje, como instrutor, quero passar isso adiante. Faz parte do meu trabalho ajudar os alunos a melhorar a técnica e se tornarem bons atletas, mas também quero que levem os valores da arte marcial para fora do treino. O respeito pelas pessoas, a disciplina para cumprir seus compromissos e a disposição para enfrentar os obstáculos são coisas que servem para a vida inteira. Para mim, ensinar Muay Thai também é contribuir para a formação de boas pessoas. Sei a diferença que o Muay Thai fez na minha vida e quero levar esse cuidado para a forma como ensino meus alunos.',
+    ],
+    quote: 'Para mim, ensinar Muay Thai também é contribuir para a formação de boas pessoas. Sei a diferença que o Muay Thai fez na minha vida e quero levar esse cuidado para a forma como ensino meus alunos.',
+    highlightBadges: ['8º Khan • Marrom', 'Academia Calasans Camargo', 'Segunda e quarta 19h', 'Disciplina & Valores', 'São José dos Campos'],
+  },
+  {
     id: 'augusto',
     name: 'Augusto',
     nickname: null,
@@ -554,16 +576,42 @@ export const PROFESSORS_DATA: Professor[] = [
     gymIds: [],
     roleTitle: 'Instrutor de Muay Thai • 7º Khan',
     khan: 7,
-    bio: 'Graduado 7º Khan (Azul Ponta Branca), entusiasta da essência do Muay Thai, focado no dinamismo dos treinos, condicionamento físico e acolhimento dos novos alunos.',
+    bio: 'Em setembro de 2022, Augusto decidiu mudar, venceu a insegurança e iniciou no Muay Thai. Com dedicação e evolução constante, tornou-se instrutor na Fábrica de Monstros em Jacareí, inspirando pessoas a superarem seus limites.',
     storyTitle: 'Augusto | Instrutor de Muay Thai',
     storyParagraphs: [
-      'Graduado 7º Khan (Azul Ponta Branca) pela Pride Muay Thai, o Instrutor Augusto representa a nova geração de dedicação marcial e energia da equipe.',
-      'Com um trabalho focado na dinâmica dos treinos, na preparação corporal e na correta execução dos fundamentos básicos das oito armas, Augusto orienta novos praticantes com paciência e dedicação.',
-      'Seu compromisso com o Muay Thai reflete a busca contínua por superação, motivando cada aluno a encontrar confiança na superação de seus próprios limites round a round.',
+      'Em setembro de 2022, Augusto decidiu mudar. Apaixonado por lutas, venceu a insegurança e começou a treinar Muay Thai, deixando o sedentarismo para trás e cuidando melhor da saúde física e mental. O incentivo veio do irmão, professor da modalidade, que o levou ao tatame pela primeira vez.',
+      'O que começou como uma busca por saúde logo se transformou em paixão. Com dedicação, treinos intensos e evolução constante, Augusto conquistou graduações e desenvolveu disciplina, confiança, equilíbrio e bem-estar.',
+      'Com o tempo, tornou-se instrutor na Fábrica de Monstros, em Jacareí, onde compartilha seus conhecimentos e o amor pela arte marcial.',
+      'Sua trajetória mostra como o esporte pode transformar vidas. Hoje, Augusto inspira outras pessoas a superarem seus limites por meio do Muay Thai.',
+      'Muito além da luta, uma jornada de transformação, disciplina e superação!',
+      'Sawadee krap! 🙏🥊✨',
     ],
-    quote: 'Cada passo respeitado na caminhada constrói a firmeza do verdadeiro praticante de Muay Thai.',
-    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Instrutor Pride', 'Fundamentos & Superação'],
+    quote: 'Muito além da luta, uma jornada de transformação, disciplina e superação! Sawadee krap! 🙏🥊✨',
+    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Fábrica de Monstros', 'Jacareí', 'Superação & Saúde', 'Sawadee Krap'],
     photoPosition: 'center 10%',
+  },
+  {
+    id: 'marina',
+    name: 'Marina',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('marina.jpeg'),
+    gymIds: [
+      'studio-m',
+    ],
+    roleTitle: 'Instrutora de Muay Thai • 7º Khan',
+    khan: 7,
+    bio: 'Graduada 7º Khan na Pride Muay Thai em Santa Branca, encontrou no esporte autoconfiança, superação e ferramentas de defesa pessoal feminina, auxiliando no aprendizado e desenvolvimento da equipe.',
+    storyTitle: 'Marina | Graduada 7º Khan & Instrutora Pride',
+    storyParagraphs: [
+      'Minha história com o Muay Thai começou em 2016, aos 16 anos, quando aceitei o convite de uma amiga para conhecer a modalidade. O que começou como uma experiência acabou despertando em mim uma paixão pelo esporte que, mesmo após uma pausa, continuaria fazendo parte da minha vida.',
+      'Depois de aproximadamente um ano e meio de treino, precisei interromper minha caminhada por conta dos estudos. Em 2023, após me mudar de São Paulo para Santa Branca, encontrei a Pride Muay Thai e não pensei duas vezes antes de procurar a academia para voltar a treinar. Foi assim que retomei uma parte importante da minha história, permanecendo na equipe até hoje.',
+      'Ao longo dessa trajetória, o Muay Thai me mostrou que sou muito mais forte e capaz do que imaginava. A modalidade transformou a maneira como me enxergo, ampliou minha confiança e me ensinou a reconhecer minha própria força, dentro e fora do tatame. Seus ensinamentos ultrapassam os limites do treino e estão presentes na forma como enfrento os desafios e conduzo meu dia a dia.',
+      'Além da transformação pessoal, encontrar no Muay Thai ferramentas de defesa e autoconfiança também tem um significado especial para mim, principalmente diante da realidade da violência contra a mulher. Saber que estou desenvolvendo habilidades que contribuem para minha segurança me faz sentir mais preparada para enfrentar o mundo de hoje, além de ter a oportunidade de repassar meus aprendizados para outras mulheres.',
+      'As competições e as graduações são, sem dúvida, alguns dos momentos mais marcantes dessa caminhada. Cada uma delas representa uma conquista diferente, resultado de dedicação, aprendizado e superação, e me lembra de quanto já evoluí e de tudo o que ainda posso alcançar. Atualmente, sou graduada no 7º Khan e sigo em constante desenvolvimento, buscando evoluir a cada treino.',
+      'Hoje, além de me dedicar à minha própria evolução, também auxilio nos treinos da equipe, compartilhando experiências e contribuindo com o aprendizado de outros alunos. Para mim, o Muay Thai vai muito além de uma modalidade esportiva: é uma ferramenta de transformação que me ensinou a acreditar mais em mim mesma, reconhecer minha força e levar para a vida os valores que aprendo no tatame.',
+    ],
+    quote: 'Para mim, o Muay Thai vai muito além de uma modalidade esportiva: é uma ferramenta de transformação que me ensinou a acreditar mais em mim mesma, reconhecer minha força e levar para a vida os valores que aprendo no tatame.',
+    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Santa Branca', 'Defesa & Autoconfiança Feminina', 'Superação & Dedicação'],
   },
   {
     id: 'pedro',
@@ -654,3 +702,62 @@ export function getGymExternalMapsUrl(gym: Gym): string {
   }
   return '';
 }
+
+// ==========================================
+// PERSONAL FIGHTERS DATA
+// Aba de Personais - adicione ou customize os cards aqui
+// ==========================================
+export const PERSONAL_FIGHTERS_DATA: PersonalFighter[] = [
+  {
+    id: 'gabriel-silva-personal',
+    name: 'Gabriel Silva Soares',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('gabriel-silva.jpeg'),
+    khan: 8,
+    city: 'São José dos Campos',
+    price: 'A consultar',
+    priceNote: 'Aulas individuais ou pacotes mensais',
+    roleTitle: 'Personal Fighter • Instrutor',
+    bio: 'Treinamento individualizado com foco em técnica tradicional, disciplina marcial e evolução constante no ritmo do aluno.',
+    highlightBadges: ['8º Khan • Marrom', 'São José dos Campos', 'Aulas Particulares', 'Técnica & Disciplina'],
+    phoneDisplay: '(12) 99117-0787',
+    phoneRaw: '5512991170787',
+  },
+  {
+    id: 'augusto-personal',
+    name: 'Augusto',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('augusto.jpeg'),
+    khan: 7,
+    city: 'Jacareí',
+    price: 'A consultar',
+    priceNote: 'Treino personalizado com foco em metas',
+    roleTitle: 'Personal Fighter • Instrutor',
+    bio: 'Treinos focados na superação de limites, combate ao sedentarismo, melhora do condicionamento físico e bem-estar geral.',
+    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Jacareí', 'Fábrica de Monstros', 'Condicionamento & Saúde'],
+    phoneDisplay: '(12) 99727-2501',
+    phoneRaw: '5512997272501',
+  },
+  {
+    id: 'marina-personal',
+    name: 'Marina',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('marina.jpeg'),
+    khan: 7,
+    city: 'Santa Branca',
+    price: 'A consultar',
+    priceNote: 'Treinos individuais e turma feminina',
+    roleTitle: 'Personal Fighter • Instrutora',
+    bio: 'Aulas dedicadas ao desenvolvimento de força, autoconfiança e técnicas de defesa pessoal feminina com metodologia acolhedora.',
+    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Santa Branca', 'Defesa Pessoal', 'Autoconfiança'],
+    phoneDisplay: '(12) 98176-7279',
+    phoneRaw: '5512981767279',
+  },
+];
+
+export function getPersonalFighterWhatsAppUrl(fighter: PersonalFighter): string {
+  if (!fighter.phoneRaw) return '';
+  const message = `Olá, ${fighter.name}! Vi seu perfil de Personal Fighter no site da Pride Muay Thai e gostaria de saber mais sobre aulas particulares de Muay Thai.`;
+  return `https://wa.me/${fighter.phoneRaw}?text=${encodeURIComponent(message)}`;
+}
+

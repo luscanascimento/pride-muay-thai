@@ -1,7 +1,7 @@
 import React from 'react';
-import { MessageCircle, Phone, ArrowUpRight, Flame } from 'lucide-react';
+import { MapPin, ArrowUpRight, Flame } from 'lucide-react';
 import { InstagramIcon } from '../ui/Icons';
-import { BRAND, getWhatsAppUrl } from '../../constants/brand';
+import { BRAND } from '../../constants/brand';
 import { Button } from '../ui/Button';
 import { TigerEmblem } from '../brand/TigerEmblem';
 
@@ -37,21 +37,20 @@ export const ContactCtaSection: React.FC = () => {
         </h2>
 
         <p className="mt-6 text-zinc-300 text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-normal leading-relaxed">
-          Dê o primeiro passo no tatame. Fale diretamente com o treinador <strong>{BRAND.coach}</strong> e descubra como o Muay Thai vai transformar sua força, disciplina e saúde.
+          Dê o primeiro passo no tatame. Escolha a academia mais próxima de você e entre em contato direto com a unidade para agendar sua aula experimental.
         </p>
 
         {/* Primary Contact CTAs */}
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
           <Button
             as="a"
-            href={getWhatsAppUrl("Olá, Renan! Quero começar a treinar no Pride Muay Thai. Como faço para agendar?")}
-            target="_blank"
+            href="#onde-treinar"
             variant="primary"
             size="lg"
             className="w-full sm:w-auto text-xl px-10 py-4 shadow-red-glow hover:shadow-red-glow-lg"
           >
-            <MessageCircle size={24} />
-            Comece Seu Treino Agora
+            <MapPin size={24} />
+            Escolher Academia Mais Próxima
           </Button>
 
           <Button
@@ -71,20 +70,18 @@ export const ContactCtaSection: React.FC = () => {
         {/* Contact information cards */}
         <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl w-full">
           
-          {/* WhatsApp Direct Card */}
+          {/* Gym Locator Direct Card */}
           <a
-            href={getWhatsAppUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#onde-treinar"
             className="p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 hover:border-red-600/60 transition-all duration-300 flex items-center justify-center gap-3 text-zinc-200 hover:text-white group"
           >
-            <div className="w-10 h-10 rounded-full bg-emerald-950/60 border border-emerald-800/60 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
-              <Phone size={18} />
+            <div className="w-10 h-10 rounded-full bg-red-950/60 border border-red-800/60 flex items-center justify-center text-red-400 group-hover:scale-105 transition-transform">
+              <MapPin size={18} />
             </div>
             <div className="text-left">
-              <span className="text-[10px] uppercase font-mono tracking-wider text-zinc-400 block">WhatsApp Oficial</span>
+              <span className="text-[10px] uppercase font-mono tracking-wider text-zinc-400 block">Academias Parceiras</span>
               <span className="font-fight text-xl tracking-wider text-white group-hover:text-red-400 transition-colors">
-                {BRAND.phoneDisplay}
+                Encontre Sua Unidade
               </span>
             </div>
           </a>

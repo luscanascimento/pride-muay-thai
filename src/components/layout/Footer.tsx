@@ -1,7 +1,7 @@
 import React from 'react';
-import { ArrowUp, MessageCircle } from 'lucide-react';
+import { ArrowUp, MapPin } from 'lucide-react';
 import { InstagramIcon } from '../ui/Icons';
-import { BRAND, getWhatsAppUrl } from '../../constants/brand';
+import { BRAND } from '../../constants/brand';
 import prideLogoCutout from '../../assets/pride-muay-thai-cutout.png';
 
 export const Footer: React.FC = () => {
@@ -49,23 +49,21 @@ export const Footer: React.FC = () => {
             <span className="text-sm text-zinc-300">São José dos Campos — SP</span>
             <span className="text-sm text-zinc-300">Santa Branca — SP</span>
             <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
-              Consulte com o Renan a unidade e os horários mais convenientes.
+              Escolha a unidade mais próxima de você e entre em contato direto com a academia.
             </p>
           </div>
 
           {/* Direct Channels */}
           <div className="md:col-span-3 flex flex-col gap-3">
             <span className="font-fight text-lg text-white uppercase tracking-wider mb-1">
-              Contato Oficial
+              Polos & Redes
             </span>
             <a
-              href={getWhatsAppUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#onde-treinar"
               className="flex items-center gap-2 text-sm text-zinc-300 hover:text-white transition-colors"
             >
-              <MessageCircle size={16} className="text-emerald-400" />
-              <span>WhatsApp: {BRAND.phoneDisplay}</span>
+              <MapPin size={16} className="text-red-500" />
+              <span>Encontrar Unidade Mais Próxima</span>
             </a>
             <a
               href={BRAND.instagramUrl}

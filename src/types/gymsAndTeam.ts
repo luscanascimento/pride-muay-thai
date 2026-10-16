@@ -62,3 +62,22 @@ export interface Professor {
   experienceYears?: number;
   highlightBadges?: string[];
 }
+
+export interface PersonalFighter {
+  id: string;
+  name: string;
+  nickname?: string | null;
+  photoUrl: string;
+  khan: number;
+  city: CityName | string;
+  price: string;
+  priceNote?: string;
+  roleTitle?: string;
+  bio?: string;
+  photoPosition?: string;
+  highlightBadges?: string[];
+  phoneDisplay?: string;
+  phoneRaw?: string;
+  gymIds?: string[];
+}
+

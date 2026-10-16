@@ -48,7 +48,7 @@ export const KhanGraduationShowcase: React.FC<KhanGraduationShowcaseProps> = ({
                 : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-700'
             }`}
           >
-            Ver Toda a Equipe (10)
+            Ver Toda a Equipe ({Object.values(memberCountsByKhan).reduce((a, b) => a + b, 0)})
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React from 'react';
-import { MessageCircle, ArrowRight, MapPin, ShieldCheck, Flame } from 'lucide-react';
-import { BRAND, getWhatsAppUrl } from '../../constants/brand';
+import { Users, ArrowRight, MapPin, ShieldCheck, Flame } from 'lucide-react';
+import { BRAND } from '../../constants/brand';
 import { Button } from '../ui/Button';
 import { TigerEmblem } from '../brand/TigerEmblem';
 import { ThreeAtmosphere } from '../motion/ThreeAtmosphere';
@@ -78,20 +78,19 @@ export const Hero: React.FC = () => {
               className="w-full sm:w-auto shadow-red-glow hover:shadow-red-glow-lg text-center"
             >
               <MapPin size={20} />
-              Comece a Treinar
+              Escolher Academia Mais Próxima
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Button>
 
             <Button
               as="a"
-              href={getWhatsAppUrl("Olá, Renan! Gostaria de tirar dúvidas sobre as turmas e horários do Pride Muay Thai.")}
-              target="_blank"
+              href="#nossa-equipe"
               variant="secondary"
               size="lg"
               className="w-full sm:w-auto"
             >
-              <MessageCircle size={18} />
-              Fale com o Renan
+              <Users size={18} />
+              Conheça Nossa Equipe
             </Button>
           </div>
 

@@ -15,24 +15,24 @@ export const BRAND = {
       state: "SP",
       region: "Vale do Paraíba",
       highlight: "Unidades com estrutura completa para treino técnico e condicionamento",
-      guidance: "Fale com o Renan para saber a unidade e grade de horários mais convenientes para você.",
+      guidance: "Escolha a unidade e grade de horários mais convenientes para você e fale direto com a academia.",
     },
     {
       city: "São José dos Campos",
       state: "SP",
       region: "Vale do Paraíba",
       highlight: "Treinos com foco técnico, condicionamento de alta intensidade e evolução constante",
-      guidance: "Fale com o Renan para saber a unidade e grade de horários mais convenientes para você.",
+      guidance: "Escolha a unidade e grade de horários mais convenientes para você e fale direto com a academia.",
     },
     {
       city: "Santa Branca",
       state: "SP",
       region: "Vale do Paraíba",
       highlight: "Treinos focados em técnica autêntica, disciplina marcial e saúde",
-      guidance: "Fale com o Renan para saber a unidade e grade de horários mais convenientes para você.",
+      guidance: "Escolha a unidade e grade de horários mais convenientes para você e fale direto com a academia.",
     },
   ],
-  unitsNote: "Entre em contato com o Renan e ele indica a unidade e horários mais próximos de você.",
+  unitsNote: "Escolha a unidade mais próxima de você e entre em contato direto com a academia pelo WhatsApp.",
   eightWeapons: [
     {
       id: "punhos",

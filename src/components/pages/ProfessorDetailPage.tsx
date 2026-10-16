@@ -21,7 +21,6 @@ import {
   getKhanRank
 } from '../../data/gymsAndTeamData';
 import { PrajiedBadge, PrajiedRope } from '../ui/PrajiedBadge';
-import { getWhatsAppUrl } from '../../constants/brand';
 
 interface ProfessorDetailPageProps {
   professor: Professor;
@@ -225,13 +224,11 @@ export const ProfessorDetailPage: React.FC<ProfessorDetailPageProps> = ({
                     Renan Hulkinho supervisiona os treinamentos, a graduação técnica e o desenvolvimento pedagógico em todas as academias parceiras da Pride no Vale do Paraíba.
                   </p>
                   <a
-                    href={getWhatsAppUrl()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold tracking-wide uppercase transition-colors shadow-md"
+                    href="#onde-treinar"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-semibold tracking-wide uppercase transition-colors shadow-md"
                   >
-                    <MessageCircle size={16} />
-                    <span>Falar diretamente com o Mestre Renan</span>
+                    <MapPin size={16} />
+                    <span>Escolher a Academia Mais Próxima</span>
                   </a>
                 </div>
               ) : gyms.length > 0 ? (
@@ -351,13 +348,11 @@ export const ProfessorDetailPage: React.FC<ProfessorDetailPageProps> = ({
             </button>
 
             <a
-              href={getWhatsAppUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#onde-treinar"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold tracking-wider uppercase transition-colors shadow-lg shadow-red-950/50"
             >
-              <MessageCircle size={17} />
-              <span>Agendar Aula Experimental</span>
+              <MapPin size={17} />
+              <span>Escolher Academia Mais Próxima</span>
             </a>
           </div>
 
