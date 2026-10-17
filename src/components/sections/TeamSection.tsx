@@ -10,6 +10,8 @@ import {
   X,
   Flame,
   MessageCircle,
+  Phone,
+  Clock,
 } from 'lucide-react';
 import {
   PROFESSORS_DATA,
@@ -17,6 +19,7 @@ import {
   getGymsForProfessor,
   getKhanRank,
   getPersonalFighterWhatsAppUrl,
+  getProfessorWhatsAppUrl,
 } from '../../data/gymsAndTeamData';
 import { PrajiedBadge } from '../ui/PrajiedBadge';
 import { KhanGraduationShowcase } from './KhanGraduationShowcase';
@@ -324,8 +327,21 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
                         )}
                       </div>
 
-                      {/* Botão Ver mais... para a página do professor */}
-                      <div className="pt-3 border-t border-zinc-800/80 mt-3">
+                      {/* Ações do Professor: Contato Direto & Ver mais... */}
+                      <div className="pt-3 border-t border-zinc-800/80 mt-3 space-y-2">
+                        {prof.phoneRaw && (
+                          <a
+                            href={getProfessorWhatsAppUrl(prof)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-emerald-600/90 hover:bg-emerald-500 border border-emerald-500/60 hover:border-emerald-400 text-white text-xs font-semibold tracking-wider uppercase transition-all shadow-sm group/wpp"
+                            aria-label={`Conversar no WhatsApp com o professor ${prof.name}`}
+                          >
+                            <MessageCircle size={14} className="text-white group-hover/wpp:scale-110 transition-transform" />
+                            <span>WhatsApp: {prof.phoneDisplay}</span>
+                          </a>
+                        )}
+
                         <button
                           type="button"
                           onClick={() => {
@@ -374,7 +390,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
               {/* City filter tabs */}
               <div className="mt-6 pt-5 border-t border-zinc-800/80 flex flex-wrap items-center gap-2">
                 <span className="text-xs font-mono uppercase text-zinc-400 mr-2">Filtrar por cidade:</span>
-                {['todas', 'Jacareí', 'São José dos Campos', 'Santa Branca'].map((city) => (
+                {['todas', 'Jacareí', 'São José dos Campos'].map((city) => (
                   <button
                     key={city}
                     type="button"
@@ -465,26 +481,78 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
                         </div>
 
                         {/* City / Location */}
-                        <div className="flex items-center gap-1.5 text-xs text-zinc-300 mb-3">
+                        <div className="flex items-center gap-1.5 text-xs text-zinc-300 mb-2.5">
                           <MapPin size={13} className="text-red-500 flex-shrink-0" />
                           <span className="font-medium">{fighter.city}</span>
                         </div>
 
-                        {/* Price box with clear highlight */}
-                        <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-800/40 flex items-center justify-between gap-2 mb-4">
-                          <div className="flex flex-col">
-                            <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">
-                              Investimento
-                            </span>
-                            {fighter.priceNote && (
-                              <span className="text-[10px] text-zinc-400">
-                                {fighter.priceNote}
-                              </span>
-                            )}
+                        {/* WhatsApp Direct Contact Box */}
+                        {fighter.phoneDisplay && (
+                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900/90 border border-zinc-800 text-xs text-zinc-300 mb-3.5">
+                            <Phone size={13} className="text-emerald-400 flex-shrink-0" />
+                            <span className="font-mono text-xs font-semibold text-zinc-200">{fighter.phoneDisplay}</span>
+                            <span className="text-[10px] text-emerald-400 font-semibold ml-auto uppercase tracking-wide">WhatsApp Direto</span>
                           </div>
-                          <span className="font-fight text-xl text-emerald-300 tracking-wide">
-                            {fighter.price}
-                          </span>
+                        )}
+
+                        {/* Price box with clear breakdown */}
+                        <div className="p-3.5 rounded-xl bg-gradient-to-b from-emerald-950/25 via-zinc-900/40 to-zinc-950/60 border border-emerald-800/40 mb-4">
+                          <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-emerald-900/40">
+                            <div className="flex flex-col">
+                              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1">
+                                <Flame size={12} className="text-yellow-400" />
+                                Investimento Personal
+                              </span>
+                              {fighter.priceNote && (
+                                <span className="text-[10px] text-zinc-400">
+                                  {fighter.priceNote}
+                                </span>
+                              )}
+                            </div>
+                            <span className="font-fight text-lg sm:text-xl text-emerald-300 tracking-wide">
+                              {fighter.price}
+                            </span>
+                          </div>
+
+                          {fighter.pricingPlan && (
+                            <div className="space-y-2 pt-1 text-xs">
+                              {/* Planos Semanais */}
+                              <div className="grid grid-cols-3 gap-1.5 text-center">
+                                <div className="p-1.5 rounded-lg bg-zinc-950/70 border border-zinc-800/80">
+                                  <span className="text-[10px] font-mono text-zinc-400 block uppercase">1x / sem</span>
+                                  <span className="font-fight text-sm text-zinc-100">{fighter.pricingPlan.frequency1x}</span>
+                                </div>
+                                <div className="p-1.5 rounded-lg bg-zinc-950/70 border border-zinc-800/80">
+                                  <span className="text-[10px] font-mono text-zinc-400 block uppercase">2x / sem</span>
+                                  <span className="font-fight text-sm text-zinc-100">{fighter.pricingPlan.frequency2x}</span>
+                                </div>
+                                <div className="p-1.5 rounded-lg bg-zinc-950/70 border border-zinc-800/80">
+                                  <span className="text-[10px] font-mono text-zinc-400 block uppercase">3x / sem</span>
+                                  <span className="font-fight text-sm text-zinc-100">{fighter.pricingPlan.frequency3x}</span>
+                                </div>
+                              </div>
+
+                              {/* Aulas Avulsas & Experimentais */}
+                              <div className="grid grid-cols-2 gap-1.5 text-center">
+                                <div className="p-1.5 rounded-lg bg-zinc-950/50 border border-zinc-800/60 flex items-center justify-between px-2.5">
+                                  <span className="text-[10px] font-mono text-zinc-400 uppercase">Avulsa:</span>
+                                  <span className="font-fight text-xs text-white">{fighter.pricingPlan.singleClass}</span>
+                                </div>
+                                <div className="p-1.5 rounded-lg bg-emerald-950/40 border border-emerald-800/50 flex items-center justify-between px-2.5">
+                                  <span className="text-[10px] font-mono text-emerald-400 uppercase">Experimental:</span>
+                                  <span className="font-fight text-xs text-emerald-300">{fighter.pricingPlan.trialClass}</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Schedule Warning note (Renan) */}
+                          {fighter.scheduleNote && (
+                            <div className="mt-2.5 pt-2 border-t border-emerald-900/40 flex items-center gap-1.5 text-[11px] text-amber-300 font-medium bg-amber-950/30 px-2 py-1.5 rounded-lg border border-amber-800/40">
+                              <Clock size={12} className="text-amber-400 flex-shrink-0" />
+                              <span>{fighter.scheduleNote}</span>
+                            </div>
+                          )}
                         </div>
 
                         {/* Bio description */}
@@ -519,7 +587,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
                             className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-fight text-sm tracking-wider uppercase transition-all shadow-md group/btn"
                           >
                             <MessageCircle size={16} className="transition-transform group-hover/btn:scale-110" />
-                            <span>Agendar com Personal</span>
+                            <span>Agendar no WhatsApp ({fighter.nickname || fighter.name})</span>
                           </a>
                         ) : (
                           <a

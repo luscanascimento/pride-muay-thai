@@ -10,7 +10,8 @@ import {
   Crown, 
   Quote, 
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  Phone,
 } from 'lucide-react';
 import type { Professor } from '../../types/gymsAndTeam';
 import { 
@@ -18,7 +19,8 @@ import {
   getGymWhatsAppUrl, 
   getGymExternalMapsUrl, 
   getAdjacentProfessors,
-  getKhanRank
+  getKhanRank,
+  getProfessorWhatsAppUrl,
 } from '../../data/gymsAndTeamData';
 import { PrajiedBadge, PrajiedRope } from '../ui/PrajiedBadge';
 
@@ -206,9 +208,38 @@ export const ProfessorDetailPage: React.FC<ProfessorDetailPageProps> = ({
               </div>
 
               {professor.bio && (
-                <p className="text-zinc-300 text-base sm:text-lg leading-relaxed mb-8 border-l-2 border-red-600 pl-4 py-1 italic bg-red-950/10 rounded-r-lg">
+                <p className="text-zinc-300 text-base sm:text-lg leading-relaxed mb-6 border-l-2 border-red-600 pl-4 py-1 italic bg-red-950/10 rounded-r-lg">
                   "{professor.bio}"
                 </p>
+              )}
+
+              {/* Direct WhatsApp Contact Card if phone available */}
+              {professor.phoneRaw && (
+                <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-zinc-900/70 to-zinc-950 border border-emerald-800/50 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[11px] font-mono uppercase tracking-widest text-emerald-400 font-semibold flex items-center gap-1.5 mb-1">
+                      <Phone size={13} className="text-emerald-400" />
+                      Contato Direto com o Professor:
+                    </span>
+                    <span className="font-mono text-base text-white font-bold tracking-wide">
+                      {professor.phoneDisplay}
+                    </span>
+                    {professor.scheduleNote && (
+                      <span className="text-xs text-amber-300 block mt-1 font-medium">
+                        ⚠️ {professor.scheduleNote}
+                      </span>
+                    )}
+                  </div>
+                  <a
+                    href={getProfessorWhatsAppUrl(professor)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold uppercase tracking-wider transition-all shadow-md flex-shrink-0 group/wpp"
+                  >
+                    <MessageCircle size={15} className="group-hover/wpp:scale-110 transition-transform" />
+                    <span>Falar no WhatsApp</span>
+                  </a>
+                </div>
               )}
             </div>
 
@@ -347,13 +378,27 @@ export const ProfessorDetailPage: React.FC<ProfessorDetailPageProps> = ({
               <span>Voltar para a Equipe</span>
             </button>
 
-            <a
-              href="#onde-treinar"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold tracking-wider uppercase transition-colors shadow-lg shadow-red-950/50"
-            >
-              <MapPin size={17} />
-              <span>Escolher Academia Mais Próxima</span>
-            </a>
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              {professor.phoneRaw && (
+                <a
+                  href={getProfessorWhatsAppUrl(professor)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold tracking-wider uppercase transition-colors shadow-lg shadow-emerald-950/50"
+                >
+                  <MessageCircle size={17} />
+                  <span>Falar no WhatsApp ({professor.phoneDisplay})</span>
+                </a>
+              )}
+
+              <a
+                href="#onde-treinar"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold tracking-wider uppercase transition-colors shadow-lg shadow-red-950/50"
+              >
+                <MapPin size={17} />
+                <span>Escolher Academia Mais Próxima</span>
+              </a>
+            </div>
           </div>
 
         </div>

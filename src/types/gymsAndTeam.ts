@@ -45,6 +45,15 @@ export interface FullKhanLevel {
   teamMembers?: string[];
 }
 
+export interface PricingPlan {
+  frequency1x: string;
+  frequency2x: string;
+  frequency3x: string;
+  singleClass: string;
+  trialClass: string;
+  scheduleNote?: string;
+}
+
 export interface Professor {
   id: string;
   name: string;
@@ -61,6 +70,9 @@ export interface Professor {
   quote?: string;
   experienceYears?: number;
   highlightBadges?: string[];
+  phoneDisplay?: string;
+  phoneRaw?: string;
+  scheduleNote?: string;
 }
 
 export interface PersonalFighter {
@@ -79,5 +91,7 @@ export interface PersonalFighter {
   phoneDisplay?: string;
   phoneRaw?: string;
   gymIds?: string[];
+  pricingPlan?: PricingPlan;
+  scheduleNote?: string;
 }
 

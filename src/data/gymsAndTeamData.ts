@@ -1,4 +1,4 @@
-import { Gym, Professor, PersonalFighter, KhanRank, FullKhanLevel } from '../types/gymsAndTeam';
+import { Gym, Professor, PersonalFighter, KhanRank, FullKhanLevel, PricingPlan } from '../types/gymsAndTeam';
 
 export const GYMS_DATA: Gym[] = [
   {
@@ -297,7 +297,7 @@ export const ALL_KHANS_SYSTEM: FullKhanLevel[] = [
     primaryColor: '#2563eb',
     tipColor: '#ffffff',
     description: 'Início da formação pedagógica. Auxílio na orientação de novos alunos e liderança de tatame.',
-    teamMembers: ['Augusto', 'Pedro', 'Marina'],
+    teamMembers: ['Augusto', 'Pedro', 'Marina', 'Rick Netto'],
   },
   {
     level: 8,
@@ -325,7 +325,7 @@ export const ALL_KHANS_SYSTEM: FullKhanLevel[] = [
     title: 'Instrutor Sênior',
     primaryColor: '#dc2626',
     description: 'Maturidade marcial avançada, formação de competidores e excelência em didática técnica.',
-    teamMembers: ['Eduardo', 'Rafael Lobinho'],
+    teamMembers: ['Eduardo (Du)', 'Rafael Lobinho'],
   },
   {
     level: 11,
@@ -335,7 +335,7 @@ export const ALL_KHANS_SYSTEM: FullKhanLevel[] = [
     primaryColor: '#dc2626',
     tipColor: '#ffffff',
     description: 'Professor habilitado para reger academias oficiais, conduzir exames e formar novas gerações de praticantes.',
-    teamMembers: ['Simone Osses', 'Paulo Roberto', 'Jean'],
+    teamMembers: ['Simone Osses', 'Paulo Roberto', 'Jean (Corvo)'],
   },
   {
     level: 12,
@@ -396,6 +396,8 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     roleTitle: 'Professor de Muay Thai • Braço Direito da Pride',
     khan: 11,
+    phoneDisplay: '(12) 98192-5045',
+    phoneRaw: '5512981925045',
     bio: 'Na Pride desde 2018 com o Mestre Renan Hulkinho, árbitro certificado, professor e braço direito da equipe, construindo sua história com dedicação, lealdade e amor ao esporte.',
     storyTitle: 'Paulo Roberto | Professor de Muay Thai & Braço Direito da Pride',
     storyParagraphs: [
@@ -433,20 +435,22 @@ export const PROFESSORS_DATA: Professor[] = [
   {
     id: 'jean',
     name: 'Jean',
-    nickname: null,
+    nickname: 'Corvo',
     photoUrl: resolvePhotoUrl('jean.jpeg'),
     gymIds: [],
     roleTitle: 'Professor de Muay Thai • 11º Khan',
     khan: 11,
-    bio: 'Professor graduado 11º Khan (Vermelha Ponta Branca), dedicado à formação técnica, física e ao espírito de disciplina e lealdade da Pride Muay Thai.',
-    storyTitle: 'Jean | Professor de Muay Thai',
+    bio: 'Iniciou no Muay Thai em 2007, graduou-se com mestres de renome e integra a Pride desde 2015. Ministra aulas pela equipe desde 2019, dedicando-se a formar caráter, criar disciplina e transformar vidas.',
+    storyTitle: 'Jean (Corvo) | Professor de Muay Thai',
     storyParagraphs: [
-      'Graduado 11º Khan (Vermelha Ponta Branca) na Pride Muay Thai, o Professor Jean construiu sua jornada marcial fundamentada na disciplina inabalável, na técnica apurada e no respeito às tradições tailandesas.',
-      'Sua atuação na equipe é marcada pelo incentivo constante aos alunos, auxiliando tanto quem busca condicionamento físico e defesa pessoal quanto aqueles que desejam aprofundar o conhecimento técnico do esporte.',
-      'Para Jean, o tatame é uma escola para a vida, onde cada round ensina paciência, resiliência e a humildade necessária para nunca parar de aprender e evoluir.',
+      'Minha história no MuayThai começou de um jeito diferente em 2007 fazendo musculação em uma academia perto de casa, enquanto treinava escutei um barulho forte vindo do piso superior e isso me chamou atenção, quando subir para ver o que era tinha um cara segurando um aparador de chute e outro chutando, fiquei impressionado porque o que chutava e bem macro mas o chute forte e encaixado que fazia aquele barulho.',
+      'Então comecei a treinar sem muito compromisso, mas confesso que não sobrevivi ao 20min de aquecimento achando por fazer musculação iria ser fácil e aos poucos fui pegando gosto e deixando a musculação de lado e quando achei que estava bom aos 6 meses de treino tomei meu primeiro knockdown aí sim eu me apaixonei pelo esporte.',
+      'Tudo isso na mesma academia perto de casa, claro que não posso deixar de falar que passamos por momentos difíceis nem sempre tinham tatame muito fezes os treinos era no piso mesmo mas o amor pelo esporte sempre falava mais alto, não tínhamos professores que podiam nós graduar naquele época, que puxava os treinos era os lutadores Gilmar China da ChuteBox/Combate Esporte em São Paulo, que em seu alge enfrentou a lenda viva até hoje Lótus Branca como era conhecido Buakaw Banchamek e o Jorge Chagas meu primeiro mestre que veio poder realizar a nossa 1° graduação em 2010.',
+      'Continuei treinamento nas academia por onde eu passava devido ao meu trabalho mas nunca parei de treinar como meu antigo mestre falava desistir não é uma opção.',
+      'Conheci a equipe atual que estou hoje em outubro de 2015 que me chamou atenção pela raiz do verdadeiro MuayThai que se conhece, mas ainda não tinha esse nome forte que é hoje, mas isso é era só o começo de mais uma jornada sólida e respeitosa com o meu novo mestre, tenho apenas 3 lutas e 1 derrota como atleta, comecei a dar aulas em 2019 pela Pride e estou até hoje com a equipe que chamamos de família, porque estamos juntos até fora do tatame, e ensinar aquilo que aprendi lá atrás, pra mim e transforma pessoas, formar caráter, criar disciplinas e também salvar vidas porque é isso que a família Pride MuayThai faz tornar seres humanos melhores.',
     ],
-    quote: 'A disciplina forjada no tatame é a força que te mantém firme em qualquer desafio da vida.',
-    highlightBadges: ['11º Khan • Vermelha Ponta Branca', 'Professor Pride', 'Tradição & Disciplina'],
+    quote: 'Ensinar aquilo que aprendi lá atrás, pra mim é transformar pessoas, formar caráter, criar disciplinas e também salvar vidas, porque é isso que a família Pride MuayThai faz: tornar seres humanos melhores.',
+    highlightBadges: ['11º Khan • Vermelha Ponta Branca', 'Trajetória desde 2007', 'Na Pride desde 2015', 'Leciona desde 2019', 'Transformando Vidas'],
     photoPosition: 'center 10%',
   },
   {
@@ -460,6 +464,8 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     roleTitle: 'Instrutor de Muay Thai • 10º Khan',
     khan: 10,
+    phoneDisplay: '(12) 98208-6665',
+    phoneRaw: '5512982086665',
     bio: 'Iniciou no Muay Thai aos 13 anos e fez da modalidade sua filosofia de vida. Graduado 10º Khan, atua em São José dos Campos ensinando que a calma sob pressão e a resiliência no tatame transformam a maneira como enfrentamos os desafios fora do ringue.',
     storyTitle: 'Rafael (Lobinho) | Instrutor de Muay Thai',
     storyParagraphs: [
@@ -477,7 +483,7 @@ export const PROFESSORS_DATA: Professor[] = [
   {
     id: 'eduardo',
     name: 'Eduardo',
-    nickname: null,
+    nickname: 'Du',
     photoUrl: resolvePhotoUrl('eduardo.jpeg'),
     gymIds: [
       'arena-viking-itamaraty',
@@ -485,8 +491,10 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     roleTitle: 'Professor de Muay Thai • 10º Khan',
     khan: 10,
+    phoneDisplay: '(12) 99115-1494',
+    phoneRaw: '5512991151494',
     bio: 'Dedicado ao acolhimento e evolução progressiva dos alunos, combinando condicionamento dinâmico e fundamentos sólidos das 8 armas.',
-    storyTitle: 'Eduardo | Professor de Muay Thai',
+    storyTitle: 'Eduardo (Du) | Professor de Muay Thai',
     storyParagraphs: [
       'Com um compromisso permanente com a evolução de cada praticante, o Professor Eduardo conduz aulas dinâmicas na Arena Viking Parque Itamaraty e no CT3 Artes Marciais em Jacareí.',
       'Sua filosofia de ensino equilibra o condicionamento físico intenso com a construção cuidadosa da postura marcial, garantindo que os alunos aprendam com segurança, firmeza e entusiasmo.',
@@ -534,18 +542,19 @@ export const PROFESSORS_DATA: Professor[] = [
     gymIds: [
       'studio-m',
     ],
-    roleTitle: 'Professor de Muay Thai • 8º Khan',
+    roleTitle: 'Instrutor de Muay Thai • 8º Khan',
     khan: 8,
-    bio: 'Instrutor responsável pela unidade de Santa Branca, focado na marcialidade autêntica, precisão de golpes e respeito à linhagem do esporte.',
-    storyTitle: 'Rafael (Japonês) | Professor de Muay Thai',
+    bio: 'Praticante de esportes desde a infância e na Pride desde 2021, alcançou o 8º Khan em 2026. Transmite aos alunos técnica, respeito mútuo, resiliência e reciprocidade para que se formem pessoas de bem.',
+    storyTitle: 'Rafael (Japonês) | Instrutor de Muay Thai',
     storyParagraphs: [
-      'À frente das aulas no Studio M em Santa Branca, o Professor Rafael Japonês é o embaixador dos valores da Pride Muay Thai no Alto Vale do Paraíba.',
-      'Com um olhar apurado para os detalhes e uma paixão declarada pela arte das oito armas, Rafael transmite as técnicas tradicionais com disciplina rígida e camaradagem fraterna.',
-      'Suas aulas desafiam os limites físicos dos alunos enquanto constroem uma base marcial sólida em defesa pessoal, velocidade de punhos e potência nos chutes.',
-      'Para Rafael, preservar a identidade da Pride significa honrar cada treino como uma oportunidade de aprendizado e crescimento com os irmãos de equipe.',
+      'Desde pequeno fiz esporte como futebol, futsal, vôlei, basquete, tênis de mesa, skate, patins, bicicross e muitos outros. Durante a minha vida sempre fiz alguma modalidade de luta como lazer e saúde, sem compromisso.',
+      'Dos meus 14 para 15 anos, comecei o Muay Thai, pratiquei por quase um ano e parei por conta da distância, eu morava em Jacareí e treinava em SJC, e o meu transporte era a bike. Além disto, eu estava mais focado no bicicross, o qual praticava competição.',
+      'Alguns anos depois voltei a prática do Muay Thai, mas parei novamente, tendo uma nova tentativa em 2019 e veio a pandemia de 2020, a qual me obrigou a interromper.',
+      'Com o retorno das aula em 2021 eu conheci a Pride Muay Thai e desde então não parei. Hoje, em 2026, alcançei o meu 8 Khan e, pela primeira vez, faço parte do quadro de instrutores da Pride Muay Thai.',
+      'Aqui eu levo o aprendizado de cada treino e tento transmiti-los para cada aluno, não somente as técnicas e golpes, mas também o respeito mútuo, resiliência e reciprocidade. Isto para que se formem pessoas de bem.',
     ],
-    quote: 'Respeito aos mestres, lealdade à equipe e dedicação incansável em cada golpe desferido.',
-    highlightBadges: ['8º Khan • Marrom', 'Pioneirismo em Santa Branca', 'Studio M', 'Técnica Tradicional'],
+    quote: 'Aqui eu levo o aprendizado de cada treino e tento transmiti-los para cada aluno, não somente as técnicas e golpes, mas também o respeito mútuo, resiliência e reciprocidade. Isto para que se formem pessoas de bem.',
+    highlightBadges: ['8º Khan • Marrom', 'Instrutor Pride 2026', 'Studio M Santa Branca', 'Respeito, Resiliência & Reciprocidade'],
   },
   {
     id: 'gabriel-silva',
@@ -636,6 +645,55 @@ export const PROFESSORS_DATA: Professor[] = [
     highlightBadges: ['7º Khan • Azul Ponta Branca', 'Energia & Dinâmica', 'Clinch & Manoplas', 'Viking Itamaraty & Unciclo'],
   },
   {
+    id: 'rick-netto',
+    name: 'Rick Netto',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('rick-netto.jpeg'),
+    gymIds: [],
+    roleTitle: 'Instrutor de Muay Thai • 7º Khan',
+    khan: 7,
+    phoneDisplay: '(12) 99183-1028',
+    phoneRaw: '5512991831028',
+    bio: 'Graduado no 7º Khan (Azul e Branco), atua como instrutor em Jacareí com foco em inteligência tática, técnica apurada, disciplina e desenvolvimento de uma mentalidade forte.',
+    storyTitle: 'Rick | Instrutor de Muay Thai • 7º Khan',
+    storyParagraphs: [
+      'Meu nome é Ricardo Faria dos Santos Neto, tenho 27 anos, sou de Jacareí, interior de São Paulo, mas no Muay Thai a maioria me conhece como Rick.',
+      'Sempre gostei muito de artes marciais. Antes de conhecer o Muay Thai, cheguei a praticar Judô e Taekwondo, mas foi depois de assistir ao filme Ong-Bak: Guerreiro Sagrado, com Tony Jaa, que fiquei realmente interessado em conhecer a luta tailandesa.',
+      'Comecei a treinar Muay Thai por volta de 2016/2017. Infelizmente, por conta do trabalho, precisei ficar um tempo afastado dos treinos, mas em 2021 consegui voltar. Desde então, venho me dedicando cada vez mais ao esporte, buscando evoluir tanto na parte técnica quanto no conhecimento sobre a modalidade.',
+      'Durante essa caminhada, tive a oportunidade de aprender com grandes professores, como Renan Hulkinho, Erasmo Gibi e Paulão. Cada um teve sua importância na minha evolução e sou muito grato por tudo que aprendi e continuo aprendendo com eles.',
+      'Hoje sou graduado no 7º Khan, azul e branco, e estou começando uma nova fase dentro do Muay Thai, agora também como instrutor. É uma responsabilidade muito grande, principalmente por saber que ainda tenho muita coisa para aprender, mas é algo que sempre tive vontade de fazer.',
+      'Também tive algumas experiências em competições internas da equipe. Foram três participações, com uma vitória e duas derrotas. Independentemente dos resultados, todas foram importantes para mim. Competir é uma experiência completamente diferente de treinar, e cada vez que subi no ringue consegui tirar algum aprendizado, principalmente sobre o que precisava melhorar.',
+      'MINHA FORMAÇÃO',
+      'Uma coisa que sempre gostei de fazer é buscar conhecimento. Não quero ficar limitado apenas ao que aprendo durante os treinos. Gosto de entender o Muay Thai de uma forma mais completa, desde a parte técnica e tática até as regras, a arbitragem e tudo que envolve a modalidade.',
+      'Por isso, procurei participar de cursos, congressos e workshops que pudessem acrescentar algo à minha formação.',
+      'Tenho dois cursos de arbitragem, sendo um pela Confederação Brasileira de Muay Thai / Boxe Tailandês (CBMT/BT) e outro pela KAMMAKAM BRASIL.',
+      'Também participei de duas edições do Congresso Nacional de Muay Thai, organizadas pela CBMT/BT, onde tive a oportunidade de acompanhar palestras e ensinamentos de nomes como Rangel Farias, Munil Adriano, Edvor Dias, Felipe Cazolari, Hugo Henrique e Pedro Rodrigues, entre outros profissionais da modalidade.',
+      'Além disso, participei de workshops com Wilson Djavan e Léo Elias, que também contribuíram bastante para ampliar meus conhecimentos.',
+      'E pretendo continuar assim. Sempre que tenho oportunidade, procuro aprender algo novo, conhecer outras formas de trabalhar e ouvir pessoas que possuem mais experiência.',
+      'Acredito que, dentro do Muay Thai, ninguém sabe tudo. Sempre existe alguma coisa para aprender, independentemente da graduação ou do tempo de treino. E agora, começando a dar aulas, vejo isso como uma responsabilidade ainda maior, porque antes de ensinar alguém, preciso estar sempre disposto a aprender também.',
+      'O QUE O MUAY THAI REPRESENTA PARA MIM',
+      'Hoje posso dizer que o Muay Thai é uma das coisas mais importantes da minha vida.',
+      'O que começou como uma curiosidade por causa de um filme acabou se tornando algo que faz parte de quem eu sou. É onde gosto de estar, onde me sinto bem e onde quero construir meu futuro profissional.',
+      'Meu objetivo é continuar evoluindo, me especializar cada vez mais e, futuramente, poder viver do Muay Thai, fazendo aquilo de que realmente gosto.',
+      'Como instrutor, quero passar para meus alunos muito mais do que socos, chutes, joelhadas e cotoveladas. Quero ensinar a pensar durante uma luta, ter inteligência tática, confiança, disciplina e, principalmente, desenvolver uma mentalidade forte.',
+      'Uma das coisas que mais gosto no Muay Thai é justamente o quanto ele trabalha a nossa cabeça.',
+      'Muitas vezes você chega para treinar depois de um dia cansativo, cheio de problemas e preocupações, mas, quando começa o treino, parece que tudo aquilo fica do lado de fora. Naquele momento, sua atenção está ali, tentando acertar um movimento, melhorar uma técnica ou aprender alguma coisa nova.',
+      'E é isso que faz a gente gostar cada vez mais. Você aprende um golpe, depois quer aperfeiçoar. Aprende uma combinação, depois quer executar melhor. E quando percebe, já está completamente envolvido com o esporte e querendo evoluir a cada treino.',
+      'Acredito muito no poder que o Muay Thai tem de transformar a vida das pessoas.',
+      'Tem gente que começa a treinar para emagrecer, melhorar o condicionamento físico ou simplesmente sair do sedentarismo. Outros procuram mais confiança, uma forma de aliviar o estresse ou aprender a se defender. E também existem aqueles que sonham em competir e se tornar atletas.',
+      'Cada pessoa chega com um objetivo diferente, e acho que uma das coisas mais importantes como instrutor é saber respeitar isso.',
+      'Quero poder ajudar cada aluno a evoluir dentro daquilo que ele busca, seja alguém que nunca colocou uma luva na vida ou alguém que pretende entrar no ringue para competir.',
+      'Sei que estou apenas começando minha caminhada como instrutor e que ainda tenho muito para aprender e conquistar. Mas tenho muita vontade de crescer dentro do Muay Thai, continuar estudando, adquirir experiência e, principalmente, compartilhar tudo aquilo que venho aprendendo.',
+      'Também faço questão de valorizar os professores que fizeram e fazem parte da minha formação, porque sei que ninguém chega a lugar nenhum sozinho.',
+      'Para mim, o Muay Thai é muito mais do que uma luta. É um esporte que ensina, desafia, fortalece e faz a gente querer ser melhor a cada dia.',
+      'E é exatamente isso que quero levar para meus alunos.',
+      'RICARDO FARIA DOS SANTOS NETO — RICK\nInstrutor de Muay Thai | 7º Khan — Azul e Branco',
+    ],
+    quote: 'Para mim, o Muay Thai é muito mais do que uma luta. É um esporte que ensina, desafia, fortalece e faz a gente querer ser melhor a cada dia. E é exatamente isso que quero levar para meus alunos.',
+    highlightBadges: ['7º Khan • Azul e Branco', 'Instrutor Pride', 'Jacareí – SP', 'Cursos CBMT/BT & KAMMAKAM', 'Inteligência Tática & Mentalidade'],
+    photoPosition: 'center 15%',
+  },
+  {
     id: 'renan-hulkinho',
     name: 'Renan',
     nickname: 'Hulkinho',
@@ -643,6 +701,9 @@ export const PROFESSORS_DATA: Professor[] = [
     gymIds: [],
     roleTitle: 'Líder & Fundador da Pride • 13º Khan',
     khan: 13,
+    phoneDisplay: '(12) 99174-6964',
+    phoneRaw: '5512991746964',
+    scheduleNote: 'Não ministra aulas aos sábados (Segunda a Sexta)',
     bio: 'Com 14 anos de vivência no Muay Thai, Renan encontrou na arte marcial um caminho de evolução contínua, amadurecimento e superação diária. Como líder da Pride, conduz a formação de instrutores e alunos em todo o Vale do Paraíba, inspirando através da honra, disciplina e amor ao esporte.',
     storyTitle: 'Renan (Hulkinho) | Líder & Fundador da Pride Muay Thai',
     storyParagraphs: [
@@ -703,61 +764,122 @@ export function getGymExternalMapsUrl(gym: Gym): string {
   return '';
 }
 
+export function getProfessorWhatsAppUrl(prof: Professor): string {
+  if (!prof.phoneRaw) return '';
+  const message = `Olá, ${prof.nickname || prof.name}! Vi seu perfil de professor no site da Pride Muay Thai e gostaria de saber mais sobre treinos e horários.`;
+  return `https://wa.me/${prof.phoneRaw}?text=${encodeURIComponent(message)}`;
+}
+
 // ==========================================
-// PERSONAL FIGHTERS DATA
-// Aba de Personais - adicione ou customize os cards aqui
+// PERSONAL FIGHTERS DATA & PRICING PLANS
 // ==========================================
+export const STANDARD_PERSONAL_PRICING: PricingPlan = {
+  frequency1x: 'R$ 340',
+  frequency2x: 'R$ 520',
+  frequency3x: 'R$ 750',
+  singleClass: 'R$ 100',
+  trialClass: 'R$ 70',
+};
+
+export const RENAN_PERSONAL_PRICING: PricingPlan = {
+  frequency1x: 'R$ 400',
+  frequency2x: 'R$ 700',
+  frequency3x: 'R$ 900',
+  singleClass: 'R$ 120',
+  trialClass: 'R$ 50',
+  scheduleNote: 'Não ministra aulas aos sábados (Segunda a Sexta)',
+};
+
 export const PERSONAL_FIGHTERS_DATA: PersonalFighter[] = [
   {
-    id: 'gabriel-silva-personal',
-    name: 'Gabriel Silva Soares',
-    nickname: null,
-    photoUrl: resolvePhotoUrl('gabriel-silva.jpeg'),
-    khan: 8,
+    id: 'renan-personal',
+    name: 'Renan',
+    nickname: 'Hulkinho',
+    photoUrl: resolvePhotoUrl('renan-hulkinho.jpeg'),
+    khan: 13,
     city: 'São José dos Campos',
-    price: 'A consultar',
-    priceNote: 'Aulas individuais ou pacotes mensais',
-    roleTitle: 'Personal Fighter • Instrutor',
-    bio: 'Treinamento individualizado com foco em técnica tradicional, disciplina marcial e evolução constante no ritmo do aluno.',
-    highlightBadges: ['8º Khan • Marrom', 'São José dos Campos', 'Aulas Particulares', 'Técnica & Disciplina'],
-    phoneDisplay: '(12) 99117-0787',
-    phoneRaw: '5512991170787',
+    price: 'A partir de R$ 400/mês',
+    priceNote: 'Planos mensais ou aulas avulsas',
+    roleTitle: 'Líder & Fundador da Pride • Personal Fighter',
+    bio: 'Treinamento exclusivo de alta performance diretamente com o líder e fundador da Pride Muay Thai. Evolução técnica acelerada e acompanhamento de ponta.',
+    highlightBadges: ['13º Khan • Kru Yai', 'São José dos Campos', 'Sem aulas aos sábados', 'Líder Geral Pride'],
+    phoneDisplay: '(12) 99174-6964',
+    phoneRaw: '5512991746964',
+    photoPosition: 'center 5%',
+    pricingPlan: RENAN_PERSONAL_PRICING,
+    scheduleNote: 'Não ministra aulas aos sábados (Segunda a Sexta)',
   },
   {
-    id: 'augusto-personal',
-    name: 'Augusto',
+    id: 'paulo-personal',
+    name: 'Paulo Roberto',
     nickname: null,
-    photoUrl: resolvePhotoUrl('augusto.jpeg'),
+    photoUrl: resolvePhotoUrl('paulo-roberto.jpeg'),
+    khan: 11,
+    city: 'Jacareí',
+    price: 'A partir de R$ 340/mês',
+    priceNote: 'Planos mensais ou aulas avulsas',
+    roleTitle: 'Personal Fighter • Professor 11º Khan',
+    bio: 'Braço direito da Pride e árbitro certificado, com didática exemplar e evolução sob medida tanto para iniciantes quanto para atletas avançados.',
+    highlightBadges: ['11º Khan • Vermelha Ponta Branca', 'Jacareí', 'Árbitro Certificado', 'Braço Direito Pride'],
+    phoneDisplay: '(12) 98192-5045',
+    phoneRaw: '5512981925045',
+    pricingPlan: STANDARD_PERSONAL_PRICING,
+  },
+  {
+    id: 'rafael-lobinho-personal',
+    name: 'Rafael',
+    nickname: 'Lobinho',
+    photoUrl: resolvePhotoUrl('rafael-lobinho.jpeg'),
+    khan: 10,
+    city: 'São José dos Campos',
+    price: 'A partir de R$ 340/mês',
+    priceNote: 'Planos mensais ou aulas avulsas',
+    roleTitle: 'Personal Fighter • Instrutor Sênior',
+    bio: 'Aulas particulares focadas em biomecânica de combate, movimentação inteligente de ringue, autodefesa e calma sob pressão.',
+    highlightBadges: ['10º Khan • Vermelha', 'São José dos Campos', 'Biomecânica & Combate', 'Técnica Tradicional'],
+    phoneDisplay: '(12) 98208-6665',
+    phoneRaw: '5512982086665',
+    pricingPlan: STANDARD_PERSONAL_PRICING,
+  },
+  {
+    id: 'rick-netto-personal',
+    name: 'Rick Netto',
+    nickname: null,
+    photoUrl: resolvePhotoUrl('rick-netto.jpeg'),
     khan: 7,
     city: 'Jacareí',
-    price: 'A consultar',
-    priceNote: 'Treino personalizado com foco em metas',
+    price: 'A partir de R$ 340/mês',
+    priceNote: 'Planos mensais ou aulas avulsas',
     roleTitle: 'Personal Fighter • Instrutor',
-    bio: 'Treinos focados na superação de limites, combate ao sedentarismo, melhora do condicionamento físico e bem-estar geral.',
-    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Jacareí', 'Fábrica de Monstros', 'Condicionamento & Saúde'],
-    phoneDisplay: '(12) 99727-2501',
-    phoneRaw: '5512997272501',
+    bio: 'Treinamento focado em inteligência tática, técnica refinada, disciplina e desenvolvimento de uma mentalidade forte e vencedora.',
+    highlightBadges: ['7º Khan • Azul e Branco', 'Jacareí', 'Cursos CBMT/BT & KAMMAKAM', 'Inteligência Tática'],
+    phoneDisplay: '(12) 99183-1028',
+    phoneRaw: '5512991831028',
+    photoPosition: 'center 15%',
+    pricingPlan: STANDARD_PERSONAL_PRICING,
   },
   {
-    id: 'marina-personal',
-    name: 'Marina',
-    nickname: null,
-    photoUrl: resolvePhotoUrl('marina.jpeg'),
-    khan: 7,
-    city: 'Santa Branca',
-    price: 'A consultar',
-    priceNote: 'Treinos individuais e turma feminina',
-    roleTitle: 'Personal Fighter • Instrutora',
-    bio: 'Aulas dedicadas ao desenvolvimento de força, autoconfiança e técnicas de defesa pessoal feminina com metodologia acolhedora.',
-    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Santa Branca', 'Defesa Pessoal', 'Autoconfiança'],
-    phoneDisplay: '(12) 98176-7279',
-    phoneRaw: '5512981767279',
+    id: 'eduardo-personal',
+    name: 'Eduardo',
+    nickname: 'Du',
+    photoUrl: resolvePhotoUrl('eduardo.jpeg'),
+    khan: 10,
+    city: 'Jacareí',
+    price: 'A partir de R$ 340/mês',
+    priceNote: 'Planos mensais ou aulas avulsas',
+    roleTitle: 'Personal Fighter • Professor 10º Khan',
+    bio: 'Treinos dinâmicos com forte foco em superação de limites, condicionamento físico de alta queima calórica e fundamentos sólidos das 8 armas.',
+    highlightBadges: ['10º Khan • Vermelha', 'Jacareí', 'Condicionamento Intenso', 'Fundamentos'],
+    phoneDisplay: '(12) 99115-1494',
+    phoneRaw: '5512991151494',
+    photoPosition: 'center 0%',
+    pricingPlan: STANDARD_PERSONAL_PRICING,
   },
 ];
 
 export function getPersonalFighterWhatsAppUrl(fighter: PersonalFighter): string {
   if (!fighter.phoneRaw) return '';
-  const message = `Olá, ${fighter.name}! Vi seu perfil de Personal Fighter no site da Pride Muay Thai e gostaria de saber mais sobre aulas particulares de Muay Thai.`;
+  const message = `Olá, ${fighter.nickname || fighter.name}! Vi seu perfil de Personal Fighter no site da Pride Muay Thai e gostaria de saber mais sobre aulas particulares de Muay Thai.`;
   return `https://wa.me/${fighter.phoneRaw}?text=${encodeURIComponent(message)}`;
 }
 
