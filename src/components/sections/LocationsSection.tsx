@@ -368,11 +368,8 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
           })}
         </div>
 
-        {/* Automatic Carousel of Gym Facilities & Tatames */}
-        <GymsCarousel onSelectGym={handleSelectGym} />
-
         {/* Section Interactive Map */}
-        <div id="mapa-unidades" className="scroll-mt-24 pt-4">
+        <div id="mapa-unidades" className="scroll-mt-24 pt-4 mb-14 sm:mb-18">
           <div className="text-center max-w-2xl mx-auto mb-6">
             <h3 className="font-fight text-3xl sm:text-4xl text-white uppercase tracking-wide">
               MAPA INTERATIVO <span className="text-red-500">DAS UNIDADES</span>
@@ -388,6 +385,9 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
             onMarkerSelect={handleSelectGym}
           />
         </div>
+
+        {/* Automatic Carousel: Conheça um pouco dos nossos alunos */}
+        <GymsCarousel onSelectGym={handleSelectGym} />
 
       </div>
     </section>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, MapPin, Building2, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MapPin, Users, ExternalLink } from 'lucide-react';
 
 interface GymCarouselItem {
   id: string;
@@ -164,14 +164,14 @@ export const GymsCarousel: React.FC<GymsCarouselProps> = ({ onSelectGym }) => {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/50 border border-red-800/50 text-red-400 text-xs font-mono uppercase tracking-wider mb-2.5 font-semibold">
-            <Building2 size={13} />
-            <span>Estrutura & Tatames Oficiais</span>
+            <Users size={13} />
+            <span>Comunidade & Família Pride</span>
           </div>
           <h3 className="font-fight text-2xl sm:text-3xl lg:text-4xl text-white uppercase tracking-wide leading-none">
-            CONHEÇA A ESTRUTURA <span className="text-red-500">DOS NOSSOS POLOS</span>
+            CONHEÇA UM POUCO <span className="text-red-500">DOS NOSSOS ALUNOS</span>
           </h3>
           <p className="mt-2 text-zinc-400 text-xs sm:text-sm max-w-2xl leading-relaxed">
-            Ambientes preparados para seu desenvolvimento no Muay Thai com tatames de alta absorção, ringue, sacos pesados e manoplas profissionais.
+            A verdadeira força da Pride está nas pessoas. Conheça um pouco da energia dos nossos alunos, turmas e companheiros de tatame que constroem juntos cada round de superação no Vale do Paraíba.
           </p>
         </div>
 
@@ -256,7 +256,7 @@ export const GymsCarousel: React.FC<GymsCarouselProps> = ({ onSelectGym }) => {
                       {item.name}
                     </h4>
                     <p className="text-xs text-zinc-400 mt-0.5 font-mono">
-                      Polo Oficial Pride Muay Thai
+                      Turma & Alunos Pride
                     </p>
                   </div>
                   <div className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 transition-colors flex-shrink-0">
