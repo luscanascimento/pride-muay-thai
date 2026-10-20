@@ -1,8 +1,40 @@
 import React, { useState } from 'react';
 import { Activity, ShieldAlert, Sparkles, ChevronRight } from 'lucide-react';
 import { BRAND } from '../../constants/brand';
-import kickImg from '../../assets/images/muay-thai-kick.jpg';
-import clinchImg from '../../assets/images/clinch-combat.jpg';
+
+const basePath = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) ? import.meta.env.BASE_URL : './';
+const resolveAlunoPhoto = (filename: string) => {
+  const base = basePath.endsWith('/') ? basePath : `${basePath}/`;
+  return `${base}images/alunos/${filename}`;
+};
+
+const TECHNIQUE_IMAGES: Record<string, { src: string; caption: string; alt: string }> = {
+  kick: {
+    src: resolveAlunoPhoto('chute.JPG'),
+    caption: 'Aluno da Pride • Chute Circular de Canela (Te Chiang)',
+    alt: 'Aluno da Pride executando chute circular de canela na manopla com rotação total de quadril',
+  },
+  elbow: {
+    src: resolveAlunoPhoto('bia-cotovelada.JPG'),
+    caption: 'Aluna Bia da Pride • Cotovelada Cortante (Sok)',
+    alt: 'Aluna Bia da Pride executando cotovelada cortante com guarda alta',
+  },
+  knee: {
+    src: resolveAlunoPhoto('joelhada.JPG'),
+    caption: 'Aluno da Pride • Joelhada Perfurante (Khao)',
+    alt: 'Aluno da Pride executando joelhada perfurante com projeção explosiva de quadril',
+  },
+  teep: {
+    src: resolveAlunoPhoto('mano-chutando.JPG'),
+    caption: 'Aluno da Pride • Extensão e Controle de Distância',
+    alt: 'Aluno da Pride executando chute de impacto na manopla',
+  },
+  clinch: {
+    src: resolveAlunoPhoto('joelhada.JPG'),
+    caption: 'Domínio de Postura & Joelhadas no Clinch',
+    alt: 'Trabalho técnico de clinch e joelhadas na Pride Muay Thai',
+  },
+};
 
 interface Technique {
   id: string;
@@ -241,27 +273,33 @@ export const CombatTechniquesSection: React.FC = () => {
             </div>
 
             {/* Authentic Photography Card */}
-            <div className="relative rounded-xl overflow-hidden border border-zinc-800 shadow-2xl flex flex-col justify-end min-h-[340px] group">
-              <img
-                src={selectedTech.id === 'clinch' ? clinchImg : kickImg}
-                alt={selectedTech.id === 'clinch' ? "Clinch e combate corporal no ringue de Muay Thai" : "Golpe de impacto e chute em combate de Muay Thai"}
-                className="absolute inset-0 w-full h-full object-cover filter contrast-125 brightness-75 transition-transform duration-700 group-hover:scale-105"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#080809] via-[#080809]/60 to-transparent" />
-              
-              <div className="relative z-10 p-6">
-                <span className="text-xs uppercase font-mono tracking-widest text-red-400 font-semibold block mb-1">
-                  Execução Real nos Treinos
-                </span>
-                <h4 className="font-fight text-2xl text-white uppercase">
-                  Técnica sem agressividade cega
-                </h4>
-                <p className="mt-2 text-xs sm:text-sm text-zinc-300">
-                  Nas aulas do Pride Muay Thai, cada movimento é praticado com proteção adequada, manoplas e correção postural constante pelo treinador {BRAND.coach}.
-                </p>
-              </div>
-            </div>
+            {(() => {
+              const techImg = TECHNIQUE_IMAGES[selectedTech.id] || TECHNIQUE_IMAGES.kick;
+              return (
+                <div className="relative rounded-xl overflow-hidden border border-zinc-800 shadow-2xl flex flex-col justify-end min-h-[340px] group">
+                  <img
+                    key={selectedTech.id}
+                    src={techImg.src}
+                    alt={techImg.alt}
+                    className="absolute inset-0 w-full h-full object-cover filter contrast-110 brightness-90 transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#080809] via-[#080809]/60 to-transparent" />
+                  
+                  <div className="relative z-10 p-6">
+                    <span className="text-xs uppercase font-mono tracking-widest text-red-400 font-semibold block mb-1">
+                      {techImg.caption}
+                    </span>
+                    <h4 className="font-fight text-2xl text-white uppercase">
+                      Técnica sem agressividade cega
+                    </h4>
+                    <p className="mt-2 text-xs sm:text-sm text-zinc-300">
+                      Nas aulas do Pride Muay Thai, cada movimento é praticado com proteção adequada, manoplas e correção postural constante pelo treinador {BRAND.coach}.
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
 
           </div>
 

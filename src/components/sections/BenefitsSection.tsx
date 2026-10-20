@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { ShieldCheck, HeartPulse, Brain, Zap, Target, Flame, Sparkles } from 'lucide-react';
-import bagImg from '../../assets/images/heavy-bag.jpg';
-import padImg from '../../assets/images/pad-work.jpg';
+
+const basePath = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) ? import.meta.env.BASE_URL : './';
+const resolveAlunoPhoto = (filename: string) => {
+  const base = basePath.endsWith('/') ? basePath : `${basePath}/`;
+  return `${base}images/alunos/${filename}`;
+};
+
+const martialImg = resolveAlunoPhoto('chute.JPG');
+const fitnessImg = resolveAlunoPhoto('dai-socando.JPG');
 
 export const BenefitsSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'martial' | 'fitness'>('martial');
@@ -131,9 +138,9 @@ export const BenefitsSection: React.FC = () => {
           <div className="lg:col-span-5 relative">
             <div className="rounded-xl overflow-hidden border border-zinc-800 shadow-2xl relative min-h-[380px] lg:min-h-[440px] flex items-end">
               <img
-                src={activeTab === 'martial' ? padImg : bagImg}
-                alt={activeTab === 'martial' ? "Treinamento de manoplas e joelhada no Muay Thai" : "Treino intenso de chute circular no saco pesado de Muay Thai"}
-                className="absolute inset-0 w-full h-full object-cover filter contrast-125 brightness-80 transition-all duration-700"
+                src={activeTab === 'martial' ? martialImg : fitnessImg}
+                alt={activeTab === 'martial' ? "Aluno da Pride executando chute técnico de canela na manopla" : "Aluna Dai treinando combinações de socos com foco e intensidade na Pride"}
+                className="absolute inset-0 w-full h-full object-cover filter contrast-110 brightness-85 transition-all duration-700"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#080809] via-[#080809]/50 to-transparent" />

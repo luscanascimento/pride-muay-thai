@@ -1,7 +1,14 @@
 import React from 'react';
 import { Flame, Shield, Award, Compass } from 'lucide-react';
 import traditionImg from '../../assets/images/thailand-tradition.jpg';
-import wrapsImg from '../../assets/images/gloves-wraps.jpg';
+
+const basePath = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) ? import.meta.env.BASE_URL : './';
+const resolveAlunoPhoto = (filename: string) => {
+  const base = basePath.endsWith('/') ? basePath : `${basePath}/`;
+  return `${base}images/alunos/${filename}`;
+};
+
+const studentTrainingImg = resolveAlunoPhoto('joy-socando.JPG');
 
 export const AboutMuayThai: React.FC = () => {
   return (
@@ -19,16 +26,16 @@ export const AboutMuayThai: React.FC = () => {
               {/* Main image: Hand wraps / ritual preparation */}
               <div className="relative rounded-lg overflow-hidden border border-zinc-800 shadow-2xl group">
                 <img
-                  src={wrapsImg}
-                  alt="Lutador com bandagens e prajiad preparando-se com o mongkhon para o ringue"
-                  className="w-full h-80 sm:h-96 object-cover filter contrast-125 brightness-90 transition-transform duration-700 group-hover:scale-105"
+                  src={studentTrainingImg}
+                  alt="Aluna Joy da Pride em treino dinâmico de combinações no tatame"
+                  className="w-full h-80 sm:h-96 object-cover filter contrast-110 brightness-90 transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0e] via-transparent to-transparent" />
                 
                 <div className="absolute bottom-4 left-4 right-4">
-                  <span className="text-xs uppercase tracking-widest text-red-400 font-semibold">Ritual & Preparação</span>
-                  <p className="text-sm font-bold text-white uppercase">A disciplina nasce antes de subir no ringue</p>
+                  <span className="text-xs uppercase tracking-widest text-red-400 font-semibold">Treino & Dedicação Real</span>
+                  <p className="text-sm font-bold text-white uppercase">A disciplina nasce na constância do tatame</p>
                 </div>
               </div>
 

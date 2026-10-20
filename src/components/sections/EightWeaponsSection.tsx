@@ -2,6 +2,35 @@ import React, { useState } from 'react';
 import { Target, Zap, Sparkles } from 'lucide-react';
 import { BRAND } from '../../constants/brand';
 
+const basePath = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) ? import.meta.env.BASE_URL : './';
+const resolveAlunoPhoto = (filename: string) => {
+  const base = basePath.endsWith('/') ? basePath : `${basePath}/`;
+  return `${base}images/alunos/${filename}`;
+};
+
+const WEAPON_REAL_PHOTOS: Record<string, { src: string; caption: string; alt: string }> = {
+  punhos: {
+    src: resolveAlunoPhoto('dai-socando.JPG'),
+    caption: 'Aluna Dai • Execução de Punhos e Combinações',
+    alt: 'Aluna Dai da Pride em sequência de socos com foco e potência',
+  },
+  cotovelos: {
+    src: resolveAlunoPhoto('bia-cotovelada.JPG'),
+    caption: 'Aluna Bia • Aplicação de Cotovelada (Sok)',
+    alt: 'Aluna Bia da Pride executando cotovelada cortante tradicional',
+  },
+  joelhos: {
+    src: resolveAlunoPhoto('joelhada.JPG'),
+    caption: 'Aluno Pride • Joelhada com Impulsão (Khao)',
+    alt: 'Aluno da Pride aplicando joelhada com elevação de quadril',
+  },
+  pernas: {
+    src: resolveAlunoPhoto('chute.JPG'),
+    caption: 'Aluno Pride • Chute com a Tíbia (Te Chiang)',
+    alt: 'Aluno da Pride desferindo chute circular com a canela na manopla',
+  },
+};
+
 export const EightWeaponsSection: React.FC = () => {
   const [activeWeaponId, setActiveWeaponId] = useState<string>('punhos');
 
@@ -246,6 +275,32 @@ export const EightWeaponsSection: React.FC = () => {
               <p className="mt-4 text-zinc-300 text-sm sm:text-base leading-relaxed">
                 {activeWeapon.description}
               </p>
+
+              {/* Authentic Photo of Pride student demonstrating the weapon */}
+              {(() => {
+                const photo = WEAPON_REAL_PHOTOS[activeWeapon.id];
+                if (!photo) return null;
+                return (
+                  <div className="mt-5 relative h-40 sm:h-48 rounded-xl overflow-hidden border border-zinc-800 group/weaponPhoto shadow-lg">
+                    <img
+                      key={activeWeapon.id}
+                      src={photo.src}
+                      alt={photo.alt}
+                      className="w-full h-full object-cover filter contrast-110 brightness-90 transition-transform duration-700 group-hover/weaponPhoto:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                      <span className="text-[11px] font-mono text-zinc-200 bg-black/70 px-2.5 py-1 rounded backdrop-blur-md border border-zinc-800">
+                        {photo.caption}
+                      </span>
+                      <span className="text-[10px] font-mono text-red-400 uppercase font-semibold hidden sm:inline-block">
+                        Tatame Pride
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Strike examples */}
               <div className="mt-6 pt-5 border-t border-zinc-800/80">

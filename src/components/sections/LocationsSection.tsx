@@ -12,6 +12,7 @@ import {
 import { GYMS_DATA, getProfessorsForGym, getGymWhatsAppUrl, getGymExternalMapsUrl } from '../../data/gymsAndTeamData';
 import { Gym } from '../../types/gymsAndTeam';
 import { GymsMap } from '../maps/GymsMap';
+import { GymsCarousel } from '../ui/GymsCarousel';
 
 interface LocationsSectionProps {
   selectedGymId?: string | null;
@@ -366,6 +367,9 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
             );
           })}
         </div>
+
+        {/* Automatic Carousel of Gym Facilities & Tatames */}
+        <GymsCarousel onSelectGym={handleSelectGym} />
 
         {/* Section Interactive Map */}
         <div id="mapa-unidades" className="scroll-mt-24 pt-4">
