@@ -7,7 +7,7 @@ const resolveAlunoPhoto = (filename: string) => {
   return `${base}images/alunos/${filename}`;
 };
 
-const martialImg = resolveAlunoPhoto('chute.JPG');
+const martialImg = resolveAlunoPhoto('joelhada.JPG');
 const fitnessImg = resolveAlunoPhoto('dai-socando.JPG');
 
 export const BenefitsSection: React.FC = () => {
@@ -136,11 +136,11 @@ export const BenefitsSection: React.FC = () => {
 
           {/* Contextual Photo Card */}
           <div className="lg:col-span-5 relative">
-            <div className="rounded-xl overflow-hidden border border-zinc-800 shadow-2xl relative min-h-[380px] lg:min-h-[440px] flex items-end">
+            <div className="rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl relative min-h-[420px] lg:min-h-[480px] flex items-end">
               <img
                 src={activeTab === 'martial' ? martialImg : fitnessImg}
-                alt={activeTab === 'martial' ? "Aluno da Pride executando chute técnico de canela na manopla" : "Aluna Dai treinando combinações de socos com foco e intensidade na Pride"}
-                className="absolute inset-0 w-full h-full object-cover filter contrast-110 brightness-85 transition-all duration-700"
+                alt={activeTab === 'martial' ? "Aluno da Pride executando joelhada técnica com biomecânica correta" : "Aluna Dai treinando socos e combinações em pé com alta queima calórica"}
+                className="absolute inset-0 w-full h-full object-cover object-center filter contrast-110 brightness-85 transition-all duration-700"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#080809] via-[#080809]/50 to-transparent" />

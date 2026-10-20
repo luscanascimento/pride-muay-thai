@@ -122,26 +122,27 @@ export const KhanGraduationShowcase: React.FC<KhanGraduationShowcaseProps> = ({
       </div>
 
       {/* Pride Graduation Ceremony Banner - Real Team Photo */}
-      <div className="mt-8 rounded-2xl overflow-hidden border border-zinc-800/80 bg-zinc-950 relative group shadow-2xl">
-        <div className="relative aspect-[16/7] sm:aspect-[21/8] min-h-[200px] sm:min-h-[250px] overflow-hidden">
+      <div className="mt-10 rounded-2xl overflow-hidden border border-zinc-800/80 bg-zinc-950 relative group shadow-2xl">
+        <div className="relative aspect-[16/10] sm:aspect-[16/9] min-h-[280px] sm:min-h-[380px] lg:min-h-[460px] overflow-hidden">
           <img
             src={resolveAlunoPhoto('equipe.JPG')}
             alt="Cerimônia oficial de graduação da equipe Pride Muay Thai com alunos e mestres"
-            className="w-full h-full object-cover object-center filter contrast-105 brightness-90 transition-transform duration-700 group-hover:scale-102"
+            style={{ objectPosition: 'center 75%' }}
+            className="w-full h-full object-cover filter contrast-105 brightness-95 transition-transform duration-700 group-hover:scale-102"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#09090c] via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#09090c]/90 via-transparent to-transparent pointer-events-none" />
           
           <div className="absolute bottom-3 left-3 sm:bottom-5 sm:left-6 right-3 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-950/80 border border-red-700/60 text-red-300 font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider mb-1">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-950/90 border border-red-700/60 text-red-300 font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider mb-1 shadow-md">
                 Família Pride • Cerimônia Oficial de Graduação
               </span>
-              <h4 className="font-fight text-xl sm:text-2xl text-white uppercase tracking-wide">
+              <h4 className="font-fight text-xl sm:text-2xl text-white uppercase tracking-wide text-glow-sm">
                 União, respeito e superação a cada novo Prajied
               </h4>
             </div>
-            <span className="text-[11px] font-mono text-zinc-300 bg-black/60 px-3 py-1 rounded-md border border-zinc-800 self-start sm:self-auto backdrop-blur-sm">
+            <span className="text-[11px] font-mono text-zinc-300 bg-black/75 px-3 py-1 rounded-md border border-zinc-800 self-start sm:self-auto backdrop-blur-md">
               Tatame & Comunidade Pride
             </span>
           </div>
