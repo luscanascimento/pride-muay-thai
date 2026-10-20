@@ -1,5 +1,5 @@
-import React from 'react';
-import { Award, Shield, Check, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Award, Shield, Check, ChevronRight, Maximize2, X } from 'lucide-react';
 import { PrajiedRope } from '../ui/PrajiedBadge';
 import { KHAN_RANKS_DATA } from '../../data/gymsAndTeamData';
 
@@ -20,6 +20,17 @@ export const KhanGraduationShowcase: React.FC<KhanGraduationShowcaseProps> = ({
   onSelectKhan,
   memberCountsByKhan,
 }) => {
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isPhotoModalOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsPhotoModalOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isPhotoModalOpen]);
+
   // Ordered from highest Khan to foundation Khan
   const activeKhans = [13, 11, 10, 9, 8, 7];
 
@@ -123,31 +134,72 @@ export const KhanGraduationShowcase: React.FC<KhanGraduationShowcaseProps> = ({
 
       {/* Pride Graduation Ceremony Banner - Real Team Photo */}
       <div className="mt-10 rounded-2xl overflow-hidden border border-zinc-800/80 bg-zinc-950 relative group shadow-2xl">
-        <div className="relative aspect-[16/10] sm:aspect-[16/9] min-h-[280px] sm:min-h-[380px] lg:min-h-[460px] overflow-hidden">
+        <div 
+          onClick={() => setIsPhotoModalOpen(true)}
+          className="relative aspect-[16/10] sm:aspect-[16/9] min-h-[230px] sm:min-h-[380px] lg:min-h-[460px] overflow-hidden cursor-pointer"
+          title="Clique para ver a foto completa da equipe"
+        >
           <img
             src={resolveAlunoPhoto('equipe.JPG')}
             alt="Cerimônia oficial de graduação da equipe Pride Muay Thai com alunos e mestres"
-            style={{ objectPosition: 'center 75%' }}
-            className="w-full h-full object-cover filter contrast-105 brightness-95 transition-transform duration-700 group-hover:scale-102"
+            className="w-full h-full object-cover object-[62%_72%] sm:object-[center_75%] filter contrast-105 brightness-95 transition-transform duration-700 group-hover:scale-102"
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#09090c]/90 via-transparent to-transparent pointer-events-none" />
           
-          <div className="absolute bottom-3 left-3 sm:bottom-5 sm:left-6 right-3 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          {/* Top-right "Ampliar Foto" button */}
+          <div className="absolute top-3 right-3 z-10">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/60 hover:bg-black/80 border border-zinc-700/70 text-zinc-300 text-[11px] font-mono backdrop-blur-md transition-colors shadow-lg">
+              <Maximize2 size={12} className="text-red-400" />
+              <span>Ver Completa</span>
+            </span>
+          </div>
+
+          <div className="absolute bottom-2.5 left-2.5 sm:bottom-5 sm:left-6 right-2.5 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 sm:gap-3 pointer-events-none">
             <div>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-950/90 border border-red-700/60 text-red-300 font-mono text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider mb-1 shadow-md">
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-red-950/90 border border-red-700/60 text-red-300 font-mono text-[9px] sm:text-[11px] font-semibold uppercase tracking-wider mb-1 shadow-md">
                 Família Pride • Cerimônia Oficial de Graduação
               </span>
-              <h4 className="font-fight text-xl sm:text-2xl text-white uppercase tracking-wide text-glow-sm">
+              <h4 className="font-fight text-lg sm:text-2xl text-white uppercase tracking-wide text-glow-sm leading-tight">
                 União, respeito e superação a cada novo Prajied
               </h4>
             </div>
-            <span className="text-[11px] font-mono text-zinc-300 bg-black/75 px-3 py-1 rounded-md border border-zinc-800 self-start sm:self-auto backdrop-blur-md">
+            <span className="text-[10px] sm:text-[11px] font-mono text-zinc-300 bg-black/75 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md border border-zinc-800 self-start sm:self-auto backdrop-blur-md">
               Tatame & Comunidade Pride
             </span>
           </div>
         </div>
       </div>
+
+      {/* Lightbox Modal for Full Panoramic Photo */}
+      {isPhotoModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6"
+          onClick={() => setIsPhotoModalOpen(false)}
+        >
+          <div 
+            className="relative max-w-6xl w-full max-h-[90vh] flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setIsPhotoModalOpen(false)}
+              className="absolute -top-11 right-0 sm:right-2 p-2 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-300 hover:text-white hover:bg-red-600 transition-colors cursor-pointer shadow-lg"
+              aria-label="Fechar foto ampliada"
+            >
+              <X size={18} />
+            </button>
+            <img
+              src={resolveAlunoPhoto('equipe.JPG')}
+              alt="Cerimônia oficial de graduação da equipe Pride Muay Thai com alunos e mestres"
+              className="w-full h-auto max-h-[82vh] object-contain rounded-xl border border-zinc-800 shadow-2xl"
+            />
+            <p className="mt-2.5 text-xs sm:text-sm font-mono text-zinc-400 text-center">
+              Cerimônia Oficial de Graduação • Família Pride Muay Thai
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Explanatory footnote */}
       <div className="mt-6 pt-4 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-zinc-400">
