@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, Sparkles, Shield, Users } from 'lucide-react';
 import { ALL_KHANS_SYSTEM } from '../../data/gymsAndTeamData';
 import { PrajiedRope } from './PrajiedBadge';
@@ -8,10 +8,22 @@ interface AllKhansCuriosityTableProps {
 }
 
 export const AllKhansCuriosityTable: React.FC<AllKhansCuriosityTableProps> = ({
-  initialExpanded = true,
+  initialExpanded = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(initialExpanded);
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
+
+  // If navigated directly via hash anchor (#curiosidades-khans), auto-expand
+  useEffect(() => {
+    const checkHash = () => {
+      if (typeof window !== 'undefined' && window.location.hash === '#curiosidades-khans') {
+        setIsExpanded(true);
+      }
+    };
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+    return () => window.removeEventListener('hashchange', checkHash);
+  }, []);
 
   const categories = [
     { id: 'todos', label: 'Todos os 16 Khans' },

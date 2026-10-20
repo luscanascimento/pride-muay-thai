@@ -257,9 +257,6 @@ export const CombatTechniquesSection: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-[#080809] via-[#080809]/60 to-transparent" />
               
               <div className="relative z-10 p-6 sm:p-8">
-                <span className="text-xs uppercase font-mono tracking-widest text-red-400 font-semibold block mb-1">
-                  Aluna Bia • Cotovelada Cortante (Sok)
-                </span>
                 <h4 className="font-fight text-2xl sm:text-3xl text-white uppercase leading-tight">
                   Técnica sem agressividade cega
                 </h4>
