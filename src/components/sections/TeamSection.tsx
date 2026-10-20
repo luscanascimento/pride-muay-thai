@@ -56,6 +56,9 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
     return counts;
   }, []);
 
+  const leaderProfessor = useMemo(() => PROFESSORS_DATA.find((p) => p.isLeader), []);
+  const otherProfessors = useMemo(() => PROFESSORS_DATA.filter((p) => !p.isLeader), []);
+
   const displayedProfessors = useMemo(() => {
     if (selectedKhan === null) return PROFESSORS_DATA;
     return PROFESSORS_DATA.filter((p) => p.khan === selectedKhan);
@@ -79,6 +82,193 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
         targetElement.classList.remove('ring-2', 'ring-red-500', 'ring-offset-2', 'ring-offset-black');
       }, 2500);
     }
+  };
+
+  const renderProfessorCard = (prof: typeof PROFESSORS_DATA[0], isSpotlight = false) => {
+    const gyms = getGymsForProfessor(prof.gymIds);
+    const rank = getKhanRank(prof.khan);
+    const isSpecialHighlight = isSpotlight || prof.isLeader;
+
+    return (
+      <article
+        key={prof.id}
+        id={`professor-${prof.id}`}
+        className={`flex flex-col h-full rounded-2xl bg-gradient-to-b from-[#131318] via-[#0f0f13] to-[#0a0a0d] border ${
+          isSpecialHighlight
+            ? 'border-red-600/70 shadow-[0_0_30px_rgba(220,38,38,0.22)] ring-1 ring-red-500/40 hover:border-red-400'
+            : 'border-zinc-800 hover:border-red-600/60'
+        } shadow-xl hover:shadow-2xl transition-all duration-300 group overflow-hidden focus-within:ring-2 focus-within:ring-red-500`}
+      >
+        {/* Photo container with strictly standardized aspect ratio */}
+        <div className="relative w-full aspect-[4/5] bg-zinc-950 overflow-hidden flex-shrink-0">
+          <img
+            src={prof.photoUrl}
+            alt={`Foto do professor ${prof.name}${prof.nickname ? ` (${prof.nickname})` : ''}`}
+            loading="lazy"
+            decoding="async"
+            style={{ objectPosition: prof.photoPosition || 'center 15%' }}
+            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+          />
+
+          {/* Gradient overlays for contrast and elegance */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f13] via-transparent to-black/40 pointer-events-none" />
+
+          {/* Thai decorative border line on image base */}
+          <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-red-600/70 to-transparent" />
+
+          {/* Khan Prajied badge on top-left of photo */}
+          <div className="absolute top-2.5 left-2.5 z-10">
+            <PrajiedBadge level={prof.khan} showRankTitle={false} size="sm" />
+          </div>
+
+          {/* Nickname or Leader pill on bottom-right of photo */}
+          {prof.isLeader ? (
+            <div className="absolute bottom-2.5 right-2.5 z-10">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded text-white font-fight text-[11px] sm:text-xs tracking-wider uppercase shadow-lg border border-red-400/60 bg-gradient-to-r from-red-600 to-red-700 shadow-red-600/30 backdrop-blur-sm">
+                <Crown size={11} className="text-yellow-400" />
+                LÍDER • {prof.nickname || prof.name}
+              </span>
+            </div>
+          ) : prof.nickname ? (
+            <div className="absolute bottom-2.5 right-2.5 z-10">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded text-white font-fight text-[11px] sm:text-xs tracking-wider uppercase shadow-lg border border-red-400/40 bg-red-600/90 backdrop-blur-sm">
+                <Award size={11} />
+                {prof.nickname}
+              </span>
+            </div>
+          ) : null}
+        </div>
+
+        {/* Card Content - standardized flex distribution */}
+        <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+          <div>
+            {/* Professor name & title */}
+            <div className="mb-3">
+              <h3 className="font-fight text-xl sm:text-2xl text-white uppercase tracking-wide group-hover:text-red-400 transition-colors leading-tight">
+                {prof.name}
+                {prof.nickname && (
+                  <span className="text-red-500 ml-1.5 text-lg sm:text-xl font-normal">
+                    ({prof.nickname})
+                  </span>
+                )}
+              </h3>
+
+              <div className="mt-1 flex items-center justify-between gap-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-red-400 font-semibold block">
+                  {prof.roleTitle}
+                </span>
+              </div>
+
+              {/* Khan subtle rank subtitle */}
+              <div className="mt-1 flex items-center gap-1.5 text-[11px] font-mono text-zinc-400">
+                <span 
+                  className="w-2 h-2 rounded-full inline-block flex-shrink-0" 
+                  style={{ backgroundColor: rank.primaryColor === '#18181b' ? '#71717a' : rank.primaryColor }} 
+                />
+                <span>{rank.level}º Khan • {rank.colorName}</span>
+              </div>
+            </div>
+
+            {/* Bio snippet */}
+            {prof.bio && (
+              <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-3">
+                {prof.bio}
+              </p>
+            )}
+          </div>
+
+          {/* Associated Academies / Leadership Scope */}
+          <div className="pt-3 border-t border-zinc-800/80 mt-auto">
+            {prof.isLeader ? (
+              <div>
+                <span className="text-[11px] font-mono uppercase tracking-widest text-red-400 font-semibold flex items-center gap-1.5 mb-2">
+                  <Shield size={12} className="text-red-500" />
+                  Liderança & Coordenação:
+                </span>
+                <div className="p-2.5 rounded-lg bg-red-950/30 border border-red-900/40 text-xs text-zinc-300 mb-2">
+                  <p className="text-[11px] text-zinc-400 leading-snug">
+                    Supervisão técnica, formação de professores e graduação em todas as unidades do Vale do Paraíba.
+                  </p>
+                </div>
+                <a
+                  href="#onde-treinar"
+                  className="w-full inline-flex items-center justify-between px-2.5 py-1.5 rounded-md bg-zinc-900/90 border border-zinc-800/80 hover:border-red-600/70 hover:bg-red-950/30 text-zinc-300 hover:text-white text-xs transition-colors group/gym"
+                >
+                  <span className="truncate font-medium">Ver unidades da equipe</span>
+                  <ChevronRight size={13} className="text-zinc-500 group-hover/gym:text-red-400 group-hover/gym:translate-x-0.5 transition-all flex-shrink-0 ml-1" />
+                </a>
+              </div>
+            ) : gyms.length > 0 ? (
+              <div>
+                <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-semibold flex items-center gap-1.5 mb-2.5">
+                  <MapPin size={12} className="text-red-500" />
+                  Onde ministra aulas:
+                </span>
+
+                <ul className="flex flex-col gap-1.5" aria-label={`Academias onde ${prof.name} dá aula`}>
+                  {gyms.map((gym) => (
+                    <li key={gym.id}>
+                      <a
+                        href={`#gym-card-${gym.id}`}
+                        onClick={(e) => handleGymClick(e, gym.id)}
+                        className="w-full inline-flex items-center justify-between px-2.5 py-1.5 rounded-md bg-zinc-900/90 border border-zinc-800/80 hover:border-red-600/70 hover:bg-red-950/30 text-zinc-300 hover:text-white text-xs transition-colors group/gym"
+                        title={`Ver horários e contato de ${gym.name}`}
+                      >
+                        <span className="truncate font-medium">{gym.name}</span>
+                        <ChevronRight size={13} className="text-zinc-500 group-hover/gym:text-red-400 group-hover/gym:translate-x-0.5 transition-all flex-shrink-0 ml-1" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div>
+                <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-semibold flex items-center gap-1.5 mb-1.5">
+                  <Shield size={12} className="text-red-500" />
+                  Corpo Docente Pride:
+                </span>
+                <div className="p-2 rounded-md bg-zinc-900/60 border border-zinc-800/80 text-[11px] text-zinc-400 leading-snug">
+                  Instrutor atuante na preparação física e técnica da equipe.
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Ações do Professor: Contato Direto & Ver mais... */}
+          <div className="pt-3 border-t border-zinc-800/80 mt-3 space-y-2">
+            {prof.phoneRaw && (
+              <a
+                href={getProfessorWhatsAppUrl(prof)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-emerald-600/90 hover:bg-emerald-500 border border-emerald-500/60 hover:border-emerald-400 text-white text-xs font-semibold tracking-wider uppercase transition-all shadow-sm group/wpp"
+                aria-label={`Conversar no WhatsApp com o professor ${prof.name}`}
+              >
+                <MessageCircle size={14} className="text-white group-hover/wpp:scale-110 transition-transform" />
+                <span>WhatsApp: {prof.phoneDisplay}</span>
+              </a>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onViewProfessor) {
+                  onViewProfessor(prof.id);
+                } else {
+                  window.location.hash = `#/professores/${prof.id}`;
+                }
+              }}
+              className="w-full inline-flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-zinc-900/90 hover:bg-red-600 text-zinc-300 hover:text-white border border-zinc-800 hover:border-red-500 text-xs font-semibold tracking-wider uppercase transition-all duration-200 group/btn shadow-sm"
+              aria-label={`Ver mais sobre o professor ${prof.name}`}
+            >
+              <span>Ver mais...</span>
+              <ArrowRight size={13} className="text-red-400 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-transform" />
+            </button>
+          </div>
+
+        </div>
+      </article>
+    );
   };
 
   return (
@@ -176,194 +366,55 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectGym, onViewPro
               </div>
             )}
 
-            {/* Standardized Professors Grid: 4 columns on large screens */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch">
-              {displayedProfessors.map((prof) => {
-                const gyms = getGymsForProfessor(prof.gymIds);
-                const rank = getKhanRank(prof.khan);
-
-                return (
-                  <article
-                    key={prof.id}
-                    id={`professor-${prof.id}`}
-                    className={`flex flex-col h-full rounded-2xl bg-gradient-to-b from-[#131318] via-[#0f0f13] to-[#0a0a0d] border ${
-                      prof.isLeader
-                        ? 'border-red-900/80 shadow-red-950/40 ring-1 ring-red-500/30 hover:border-red-500'
-                        : 'border-zinc-800 hover:border-red-600/60'
-                    } shadow-xl hover:shadow-2xl transition-all duration-300 group overflow-hidden focus-within:ring-2 focus-within:ring-red-500`}
-                  >
-                    {/* Photo container with strictly standardized aspect ratio */}
-                    <div className="relative w-full aspect-[4/5] bg-zinc-950 overflow-hidden flex-shrink-0">
-                      <img
-                        src={prof.photoUrl}
-                        alt={`Foto do professor ${prof.name}${prof.nickname ? ` (${prof.nickname})` : ''}`}
-                        loading="lazy"
-                        decoding="async"
-                        style={{ objectPosition: prof.photoPosition || 'center 15%' }}
-                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                      />
-
-                      {/* Gradient overlays for contrast and elegance */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f13] via-transparent to-black/40 pointer-events-none" />
-
-                      {/* Thai decorative border line on image base */}
-                      <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-red-600/70 to-transparent" />
-
-                      {/* Khan Prajied badge on top-left of photo */}
-                      <div className="absolute top-2.5 left-2.5 z-10">
-                        <PrajiedBadge level={prof.khan} showRankTitle={false} size="sm" />
-                      </div>
-
-                      {/* Nickname or Leader pill on bottom-right of photo */}
-                      {prof.isLeader ? (
-                        <div className="absolute bottom-2.5 right-2.5 z-10">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded text-white font-fight text-[11px] sm:text-xs tracking-wider uppercase shadow-lg border border-red-400/60 bg-gradient-to-r from-red-600 to-red-700 shadow-red-600/30 backdrop-blur-sm">
-                            <Crown size={11} className="text-yellow-400" />
-                            LÍDER • {prof.nickname || prof.name}
-                          </span>
-                        </div>
-                      ) : prof.nickname ? (
-                        <div className="absolute bottom-2.5 right-2.5 z-10">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded text-white font-fight text-[11px] sm:text-xs tracking-wider uppercase shadow-lg border border-red-400/40 bg-red-600/90 backdrop-blur-sm">
-                            <Award size={11} />
-                            {prof.nickname}
-                          </span>
-                        </div>
-                      ) : null}
+            {/* Filtered View: When a specific Khan is selected */}
+            {selectedKhan !== null ? (
+              displayedProfessors.length === 1 ? (
+                <div className="flex justify-center max-w-sm sm:max-w-md mx-auto">
+                  {renderProfessorCard(displayedProfessors[0])}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch">
+                  {displayedProfessors.map((prof) => renderProfessorCard(prof))}
+                </div>
+              )
+            ) : (
+              /* Default View: Leader Spotlight (Renan) centered at top, followed by 12 instructors in perfect 4-column grid */
+              <div className="space-y-12">
+                {/* 1. Leader Spotlight (Renan Hulkinho) */}
+                {leaderProfessor && (
+                  <div className="flex flex-col items-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-red-950/80 via-red-900/60 to-red-950/80 border border-red-500/50 text-red-300 text-xs font-mono uppercase tracking-widest mb-4 font-bold shadow-lg shadow-red-950/50">
+                      <Crown size={15} className="text-yellow-400" />
+                      <span>Liderança Técnica & Fundador da Pride</span>
                     </div>
 
-                    {/* Card Content - standardized flex distribution */}
-                    <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-                      <div>
-                        {/* Professor name & title */}
-                        <div className="mb-3">
-                          <h3 className="font-fight text-xl sm:text-2xl text-white uppercase tracking-wide group-hover:text-red-400 transition-colors leading-tight">
-                            {prof.name}
-                            {prof.nickname && (
-                              <span className="text-red-500 ml-1.5 text-lg sm:text-xl font-normal">
-                                ({prof.nickname})
-                              </span>
-                            )}
-                          </h3>
-
-                          <div className="mt-1 flex items-center justify-between gap-2">
-                            <span className="text-xs font-mono uppercase tracking-wider text-red-400 font-semibold block">
-                              {prof.roleTitle}
-                            </span>
-                          </div>
-
-                          {/* Khan subtle rank subtitle */}
-                          <div className="mt-1 flex items-center gap-1.5 text-[11px] font-mono text-zinc-400">
-                            <span 
-                              className="w-2 h-2 rounded-full inline-block flex-shrink-0" 
-                              style={{ backgroundColor: rank.primaryColor === '#18181b' ? '#71717a' : rank.primaryColor }} 
-                            />
-                            <span>{rank.level}º Khan • {rank.colorName}</span>
-                          </div>
-                        </div>
-
-                        {/* Bio snippet */}
-                        {prof.bio && (
-                          <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-3">
-                            {prof.bio}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Associated Academies / Leadership Scope */}
-                      <div className="pt-3 border-t border-zinc-800/80 mt-auto">
-                        {prof.isLeader ? (
-                          <div>
-                            <span className="text-[11px] font-mono uppercase tracking-widest text-red-400 font-semibold flex items-center gap-1.5 mb-2">
-                              <Shield size={12} className="text-red-500" />
-                              Liderança & Coordenação:
-                            </span>
-                            <div className="p-2.5 rounded-lg bg-red-950/30 border border-red-900/40 text-xs text-zinc-300 mb-2">
-                              <p className="text-[11px] text-zinc-400 leading-snug">
-                                Supervisão técnica, formação de professores e graduação em todas as unidades do Vale do Paraíba.
-                              </p>
-                            </div>
-                            <a
-                              href="#onde-treinar"
-                              className="w-full inline-flex items-center justify-between px-2.5 py-1.5 rounded-md bg-zinc-900/90 border border-zinc-800/80 hover:border-red-600/70 hover:bg-red-950/30 text-zinc-300 hover:text-white text-xs transition-colors group/gym"
-                            >
-                              <span className="truncate font-medium">Ver unidades da equipe</span>
-                              <ChevronRight size={13} className="text-zinc-500 group-hover/gym:text-red-400 group-hover/gym:translate-x-0.5 transition-all flex-shrink-0 ml-1" />
-                            </a>
-                          </div>
-                        ) : gyms.length > 0 ? (
-                          <div>
-                            <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-semibold flex items-center gap-1.5 mb-2.5">
-                              <MapPin size={12} className="text-red-500" />
-                              Onde ministra aulas:
-                            </span>
-
-                            <ul className="flex flex-col gap-1.5" aria-label={`Academias onde ${prof.name} dá aula`}>
-                              {gyms.map((gym) => (
-                                <li key={gym.id}>
-                                  <a
-                                    href={`#gym-card-${gym.id}`}
-                                    onClick={(e) => handleGymClick(e, gym.id)}
-                                    className="w-full inline-flex items-center justify-between px-2.5 py-1.5 rounded-md bg-zinc-900/90 border border-zinc-800/80 hover:border-red-600/70 hover:bg-red-950/30 text-zinc-300 hover:text-white text-xs transition-colors group/gym"
-                                    title={`Ver horários e contato de ${gym.name}`}
-                                  >
-                                    <span className="truncate font-medium">{gym.name}</span>
-                                    <ChevronRight size={13} className="text-zinc-500 group-hover/gym:text-red-400 group-hover/gym:translate-x-0.5 transition-all flex-shrink-0 ml-1" />
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ) : (
-                          <div>
-                            <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 font-semibold flex items-center gap-1.5 mb-1.5">
-                              <Shield size={12} className="text-red-500" />
-                              Corpo Docente Pride:
-                            </span>
-                            <div className="p-2 rounded-md bg-zinc-900/60 border border-zinc-800/80 text-[11px] text-zinc-400 leading-snug">
-                              Instrutor atuante na preparação física e técnica da equipe.
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Ações do Professor: Contato Direto & Ver mais... */}
-                      <div className="pt-3 border-t border-zinc-800/80 mt-3 space-y-2">
-                        {prof.phoneRaw && (
-                          <a
-                            href={getProfessorWhatsAppUrl(prof)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-emerald-600/90 hover:bg-emerald-500 border border-emerald-500/60 hover:border-emerald-400 text-white text-xs font-semibold tracking-wider uppercase transition-all shadow-sm group/wpp"
-                            aria-label={`Conversar no WhatsApp com o professor ${prof.name}`}
-                          >
-                            <MessageCircle size={14} className="text-white group-hover/wpp:scale-110 transition-transform" />
-                            <span>WhatsApp: {prof.phoneDisplay}</span>
-                          </a>
-                        )}
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (onViewProfessor) {
-                              onViewProfessor(prof.id);
-                            } else {
-                              window.location.hash = `#/professores/${prof.id}`;
-                            }
-                          }}
-                          className="w-full inline-flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-zinc-900/90 hover:bg-red-600 text-zinc-300 hover:text-white border border-zinc-800 hover:border-red-500 text-xs font-semibold tracking-wider uppercase transition-all duration-200 group/btn shadow-sm"
-                          aria-label={`Ver mais sobre o professor ${prof.name}`}
-                        >
-                          <span>Ver mais...</span>
-                          <ArrowRight size={13} className="text-red-400 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-transform" />
-                        </button>
-                      </div>
-
+                    <div className="w-full max-w-sm sm:max-w-md">
+                      {renderProfessorCard(leaderProfessor, true)}
                     </div>
-                  </article>
-                );
-              })}
-            </div>
+                  </div>
+                )}
+
+                {/* 2. Section Subtitle for Team Instructors (Exact 12 members = 3 complete rows of 4) */}
+                <div className="pt-6 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+                  <div>
+                    <span className="text-[11px] font-mono uppercase tracking-widest text-red-400 font-bold block mb-1">
+                      Corpo Docente & Graduados
+                    </span>
+                    <h3 className="font-fight text-2xl sm:text-3xl text-white uppercase tracking-wide">
+                      Professores & Instrutores da Equipe
+                    </h3>
+                  </div>
+                  <span className="text-xs font-mono text-zinc-400 bg-zinc-900/90 px-3.5 py-1.5 rounded-lg border border-zinc-800">
+                    {otherProfessors.length} Instrutores no Vale do Paraíba
+                  </span>
+                </div>
+
+                {/* 3. The 12 Professors in a perfectly balanced 4-column grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch">
+                  {otherProfessors.map((prof) => renderProfessorCard(prof))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
