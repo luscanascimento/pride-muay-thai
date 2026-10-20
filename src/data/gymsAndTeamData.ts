@@ -49,14 +49,16 @@ export const GYMS_DATA: Gym[] = [
   {
     id: 'arena-viking-itamaraty',
     name: 'Arena Viking Parque Itamaraty',
+    alias: 'Arena Viking - Pq. Itamaraty',
     city: 'Jacareí',
     address: 'Rua Carlos de Campos, 297 — Parque Itamaraty, Jacareí - SP',
-    cep: '12307-380',
+    cep: '12307-430',
     coordinates: { lat: -23.2974496, lng: -45.9530053 },
     phoneDisplay: '(12) 99727-2501',
     phoneRaw: '5512997272501',
     schedules: [
-      { days: 'Segunda e quarta', hours: '19h20' },
+      { days: 'Segunda e quarta', hours: '8h30 e 19h20' },
+      { days: 'Terça e quinta', hours: '14h30' },
     ],
   },
   {
@@ -157,15 +159,18 @@ export const GYMS_DATA: Gym[] = [
   },
   {
     id: 'unciclo',
-    name: 'Unciclo',
-    city: 'Vale do Paraíba',
-    address: null,
-    coordinates: null,
-    phoneDisplay: null,
-    phoneRaw: null,
-    schedules: [],
-    notes: 'Unidade vinculada ao professor Pedro. Horários e contatos em processo de confirmação.',
-    isPending: true,
+    name: 'Academia Uniclo',
+    alias: 'Uniclo',
+    city: 'São José dos Campos',
+    address: 'R. Manoel Joaquim de Oliveira, 372 — Monte Castelo, São José dos Campos - SP',
+    cep: '12215-090',
+    coordinates: { lat: -23.1857366, lng: -45.8740607 },
+    phoneDisplay: '(12) 99686-7147',
+    phoneRaw: '5512996867147',
+    schedules: [
+      { days: 'Segunda e quarta', hours: '19h30' },
+    ],
+    notes: 'Unidade no bairro Monte Castelo com turmas às segundas e quartas.',
   },
 ];
 
@@ -636,13 +641,13 @@ export const PROFESSORS_DATA: Professor[] = [
     bio: 'Entusiasta da energia marcial e do trabalho de clinch e manoplas, auxiliando os alunos a desenvolverem força física e mental constante.',
     storyTitle: 'Pedro | Professor de Muay Thai',
     storyParagraphs: [
-      'Com energia contagiante e paixão vibrante pelo esporte, o Professor Pedro dedica-se à formação de novos talentos e ao desenvolvimento de praticantes na Arena Viking Parque Itamaraty e Unciclo.',
+      'Com energia contagiante e paixão vibrante pelo esporte, o Professor Pedro dedica-se à formação de novos talentos e ao desenvolvimento de praticantes na Arena Viking Parque Itamaraty e na Academia Uniclo.',
       'Especialista na intensidade das manoplas, na cadência de combinações e no estudo das posições de clinch, Pedro busca extrair a melhor performance física e mental de cada aluno.',
       'Para ele, o treino é um momento sagrado de renovação de energias, onde o esforço coletivo empurra cada praticante para além dos seus supostos limites.',
       'Sua metodologia incentiva a camaradagem, a escuta atenta aos princípios do Muay Thai e o cultivo de hábitos saudáveis que perduram para a vida inteira.',
     ],
     quote: 'A intensidade que você entrega ao tatame se transforma na energia que move a sua vida lá fora.',
-    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Energia & Dinâmica', 'Clinch & Manoplas', 'Viking Itamaraty & Unciclo'],
+    highlightBadges: ['7º Khan • Azul Ponta Branca', 'Energia & Dinâmica', 'Clinch & Manoplas', 'Viking Itamaraty & Academia Uniclo'],
   },
   {
     id: 'rick-netto',
