@@ -469,7 +469,7 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     quote: 'A disciplina forjada no tatame é a força que te mantém firme em qualquer desafio da vida. Respeito, dedicação e evolução contínua.',
     highlightBadges: ['11º Khan • Vermelha Ponta Branca', 'Academia Calasans Camargo', 'São José dos Campos', 'Técnica & Disciplina', 'Evolução Contínua'],
-    photoPosition: 'center 10%',
+    photoPosition: 'center 45%',
   },
   {
     id: 'rafael-lobinho',
