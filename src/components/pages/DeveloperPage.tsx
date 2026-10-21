@@ -87,7 +87,7 @@ export const DeveloperPage: React.FC<DeveloperPageProps> = ({ onBack }) => {
               <img
                 src={photoUrl}
                 alt="Fotografia de Lucas Gabriel Ferreira do Nascimento"
-                style={{ objectPosition: '54% center' }}
+                style={{ objectPosition: '63% center' }}
                 className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 onError={(e) => {
                   // Fallback to original JPG if jpeg fails
