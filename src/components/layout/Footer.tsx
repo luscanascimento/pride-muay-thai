@@ -30,7 +30,7 @@ export const Footer: React.FC = () => {
                   PRIDE <span className="text-red-500">MUAY THAI</span>
                 </span>
                 <span className="text-xs uppercase font-mono tracking-widest text-zinc-400 mt-0.5">
-                  {BRAND.coach}
+                  {BRAND.subtitle}
                 </span>
               </div>
             </div>

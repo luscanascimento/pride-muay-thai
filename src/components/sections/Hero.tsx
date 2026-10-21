@@ -36,10 +36,10 @@ export const Hero: React.FC = () => {
             PRIDE <span className="text-red-600 text-glow-red block sm:inline">MUAY THAI</span>
           </h1>
 
-          {/* Coach & Subtitle */}
+          {/* Subtitle */}
           <div className="mt-2 sm:mt-3 flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3">
             <span className="font-condensed text-lg sm:text-2xl font-bold uppercase tracking-widest text-zinc-300">
-              {BRAND.coach}
+              {BRAND.subtitle}
             </span>
             <span className="h-4 w-[1px] bg-zinc-700 hidden sm:inline-block" />
             <span className="text-xs sm:text-sm font-medium uppercase tracking-wider text-red-400/90 hidden sm:inline-block">

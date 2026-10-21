@@ -1,5 +1,6 @@
 export const BRAND = {
   name: "PRIDE MUAY THAI",
+  subtitle: "Fight Team",
   coach: "Renan Hulkinho",
   tagline: "Tradição. Técnica. Disciplina.",
   subtagline: "Treine com uma das maiores equipes do Vale do Paraíba em Jacareí, São José dos Campos e Santa Branca.",

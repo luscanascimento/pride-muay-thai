@@ -51,7 +51,7 @@ export const Header: React.FC = () => {
               PRIDE <span className="text-red-500">MUAY THAI</span>
             </span>
             <span className="text-[9px] sm:text-[11px] font-medium tracking-widest text-zinc-400 uppercase leading-tight mt-0.5">
-              {BRAND.coach}
+              {BRAND.subtitle}
             </span>
           </div>
         </a>

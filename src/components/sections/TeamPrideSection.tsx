@@ -28,7 +28,7 @@ export const TeamPrideSection: React.FC = () => {
                   {BRAND.name}
                 </span>
                 <span className="text-xs uppercase font-mono tracking-widest text-red-500 font-semibold">
-                  {BRAND.coach}
+                  {BRAND.subtitle}
                 </span>
               </div>
             </div>
