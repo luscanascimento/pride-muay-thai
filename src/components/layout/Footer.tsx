@@ -86,9 +86,7 @@ export const Footer: React.FC = () => {
             <p className="text-zinc-400">
               Site desenvolvido por:{' '}
               <a
-                href="https://github.com/luscanascimento"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#/desenvolvedor"
                 className="text-zinc-400 hover:text-zinc-200 transition-colors underline decoration-zinc-700/60 hover:decoration-red-500 underline-offset-4"
               >
                 Lucas Nascimento

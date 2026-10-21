@@ -17,16 +17,26 @@ import { LocationsSection } from './components/sections/LocationsSection';
 import { ContactCtaSection } from './components/sections/ContactCtaSection';
 import { WhatsAppFloat } from './components/ui/WhatsAppFloat';
 import { ProfessorDetailPage } from './components/pages/ProfessorDetailPage';
+import { DeveloperPage } from './components/pages/DeveloperPage';
 import { getProfessorById } from './data/gymsAndTeamData';
 
 export const App: React.FC = () => {
   const [selectedGymId, setSelectedGymId] = useState<string | null>(null);
   const [currentProfessorId, setCurrentProfessorId] = useState<string | null>(null);
+  const [isDeveloperPage, setIsDeveloperPage] = useState<boolean>(false);
 
   // Sync routing with window.location.hash (GitHub Pages compatible)
   useEffect(() => {
     const parseHashRoute = () => {
       const hash = window.location.hash;
+
+      if (hash === '#/desenvolvedor' || hash === '#/lucas-nascimento' || hash === '#/dev') {
+        setIsDeveloperPage(true);
+        setCurrentProfessorId(null);
+        return;
+      }
+      setIsDeveloperPage(false);
+
       const match = hash.match(/^#\/(?:professores|professor)\/([a-zA-Z0-9_-]+)/);
       if (match && match[1]) {
         const profId = match[1];
@@ -72,6 +82,12 @@ export const App: React.FC = () => {
     }, 60);
   }, []);
 
+  const handleBackToHome = useCallback(() => {
+    setIsDeveloperPage(false);
+    window.location.hash = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const selectedProfessor = currentProfessorId ? getProfessorById(currentProfessorId) : undefined;
 
   return (
@@ -81,7 +97,9 @@ export const App: React.FC = () => {
         <Header />
         
         <main id="main-content" tabIndex={-1} className="focus:outline-none overflow-x-hidden w-full max-w-full">
-          {selectedProfessor ? (
+          {isDeveloperPage ? (
+            <DeveloperPage onBack={handleBackToHome} />
+          ) : selectedProfessor ? (
             <ProfessorDetailPage
               professor={selectedProfessor}
               onBack={handleBackToTeam}

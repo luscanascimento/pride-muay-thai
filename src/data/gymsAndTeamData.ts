@@ -234,7 +234,19 @@ export const KHAN_RANKS_DATA: Record<number, KhanRank> = {
 };
 
 export function getKhanRank(level: number): KhanRank {
-  return KHAN_RANKS_DATA[level] || {
+  if (KHAN_RANKS_DATA[level]) return KHAN_RANKS_DATA[level];
+  const found = ALL_KHANS_SYSTEM.find((k) => k.level === level);
+  if (found) {
+    return {
+      level: found.level,
+      title: found.title,
+      colorName: found.colorName,
+      primaryColor: found.primaryColor,
+      tipColor: found.tipColor,
+      description: found.description,
+    };
+  }
+  return {
     level,
     title: 'Graduado',
     colorName: 'Graduação Pride',
