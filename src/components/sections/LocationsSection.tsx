@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   MapPin,
   Clock,
@@ -55,11 +55,27 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
     }
   };
 
-  // Filter gyms based on selected city tab
-  const filteredGyms = GYMS_DATA.filter((gym) => {
-    if (selectedCity === 'todas') return true;
-    return gym.city === selectedCity;
-  });
+  // Filter gyms based on selected city tab with Arena Viking Santa Maria & São João prioritized first in Jacareí
+  const filteredGyms = useMemo(() => {
+    const list = GYMS_DATA.filter((gym) => {
+      if (selectedCity === 'todas') return true;
+      return gym.city === selectedCity;
+    });
+
+    if (selectedCity === 'Jacareí') {
+      const priorityIds = ['arena-viking-santa-maria', 'arena-viking-sao-joao'];
+      return [...list].sort((a, b) => {
+        const indexA = priorityIds.indexOf(a.id);
+        const indexB = priorityIds.indexOf(b.id);
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        return 0;
+      });
+    }
+
+    return list;
+  }, [selectedCity]);
 
   const cityCounts = {
     todas: GYMS_DATA.length,
