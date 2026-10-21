@@ -58,7 +58,7 @@ export const TigerEmblem: React.FC<TigerEmblemProps> = ({
 
         <img
           src={prideLogoCutout}
-          alt="Pride Muay Thai — Tigres Sak Yant Renan Hulkinho"
+          alt="Pride Muay Thai Fight Team — Tigres Sak Yant"
           className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.8)]"
           loading="eager"
           decoding="async"

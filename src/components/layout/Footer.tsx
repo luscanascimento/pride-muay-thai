@@ -81,7 +81,7 @@ export const Footer: React.FC = () => {
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left">
-            <p>© {new Date().getFullYear()} {BRAND.name} • {BRAND.coach}. Todos os direitos reservados.</p>
+            <p>© {new Date().getFullYear()} {BRAND.name} {BRAND.subtitle}. Todos os direitos reservados.</p>
             <span className="hidden sm:inline text-zinc-700">•</span>
             <p className="text-zinc-400">
               Site desenvolvido por:{' '}
