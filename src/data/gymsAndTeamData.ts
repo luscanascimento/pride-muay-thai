@@ -30,6 +30,19 @@ export const GYMS_DATA: Gym[] = [
     ],
   },
   {
+    id: 'arena-41-old-school',
+    name: 'Arena 41 Old School (Trianon)',
+    city: 'Jacareí',
+    address: 'Av. Japão, 250 — Jardim Marister, Jacareí - SP',
+    cep: '12321-820',
+    coordinates: { lat: -23.3054589, lng: -45.9798231 },
+    phoneDisplay: '(12) 99132-0006',
+    phoneRaw: '5512991320006',
+    schedules: [
+      { days: 'Terça e quinta', hours: '17h30' },
+    ],
+  },
+  {
     id: 'calasans-camargo',
     name: 'Academia Calasans Camargo',
     city: 'São José dos Campos',
@@ -130,19 +143,6 @@ export const GYMS_DATA: Gym[] = [
       { days: 'Sábado', hours: '7h e 8h30' },
     ],
     notes: 'Aulas de sábado com foco em expansão da modalidade e desenvolvimento comunitário.',
-  },
-  {
-    id: 'arena-41-old-school',
-    name: 'Arena 41 Old School (Trianon)',
-    city: 'Jacareí',
-    address: 'Av. Japão, 250 — Jardim Marister, Jacareí - SP',
-    cep: '12321-820',
-    coordinates: { lat: -23.3054589, lng: -45.9798231 },
-    phoneDisplay: '(12) 99132-0006',
-    phoneRaw: '5512991320006',
-    schedules: [
-      { days: 'Terça e quinta', hours: '17h30' },
-    ],
   },
   {
     id: 'arena-muv',

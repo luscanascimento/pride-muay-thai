@@ -63,7 +63,7 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
     });
 
     if (selectedCity === 'Jacareí') {
-      const priorityIds = ['arena-viking-santa-maria', 'arena-viking-sao-joao'];
+      const priorityIds = ['arena-viking-santa-maria', 'arena-viking-sao-joao', 'arena-41-old-school'];
       return [...list].sort((a, b) => {
         const indexA = priorityIds.indexOf(a.id);
         const indexB = priorityIds.indexOf(b.id);
