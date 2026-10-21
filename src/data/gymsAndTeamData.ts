@@ -602,7 +602,7 @@ export const PROFESSORS_DATA: Professor[] = [
     ],
     quote: 'Ensinar aquilo que aprendi lá atrás, pra mim, é transformar pessoas, formar caráter, criar disciplina e também salvar vidas, porque é isso que a família Pride Muay Thai faz: tornar seres humanos melhores.',
     highlightBadges: ['8º Khan • Marrom', 'Trajetória desde 2007', 'Na Pride desde 2015', 'Leciona desde 2019', 'Transformando Vidas'],
-    photoPosition: 'center 15%',
+    photoPosition: 'center 25%',
   },
   {
     id: 'augusto',
