@@ -4,7 +4,7 @@ import { generateSlug } from '../src/utils/slug';
 import { ALL_KHANS_SYSTEM, isValidKhan } from '../src/constants/khans';
 
 test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () => {
-  test('o canal do YouTube possui link oficial, atributos de segurança e acessibilidade no rodapé e cabeçalho', async ({
+  test('o canal do YouTube possui link oficial, atributos de segurança e acessibilidade no rodapé e na seção de contato', async ({
     page,
   }) => {
     await page.goto('/');
@@ -16,11 +16,12 @@ test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () =
     await expect(footerYtLink).toHaveAttribute('rel', 'noopener noreferrer');
     await expect(footerYtLink).toHaveAttribute('aria-label', /YouTube.*@pridemuaythaifighter/);
 
-    // Link do YouTube no Header Desktop
-    const headerYtLink = page.locator('header a[href="https://www.youtube.com/@pridemuaythaifighter"]').first();
-    await expect(headerYtLink).toBeAttached();
-    await expect(headerYtLink).toHaveAttribute('target', '_blank');
-    await expect(headerYtLink).toHaveAttribute('rel', 'noopener noreferrer');
+    // Link do YouTube na seção de Contato junto com o Instagram
+    const contactYtLink = page.locator('#contato a[href="https://www.youtube.com/@pridemuaythaifighter"]').first();
+    await expect(contactYtLink).toBeAttached();
+    await expect(contactYtLink).toHaveAttribute('target', '_blank');
+    await expect(contactYtLink).toHaveAttribute('rel', 'noopener noreferrer');
+    await expect(contactYtLink).toHaveAttribute('aria-label', /YouTube.*@pridemuaythaifighter/);
   });
 });
 

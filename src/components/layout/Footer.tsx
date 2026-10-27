@@ -10,12 +10,12 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="relative bg-[#050507] border-t border-zinc-900 pt-16 pb-12 px-4 sm:px-6 lg:px-8 text-zinc-400 overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-zinc-800/80 items-start">
+    <footer className="relative bg-[#050507] border-t border-zinc-900 pt-16 pb-12 text-zinc-400 overflow-hidden">
+      <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 pb-12 border-b border-zinc-800/80 items-start">
           
           {/* Brand Column */}
-          <div className="md:col-span-6 flex flex-col items-start gap-4">
+          <div className="md:col-span-6 lg:col-span-5 flex flex-col items-start gap-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 flex-shrink-0">
                 <img
@@ -35,13 +35,13 @@ export const Footer: React.FC = () => {
               </div>
             </div>
 
-            <p className="text-sm text-zinc-400 max-w-sm leading-relaxed mt-1">
+            <p className="text-sm text-zinc-400 max-w-md leading-relaxed mt-1">
               Tradição, técnica, disciplina e respeito. Treinos de Muay Thai autêntico no Vale do Paraíba.
             </p>
           </div>
 
           {/* Locations */}
-          <div className="md:col-span-3 flex flex-col gap-2">
+          <div className="md:col-span-3 lg:col-span-4 flex flex-col gap-2">
             <span className="font-fight text-lg text-white uppercase tracking-wider mb-2">
               Atividades
             </span>
@@ -54,7 +54,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Direct Channels */}
-          <div className="md:col-span-3 flex flex-col gap-3">
+          <div className="md:col-span-3 lg:col-span-3 flex flex-col gap-3">
             <span className="font-fight text-lg text-white uppercase tracking-wider mb-1">
               Polos & Redes
             </span>

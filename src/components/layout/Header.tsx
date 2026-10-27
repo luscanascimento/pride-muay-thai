@@ -3,7 +3,6 @@ import { Menu, X, MapPin } from 'lucide-react';
 import { BRAND } from '../../constants/brand';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
 import { Button } from '../ui/Button';
-import { YoutubeIcon } from '../ui/Icons';
 import prideLogoCutout from '../../assets/pride-muay-thai-cutout.png';
 
 export const Header: React.FC = () => {
@@ -12,8 +11,6 @@ export const Header: React.FC = () => {
 
   const navLinks = [
     { label: 'Início', href: '#inicio' },
-    { label: 'A Arte', href: '#sobre-muay-thai' },
-    { label: '8 Armas', href: '#oito-armas' },
     { label: 'Benefícios', href: '#beneficios' },
     { label: 'O Treino', href: '#treino' },
     { label: 'Nossa Equipe', href: '#nossa-equipe' },
@@ -34,7 +31,7 @@ export const Header: React.FC = () => {
           : 'bg-gradient-to-b from-[#080809]/90 to-transparent py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 flex items-center justify-between">
         {/* Brand identity logo + text */}
         <a
           href="#inicio"
@@ -60,29 +57,20 @@ export const Header: React.FC = () => {
         </a>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6" aria-label="Navegação principal">
+        <nav className="hidden lg:flex items-center gap-2.5 xl:gap-4 2xl:gap-6" aria-label="Navegação principal">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="font-fight text-base xl:text-lg uppercase tracking-wider text-zinc-300 hover:text-white transition-colors relative py-1 hover:after:w-full after:w-0 after:h-[2px] after:bg-red-600 after:absolute after:bottom-0 after:left-0 after:transition-all whitespace-nowrap"
+              className="font-fight text-sm xl:text-base 2xl:text-lg uppercase tracking-wider text-zinc-300 hover:text-white transition-colors relative py-1 hover:after:w-full after:w-0 after:h-[2px] after:bg-red-600 after:absolute after:bottom-0 after:left-0 after:transition-all whitespace-nowrap"
             >
               {link.label}
             </a>
           ))}
         </nav>
 
-        {/* Desktop CTA Button & Social */}
+        {/* Desktop CTA Button */}
         <div className="hidden lg:flex items-center gap-3">
-          <a
-            href={BRAND.youtubeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Canal oficial da Pride Muay Thai no YouTube: ${BRAND.youtubeHandle} (abre em nova aba)`}
-            className="p-2 text-zinc-400 hover:text-red-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-sm"
-          >
-            <YoutubeIcon size={20} />
-          </a>
           <Button
             as="a"
             href="#onde-treinar"
@@ -123,17 +111,6 @@ export const Header: React.FC = () => {
                 {link.label}
               </a>
             ))}
-            <a
-              href={BRAND.youtubeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={closeMenu}
-              aria-label={`Canal oficial da Pride Muay Thai no YouTube: ${BRAND.youtubeHandle} (abre em nova aba)`}
-              className="font-fight text-2xl uppercase tracking-wider text-zinc-200 hover:text-red-500 py-2 border-b border-zinc-800/50 transition-colors flex items-center justify-center gap-2"
-            >
-              <YoutubeIcon size={22} className="text-red-500" />
-              YouTube
-            </a>
             <div className="pt-4 flex flex-col gap-3">
               <Button
                 as="a"

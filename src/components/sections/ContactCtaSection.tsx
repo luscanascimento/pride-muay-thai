@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapPin, ArrowUpRight, Flame } from 'lucide-react';
-import { InstagramIcon } from '../ui/Icons';
+import { InstagramIcon, YoutubeIcon } from '../ui/Icons';
 import { BRAND } from '../../constants/brand';
 import { Button } from '../ui/Button';
 import { TigerEmblem } from '../brand/TigerEmblem';
@@ -57,18 +57,35 @@ export const ContactCtaSection: React.FC = () => {
             as="a"
             href={BRAND.instagramUrl}
             target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Acessar o perfil oficial do Instagram: ${BRAND.instagramHandle} (abre em nova aba)`}
             variant="secondary"
             size="lg"
             className="w-full sm:w-auto text-lg px-8 py-4"
           >
             <InstagramIcon size={20} className="text-red-500" />
-            Ver Instagram Oficial
+            Instagram Oficial
+            <ArrowUpRight size={18} className="text-zinc-500" />
+          </Button>
+
+          <Button
+            as="a"
+            href={BRAND.youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Canal oficial da Pride Muay Thai no YouTube: ${BRAND.youtubeHandle} (abre em nova aba)`}
+            variant="secondary"
+            size="lg"
+            className="w-full sm:w-auto text-lg px-8 py-4 border-red-600/30 hover:border-red-600/80"
+          >
+            <YoutubeIcon size={20} className="text-red-500" />
+            Canal no YouTube
             <ArrowUpRight size={18} className="text-zinc-500" />
           </Button>
         </div>
 
         {/* Contact information cards */}
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl w-full">
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl w-full">
           
           {/* Gym Locator Direct Card */}
           <a
@@ -91,15 +108,35 @@ export const ContactCtaSection: React.FC = () => {
             href={BRAND.instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={`Acessar o perfil oficial do Instagram: ${BRAND.instagramHandle} (abre em nova aba)`}
             className="p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 hover:border-red-600/60 transition-all duration-300 flex items-center justify-center gap-3 text-zinc-200 hover:text-white group"
           >
             <div className="w-10 h-10 rounded-full bg-red-950/60 border border-red-800/60 flex items-center justify-center text-red-400 group-hover:scale-105 transition-transform">
               <InstagramIcon size={18} />
             </div>
             <div className="text-left">
-              <span className="text-[10px] uppercase font-mono tracking-wider text-zinc-400 block">Siga nas Redes</span>
+              <span className="text-[10px] uppercase font-mono tracking-wider text-zinc-400 block">Siga no Instagram</span>
               <span className="font-fight text-xl tracking-wider text-white group-hover:text-red-400 transition-colors">
                 {BRAND.instagramHandle}
+              </span>
+            </div>
+          </a>
+
+          {/* YouTube Direct Card */}
+          <a
+            href={BRAND.youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Canal oficial da Pride Muay Thai no YouTube: ${BRAND.youtubeHandle} (abre em nova aba)`}
+            className="p-4 rounded-xl bg-zinc-900/90 border border-zinc-800 hover:border-red-600/60 transition-all duration-300 flex items-center justify-center gap-3 text-zinc-200 hover:text-white group"
+          >
+            <div className="w-10 h-10 rounded-full bg-red-950/60 border border-red-800/60 flex items-center justify-center text-red-400 group-hover:scale-105 transition-transform">
+              <YoutubeIcon size={18} />
+            </div>
+            <div className="text-left">
+              <span className="text-[10px] uppercase font-mono tracking-wider text-zinc-400 block">Canal no YouTube</span>
+              <span className="font-fight text-xl tracking-wider text-white group-hover:text-red-400 transition-colors">
+                {BRAND.youtubeHandle}
               </span>
             </div>
           </a>

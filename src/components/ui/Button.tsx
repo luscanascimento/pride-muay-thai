@@ -51,6 +51,7 @@ export const Button: React.FC<ButtonProps> = ({
         target={target}
         rel={rel || (target === '_blank' ? 'noopener noreferrer' : undefined)}
         className={combinedClasses}
+        {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
       >
         <span className="relative z-10 flex items-center gap-2">{children}</span>
       </a>
