@@ -10,9 +10,9 @@ interface AdminRouteProps {
 }
 
 export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = '/admin' }) => {
-  const { session, isLoading, isAdmin, signOut } = useAuth();
+  const { session, isInitialLoading, isAdmin, signOut } = useAuth();
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center text-center p-6">
         <RefreshCw size={36} className="animate-spin text-red-500 mb-4" />

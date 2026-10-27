@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test": "LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:./.lib:/home/sirbu/lib\" playwright test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@playwright/test": "^1.64.1",
     "@types/mapbox-gl": "^3.4.1",
     "@types/node": "^22.13.9",
     "@types/react": "^19.0.10",

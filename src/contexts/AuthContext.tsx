@@ -7,14 +7,15 @@ export { type AuthContextValue } from './authContextDef';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<AdminSession | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
     if (!isSupabaseConfigured) {
-      setIsLoading(false);
+      setIsInitialLoading(false);
       return;
     }
 
@@ -31,14 +32,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(null);
       })
       .finally(() => {
-        if (isMounted) setIsLoading(false);
+        if (isMounted) setIsInitialLoading(false);
       });
 
     // Ouvinte em tempo real de mudanças de auth
     const sub = authService.onAuthStateChange((nextSession) => {
       if (isMounted) {
         setSession(nextSession);
-        setIsLoading(false);
+        setIsInitialLoading(false);
       }
     });
 
@@ -76,6 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const value: AuthContextValue = {
     session,
     isLoading,
+    isInitialLoading,
     error,
     isAdmin: Boolean(session?.adminUser?.user_id),
     signIn,
