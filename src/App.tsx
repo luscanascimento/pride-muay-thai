@@ -26,6 +26,8 @@ import { StudentDetailPage } from './components/pages/StudentDetailPage';
 import { AdminRoute } from './components/admin/AdminRoute';
 import { AdminLoginPage } from './components/pages/AdminLoginPage';
 import { AdminDashboardPage } from './components/pages/AdminDashboardPage';
+import { EventsAdmin } from './components/admin/EventsAdmin';
+import { EventForm } from './components/admin/EventForm';
 import { getProfessorById } from './data/gymsAndTeamData';
 import { AppRoute } from './types/routes';
 import { parseHashRoute, navigateTo } from './utils/routes';
@@ -106,6 +108,18 @@ export const App: React.FC = () => {
             ) : currentRoute.type === 'admin-dashboard' ? (
               <AdminRoute currentPath="/admin">
                 <AdminDashboardPage />
+              </AdminRoute>
+            ) : currentRoute.type === 'admin-events-list' ? (
+              <AdminRoute currentPath="/admin/eventos">
+                <EventsAdmin />
+              </AdminRoute>
+            ) : currentRoute.type === 'admin-event-create' ? (
+              <AdminRoute currentPath="/admin/eventos">
+                <EventForm />
+              </AdminRoute>
+            ) : currentRoute.type === 'admin-event-edit' ? (
+              <AdminRoute currentPath="/admin/eventos">
+                <EventForm eventId={currentRoute.id} />
               </AdminRoute>
             ) : selectedProfessor ? (
               <ProfessorDetailPage
