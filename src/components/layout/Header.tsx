@@ -17,6 +17,7 @@ export const Header: React.FC = () => {
     { label: 'Benefícios', href: '#beneficios' },
     { label: 'O Treino', href: '#treino' },
     { label: 'Nossa Equipe', href: '#nossa-equipe' },
+    { label: 'Eventos', href: '#/eventos' },
     { label: 'Personal Fight', href: '#personal-fighters' },
     { label: 'Onde Treinar', href: '#onde-treinar' },
     { label: 'Contato', href: '#contato' },

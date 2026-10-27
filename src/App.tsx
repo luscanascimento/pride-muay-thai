@@ -18,6 +18,8 @@ import { ContactCtaSection } from './components/sections/ContactCtaSection';
 import { WhatsAppFloat } from './components/ui/WhatsAppFloat';
 import { ProfessorDetailPage } from './components/pages/ProfessorDetailPage';
 import { DeveloperPage } from './components/pages/DeveloperPage';
+import { EventsPage } from './components/pages/EventsPage';
+import { EventDetailPage } from './components/pages/EventDetailPage';
 import { getProfessorById } from './data/gymsAndTeamData';
 import { AppRoute } from './types/routes';
 import { parseHashRoute, navigateTo } from './utils/routes';
@@ -84,6 +86,10 @@ export const App: React.FC = () => {
         <main id="main-content" tabIndex={-1} className="focus:outline-none overflow-x-hidden w-full max-w-full">
           {currentRoute.type === 'developer' ? (
             <DeveloperPage onBack={handleBackToHome} />
+          ) : currentRoute.type === 'events-list' ? (
+            <EventsPage initialSearchParams={currentRoute.searchParams} />
+          ) : currentRoute.type === 'event-detail' ? (
+            <EventDetailPage slug={currentRoute.slug} />
           ) : selectedProfessor ? (
             <ProfessorDetailPage
               professor={selectedProfessor}
