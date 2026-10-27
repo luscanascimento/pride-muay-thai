@@ -20,6 +20,8 @@ import { ProfessorDetailPage } from './components/pages/ProfessorDetailPage';
 import { DeveloperPage } from './components/pages/DeveloperPage';
 import { EventsPage } from './components/pages/EventsPage';
 import { EventDetailPage } from './components/pages/EventDetailPage';
+import { StudentsPage } from './components/pages/StudentsPage';
+import { StudentDetailPage } from './components/pages/StudentDetailPage';
 import { getProfessorById } from './data/gymsAndTeamData';
 import { AppRoute } from './types/routes';
 import { parseHashRoute, navigateTo } from './utils/routes';
@@ -90,6 +92,10 @@ export const App: React.FC = () => {
             <EventsPage initialSearchParams={currentRoute.searchParams} />
           ) : currentRoute.type === 'event-detail' ? (
             <EventDetailPage slug={currentRoute.slug} />
+          ) : currentRoute.type === 'students-list' ? (
+            <StudentsPage initialSearchParams={currentRoute.searchParams} />
+          ) : currentRoute.type === 'student-detail' ? (
+            <StudentDetailPage slug={currentRoute.slug} />
           ) : selectedProfessor ? (
             <ProfessorDetailPage
               professor={selectedProfessor}
