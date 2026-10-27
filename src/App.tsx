@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { SmoothScrollProvider } from './components/motion/SmoothScrollProvider';
+import { AuthProvider } from './contexts/AuthContext';
 import { SkipLink } from './components/ui/SkipLink';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -22,6 +23,9 @@ import { EventsPage } from './components/pages/EventsPage';
 import { EventDetailPage } from './components/pages/EventDetailPage';
 import { StudentsPage } from './components/pages/StudentsPage';
 import { StudentDetailPage } from './components/pages/StudentDetailPage';
+import { AdminRoute } from './components/admin/AdminRoute';
+import { AdminLoginPage } from './components/pages/AdminLoginPage';
+import { AdminDashboardPage } from './components/pages/AdminDashboardPage';
 import { getProfessorById } from './data/gymsAndTeamData';
 import { AppRoute } from './types/routes';
 import { parseHashRoute, navigateTo } from './utils/routes';
@@ -80,53 +84,61 @@ export const App: React.FC = () => {
       : undefined;
 
   return (
-    <SmoothScrollProvider>
-      <div className="min-h-screen bg-[#080809] text-zinc-100 overflow-x-hidden w-full max-w-full relative">
-        <SkipLink />
-        <Header />
-        
-        <main id="main-content" tabIndex={-1} className="focus:outline-none overflow-x-hidden w-full max-w-full">
-          {currentRoute.type === 'developer' ? (
-            <DeveloperPage onBack={handleBackToHome} />
-          ) : currentRoute.type === 'events-list' ? (
-            <EventsPage initialSearchParams={currentRoute.searchParams} />
-          ) : currentRoute.type === 'event-detail' ? (
-            <EventDetailPage slug={currentRoute.slug} />
-          ) : currentRoute.type === 'students-list' ? (
-            <StudentsPage initialSearchParams={currentRoute.searchParams} />
-          ) : currentRoute.type === 'student-detail' ? (
-            <StudentDetailPage slug={currentRoute.slug} />
-          ) : selectedProfessor ? (
-            <ProfessorDetailPage
-              professor={selectedProfessor}
-              onBack={handleBackToTeam}
-              onNavigateToProfessor={handleViewProfessor}
-            />
-          ) : (
-            <>
-              <Hero />
-              <AboutMuayThai />
-              <EightWeaponsSection />
-              <CombatTechniquesSection />
-              <CuriositiesSection />
-              <BenefitsSection />
-              <TrainingExperienceSection />
-              <WhoIsItForSection />
-              <TeamPrideSection />
-              <TeamSection
-                onSelectGym={(gymId) => setSelectedGymId(gymId)}
-                onViewProfessor={handleViewProfessor}
+    <AuthProvider>
+      <SmoothScrollProvider>
+        <div className="min-h-screen bg-[#080809] text-zinc-100 overflow-x-hidden w-full max-w-full relative">
+          <SkipLink />
+          <Header />
+          
+          <main id="main-content" tabIndex={-1} className="focus:outline-none overflow-x-hidden w-full max-w-full">
+            {currentRoute.type === 'developer' ? (
+              <DeveloperPage onBack={handleBackToHome} />
+            ) : currentRoute.type === 'events-list' ? (
+              <EventsPage initialSearchParams={currentRoute.searchParams} />
+            ) : currentRoute.type === 'event-detail' ? (
+              <EventDetailPage slug={currentRoute.slug} />
+            ) : currentRoute.type === 'students-list' ? (
+              <StudentsPage initialSearchParams={currentRoute.searchParams} />
+            ) : currentRoute.type === 'student-detail' ? (
+              <StudentDetailPage slug={currentRoute.slug} />
+            ) : currentRoute.type === 'admin-login' ? (
+              <AdminLoginPage />
+            ) : currentRoute.type === 'admin-dashboard' ? (
+              <AdminRoute currentPath="/admin">
+                <AdminDashboardPage />
+              </AdminRoute>
+            ) : selectedProfessor ? (
+              <ProfessorDetailPage
+                professor={selectedProfessor}
+                onBack={handleBackToTeam}
+                onNavigateToProfessor={handleViewProfessor}
               />
-              <LocationsSection selectedGymId={selectedGymId} onSelectGym={setSelectedGymId} />
-              <ContactCtaSection />
-            </>
-          )}
-        </main>
+            ) : (
+              <>
+                <Hero />
+                <AboutMuayThai />
+                <EightWeaponsSection />
+                <CombatTechniquesSection />
+                <CuriositiesSection />
+                <BenefitsSection />
+                <TrainingExperienceSection />
+                <WhoIsItForSection />
+                <TeamPrideSection />
+                <TeamSection
+                  onSelectGym={(gymId) => setSelectedGymId(gymId)}
+                  onViewProfessor={handleViewProfessor}
+                />
+                <LocationsSection selectedGymId={selectedGymId} onSelectGym={setSelectedGymId} />
+                <ContactCtaSection />
+              </>
+            )}
+          </main>
 
-        <Footer />
-        <WhatsAppFloat />
-      </div>
-    </SmoothScrollProvider>
+          <Footer />
+          <WhatsAppFloat />
+        </div>
+      </SmoothScrollProvider>
+    </AuthProvider>
   );
 };
 

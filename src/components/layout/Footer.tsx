@@ -103,6 +103,13 @@ export const Footer: React.FC = () => {
                 Lucas Nascimento
               </a>
             </p>
+            <span className="hidden sm:inline text-zinc-700">•</span>
+            <a
+              href="#/admin"
+              className="text-zinc-500 hover:text-zinc-300 transition-colors"
+            >
+              Acesso Restrito
+            </a>
           </div>
           
           <button
