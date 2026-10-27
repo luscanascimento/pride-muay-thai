@@ -19,76 +19,61 @@ import { WhatsAppFloat } from './components/ui/WhatsAppFloat';
 import { ProfessorDetailPage } from './components/pages/ProfessorDetailPage';
 import { DeveloperPage } from './components/pages/DeveloperPage';
 import { getProfessorById } from './data/gymsAndTeamData';
+import { AppRoute } from './types/routes';
+import { parseHashRoute, navigateTo } from './utils/routes';
 
 export const App: React.FC = () => {
   const [selectedGymId, setSelectedGymId] = useState<string | null>(null);
-  const [currentProfessorId, setCurrentProfessorId] = useState<string | null>(null);
-  const [isDeveloperPage, setIsDeveloperPage] = useState<boolean>(false);
+  const [currentRoute, setCurrentRoute] = useState<AppRoute>(() => parseHashRoute(window.location.hash));
 
-  // Sync routing with window.location.hash (GitHub Pages compatible)
+  // Sync routing with window.location.hash
   useEffect(() => {
-    const parseHashRoute = () => {
-      const hash = window.location.hash;
+    const handleHashChange = () => {
+      const nextRoute = parseHashRoute(window.location.hash);
+      setCurrentRoute(nextRoute);
 
-      if (hash === '#/desenvolvedor' || hash === '#/lucas-nascimento' || hash === '#/dev') {
-        setIsDeveloperPage(true);
-        setCurrentProfessorId(null);
-        return;
+      if (nextRoute.type === 'home' && nextRoute.anchor) {
+        setTimeout(() => {
+          const targetEl = document.getElementById(nextRoute.anchor!);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 60);
       }
-      setIsDeveloperPage(false);
-
-      const match = hash.match(/^#\/(?:professores|professor)\/([a-zA-Z0-9_-]+)/);
-      if (match && match[1]) {
-        const profId = match[1];
-        if (getProfessorById(profId)) {
-          setCurrentProfessorId(profId);
-          return;
-        }
-      }
-
-      setCurrentProfessorId((prev) => {
-        if (prev !== null && hash && !hash.startsWith('#/')) {
-          // Navigated from professor detail to an anchor on landing page
-          setTimeout(() => {
-            const targetId = hash.replace(/^#/, '');
-            const targetEl = document.getElementById(targetId);
-            if (targetEl) {
-              targetEl.scrollIntoView({ behavior: 'smooth' });
-            }
-          }, 60);
-        }
-        return null;
-      });
     };
 
-    parseHashRoute();
-    window.addEventListener('hashchange', parseHashRoute);
-    return () => window.removeEventListener('hashchange', parseHashRoute);
-  }, []);
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Initial check for anchor scroll
+    if (currentRoute.type === 'home' && currentRoute.anchor) {
+      setTimeout(() => {
+        const targetEl = document.getElementById(currentRoute.anchor!);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 60);
+    }
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [currentRoute]);
 
   const handleViewProfessor = useCallback((profId: string) => {
-    setCurrentProfessorId(profId);
-    window.location.hash = `#/professores/${profId}`;
+    navigateTo(`/professores/${profId}`);
   }, []);
 
   const handleBackToTeam = useCallback(() => {
-    setCurrentProfessorId(null);
-    window.location.hash = '#nossa-equipe';
-    setTimeout(() => {
-      const el = document.getElementById('nossa-equipe');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 60);
+    navigateTo('nossa-equipe');
   }, []);
 
   const handleBackToHome = useCallback(() => {
-    setIsDeveloperPage(false);
-    window.location.hash = '';
+    navigateTo('', { smoothScroll: true });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  const selectedProfessor = currentProfessorId ? getProfessorById(currentProfessorId) : undefined;
+  const selectedProfessor =
+    currentRoute.type === 'professor-detail'
+      ? getProfessorById(currentRoute.professorId)
+      : undefined;
 
   return (
     <SmoothScrollProvider>
@@ -97,7 +82,7 @@ export const App: React.FC = () => {
         <Header />
         
         <main id="main-content" tabIndex={-1} className="focus:outline-none overflow-x-hidden w-full max-w-full">
-          {isDeveloperPage ? (
+          {currentRoute.type === 'developer' ? (
             <DeveloperPage onBack={handleBackToHome} />
           ) : selectedProfessor ? (
             <ProfessorDetailPage

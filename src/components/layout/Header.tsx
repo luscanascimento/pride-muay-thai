@@ -3,6 +3,7 @@ import { Menu, X, MapPin } from 'lucide-react';
 import { BRAND } from '../../constants/brand';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
 import { Button } from '../ui/Button';
+import { YoutubeIcon } from '../ui/Icons';
 import prideLogoCutout from '../../assets/pride-muay-thai-cutout.png';
 
 export const Header: React.FC = () => {
@@ -69,8 +70,17 @@ export const Header: React.FC = () => {
           ))}
         </nav>
 
-        {/* Desktop CTA Button */}
+        {/* Desktop CTA Button & Social */}
         <div className="hidden lg:flex items-center gap-3">
+          <a
+            href={BRAND.youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Canal oficial da Pride Muay Thai no YouTube: ${BRAND.youtubeHandle} (abre em nova aba)`}
+            className="p-2 text-zinc-400 hover:text-red-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-sm"
+          >
+            <YoutubeIcon size={20} />
+          </a>
           <Button
             as="a"
             href="#onde-treinar"
@@ -111,6 +121,17 @@ export const Header: React.FC = () => {
                 {link.label}
               </a>
             ))}
+            <a
+              href={BRAND.youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMenu}
+              aria-label={`Canal oficial da Pride Muay Thai no YouTube: ${BRAND.youtubeHandle} (abre em nova aba)`}
+              className="font-fight text-2xl uppercase tracking-wider text-zinc-200 hover:text-red-500 py-2 border-b border-zinc-800/50 transition-colors flex items-center justify-center gap-2"
+            >
+              <YoutubeIcon size={22} className="text-red-500" />
+              YouTube
+            </a>
             <div className="pt-4 flex flex-col gap-3">
               <Button
                 as="a"

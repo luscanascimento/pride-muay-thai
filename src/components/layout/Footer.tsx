@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowUp, MapPin } from 'lucide-react';
-import { InstagramIcon } from '../ui/Icons';
+import { InstagramIcon, YoutubeIcon } from '../ui/Icons';
 import { BRAND } from '../../constants/brand';
 import prideLogoCutout from '../../assets/pride-muay-thai-cutout.png';
 
@@ -69,10 +69,21 @@ export const Footer: React.FC = () => {
               href={BRAND.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`Acessar o perfil oficial do Instagram: ${BRAND.instagramHandle} (abre em nova aba)`}
               className="flex items-center gap-2 text-sm text-zinc-300 hover:text-white transition-colors"
             >
               <InstagramIcon size={16} className="text-red-500" />
               <span>Instagram: {BRAND.instagramHandle}</span>
+            </a>
+            <a
+              href={BRAND.youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Canal oficial da Pride Muay Thai no YouTube: ${BRAND.youtubeHandle} (abre em nova aba)`}
+              className="flex items-center gap-2 text-sm text-zinc-300 hover:text-white transition-colors"
+            >
+              <YoutubeIcon size={16} className="text-red-500" />
+              <span>YouTube: {BRAND.youtubeHandle}</span>
             </a>
           </div>
 

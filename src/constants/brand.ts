@@ -7,6 +7,8 @@ export const BRAND = {
   regionHighlight: "Uma das maiores equipes do Vale do Paraíba de Muay Thai",
   instagramUrl: "https://www.instagram.com/prideemuaythai/",
   instagramHandle: "@prideemuaythai",
+  youtubeUrl: "https://www.youtube.com/@pridemuaythaifighter",
+  youtubeHandle: "@pridemuaythaifighter",
   phoneDisplay: "+55 (12) 99174-6964",
   phoneRaw: "5512991746964",
   whatsappDefaultMsg: "Olá, Renan! Vi o site do Pride Muay Thai e gostaria de saber mais sobre os treinos.",
