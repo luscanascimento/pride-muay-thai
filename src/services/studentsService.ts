@@ -89,6 +89,26 @@ export const studentsService = {
   },
 
   /**
+   * Busca todos os alunos para exportação completa em planilha
+   */
+  async getAllStudentsForExport(publicOnly: boolean = false): Promise<DbStudent[]> {
+    if (!isSupabaseConfigured) return [];
+
+    let query = supabase.from('students').select('*').order('name', { ascending: true });
+
+    if (publicOnly) {
+      query = query.eq('is_active', true).eq('is_published', true);
+    }
+
+    const { data, error } = await query;
+    if (error) {
+      throw new Error(`Erro ao buscar alunos para exportação: ${error.message}`);
+    }
+
+    return (data || []) as DbStudent[];
+  },
+
+  /**
    * Obtém detalhes de um aluno público pelo slug e todo o seu histórico de graduações
    */
   async getPublicStudentBySlug(slug: string): Promise<StudentWithGraduations | null> {

@@ -4,6 +4,8 @@ import { generateSlug } from '../src/utils/slug';
 import { ALL_KHANS_SYSTEM, isValidKhan } from '../src/constants/khans';
 import { getGymNames } from '../src/utils/gyms';
 import { bracketsService } from '../src/services/bracketsService';
+import { buildStudentsCsvContent } from '../src/utils/studentExcelExport';
+import { DbStudent } from '../src/types/database';
 
 test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () => {
   test('o canal do YouTube possui link oficial, atributos de segurança e acessibilidade no rodapé e na seção de contato', async ({
@@ -291,5 +293,72 @@ test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
     };
     expect(fakeBracket.event_id).toBe('event-uuid-1234');
     expect(fakeBracket.title).toBeTruthy();
+  });
+
+  test('exportação de alunos para Excel: colunas estritas Nome, Khan Atual e Academia com formatação pt-BR', () => {
+    const mockStudents: DbStudent[] = [
+      {
+        id: 'student-1',
+        name: 'Lucas "The Hammer" Nascimento',
+        slug: 'lucas-nascimento',
+        current_khan: 7,
+        is_active: true,
+        is_published: true,
+        gym_ids: ['arena-viking-santa-maria'],
+        graduation_date: '2026-01-15',
+        created_at: '2026-01-01T00:00:00Z',
+        updated_at: '2026-01-15T00:00:00Z',
+      },
+      {
+        id: 'student-2',
+        name: 'Carlos Eduardo',
+        slug: 'carlos-eduardo',
+        current_khan: 1,
+        is_active: true,
+        is_published: true,
+        gym_ids: [],
+        graduation_date: '2026-02-01',
+        created_at: '2026-02-01T00:00:00Z',
+        updated_at: '2026-02-01T00:00:00Z',
+      },
+      {
+        id: 'student-3',
+        name: 'Mariana Silva',
+        slug: 'mariana-silva',
+        current_khan: 12,
+        is_active: true,
+        is_published: true,
+        gym_ids: ['arena-viking-santa-maria', 'ct3-artes-marciais'],
+        graduation_date: '2026-03-01',
+        created_at: '2026-03-01T00:00:00Z',
+        updated_at: '2026-03-01T00:00:00Z',
+      },
+    ];
+
+    const csv = buildStudentsCsvContent(mockStudents);
+
+    // Começa com UTF-8 BOM
+    expect(csv.startsWith('\uFEFF')).toBe(true);
+
+    const lines = csv.replace('\uFEFF', '').split('\r\n');
+    expect(lines).toHaveLength(4); // Cabeçalho + 3 linhas
+
+    // Cabeçalho estritamente: "Nome";"Khan Atual";"Academia"
+    expect(lines[0]).toBe('"Nome";"Khan Atual";"Academia"');
+
+    // Linha 1: Lucas com aspas escapadas e academia Viking
+    expect(lines[1]).toContain('"Lucas ""The Hammer"" Nascimento"');
+    expect(lines[1]).toContain('"7º Khan (Azul Ponta Branca)"');
+    expect(lines[1]).toContain('"Arena Viking Santa Maria"');
+
+    // Linha 2: Carlos sem academia (Não informada) e Khan 1
+    expect(lines[2]).toContain('"Carlos Eduardo"');
+    expect(lines[2]).toContain('"1º Khan (Branca)"');
+    expect(lines[2]).toContain('"Não informada"');
+
+    // Linha 3: Mariana com múltiplas academias e Khan 12
+    expect(lines[3]).toContain('"Mariana Silva"');
+    expect(lines[3]).toContain('"12º Khan (Preta)"');
+    expect(lines[3]).toContain('"Arena Viking Santa Maria, CT3 Artes Marciais"');
   });
 });

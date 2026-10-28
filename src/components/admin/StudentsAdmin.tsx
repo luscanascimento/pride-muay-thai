@@ -10,6 +10,7 @@ import {
   Archive,
   RefreshCw,
   Award,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { studentsService, AdminStudentsFilter } from '../../services/studentsService';
 import { DbStudent } from '../../types/database';
@@ -19,6 +20,7 @@ import { ALL_KHANS_SYSTEM, getKhanRank } from '../../constants/khans';
 import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
 import { getGymNames } from '../../utils/gyms';
+import { exportStudentsToExcel } from '../../utils/studentExcelExport';
 
 export const StudentsAdmin: React.FC = () => {
   const [students, setStudents] = useState<DbStudent[]>([]);
@@ -30,6 +32,7 @@ export const StudentsAdmin: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'archived'>('all');
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchStudents = useCallback(async () => {
@@ -86,6 +89,18 @@ export const StudentsAdmin: React.FC = () => {
     }
   };
 
+  const handleExportExcel = async () => {
+    setIsExporting(true);
+    try {
+      const allStudents = await studentsService.getAllStudentsForExport(false);
+      exportStudentsToExcel(allStudents, 'pride-muay-thai-alunos-painel');
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Erro ao exportar alunos para Excel.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div>
       {/* Header and New Student button */}
@@ -99,14 +114,31 @@ export const StudentsAdmin: React.FC = () => {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => navigateTo('/admin/alunos/novo')}
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-sm bg-red-600 hover:bg-red-500 text-white font-mono text-xs uppercase font-semibold transition-colors shadow-red-glow"
-        >
-          <Plus size={16} />
-          <span>Novo Aluno</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={handleExportExcel}
+            disabled={isExporting}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-200 hover:text-white font-mono text-xs uppercase font-semibold transition-colors disabled:opacity-50"
+            title="Exportar todos os alunos cadastrados para planilha Excel"
+          >
+            {isExporting ? (
+              <RefreshCw size={15} className="animate-spin text-emerald-500" />
+            ) : (
+              <FileSpreadsheet size={15} className="text-emerald-500" />
+            )}
+            <span>Exportar Excel</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigateTo('/admin/alunos/novo')}
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-sm bg-red-600 hover:bg-red-500 text-white font-mono text-xs uppercase font-semibold transition-colors shadow-red-glow"
+          >
+            <Plus size={16} />
+            <span>Novo Aluno</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Filter, Users } from 'lucide-react';
+import { Search, Filter, Users, FileSpreadsheet, RefreshCw } from 'lucide-react';
 import { studentsService, PublicStudentsFilter } from '../../services/studentsService';
 import { DbStudent } from '../../types/database';
 import { StudentTable } from '../students/StudentTable';
 import { Pagination } from '../ui/Pagination';
 import { ALL_KHANS_SYSTEM } from '../../constants/khans';
 import { buildHashUrl, navigateTo } from '../../utils/routes';
+import { exportStudentsToExcel } from '../../utils/studentExcelExport';
 
 interface StudentsPageProps {
   initialSearchParams?: URLSearchParams;
@@ -26,6 +27,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ initialSearchParams 
   const [totalPages, setTotalPages] = useState<number>(1);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const updateUrl = useCallback(
@@ -87,6 +89,18 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ initialSearchParams 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleExportExcel = async () => {
+    setIsExporting(true);
+    try {
+      const allStudents = await studentsService.getAllStudentsForExport(true);
+      exportStudentsToExcel(allStudents, 'pride-muay-thai-alunos');
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Erro ao exportar alunos para Excel.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-[70vh]">
       {/* Editorial Header */}
@@ -138,17 +152,34 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ initialSearchParams 
           )}
         </div>
 
-        {/* Search by student name */}
-        <form onSubmit={handleSearchSubmit} className="relative flex-grow sm:flex-grow-0 sm:min-w-[280px]">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar aluno por nome..."
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-xs text-zinc-200 py-2.5 pl-9 pr-3 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
-        </form>
+        {/* Search by student name and Export button */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <form onSubmit={handleSearchSubmit} className="relative flex-grow sm:flex-grow-0 sm:min-w-[260px]">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar aluno por nome..."
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-xs text-zinc-200 py-2.5 pl-9 pr-3 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+          </form>
+
+          <button
+            type="button"
+            onClick={handleExportExcel}
+            disabled={isExporting}
+            className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-sm bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white font-mono text-xs uppercase font-semibold transition-colors disabled:opacity-50"
+            title="Exportar alunos para planilha Excel (.csv)"
+          >
+            {isExporting ? (
+              <RefreshCw size={14} className="animate-spin text-emerald-500" />
+            ) : (
+              <FileSpreadsheet size={14} className="text-emerald-500" />
+            )}
+            <span>Exportar Excel</span>
+          </button>
+        </div>
       </div>
 
       {/* Student Table / Cards */}
