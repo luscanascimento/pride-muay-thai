@@ -81,6 +81,8 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
     }
   };
 
+  const visibleBrackets = brackets.filter((b) => isAdmin || Boolean(b.is_published));
+
   if (isLoading) {
     return (
       <div className="pt-32 pb-24 px-4 text-center min-h-[60vh] flex flex-col items-center justify-center">
@@ -258,22 +260,45 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
         </section>
       )}
 
-      {/* Chaveamentos de Competição / Lutas (Opcional) */}
-      {brackets.length > 0 && (
+      {/* Chaveamentos de Competição / Lutas (Opcional - visível se publicado ou para admin logado) */}
+      {visibleBrackets.length > 0 && (
         <section className="mb-12 space-y-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Trophy size={24} className="text-red-500" />
-            <h2 className="font-fight text-2xl sm:text-3xl text-white uppercase tracking-wider">
-              Chaveamentos & Lutas Oficiais
-            </h2>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-2">
+              <Trophy size={24} className="text-red-500" />
+              <h2 className="font-fight text-2xl sm:text-3xl text-white uppercase tracking-wider">
+                Chaveamentos & Lutas Oficiais
+              </h2>
+            </div>
+            {isAdmin && (
+              <span className="text-[11px] font-mono uppercase px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-400">
+                Visualização de Administrador
+              </span>
+            )}
           </div>
-          {brackets.map((b) => (
-            <BracketView
-              key={b.id}
-              bracket={b}
-              eventTitle={event.title}
-              eventDate={formatDateTime(event.event_date)}
-            />
+          {visibleBrackets.map((b) => (
+            <div key={b.id} className="space-y-2">
+              {isAdmin && (
+                <div className="flex items-center justify-between px-2 text-xs font-mono">
+                  <span
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
+                      b.is_published
+                        ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/60'
+                        : 'bg-amber-950/40 text-amber-400 border border-amber-800/50'
+                    }`}
+                  >
+                    {b.is_published
+                      ? '● Chaveamento Público'
+                      : '○ Chaveamento Privado (Oculto para o Público)'}
+                  </span>
+                </div>
+              )}
+              <BracketView
+                bracket={b}
+                eventTitle={event.title}
+                eventDate={formatDateTime(event.event_date)}
+              />
+            </div>
           ))}
         </section>
       )}

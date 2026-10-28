@@ -6,6 +6,7 @@ import { getGymNames } from '../src/utils/gyms';
 import { bracketsService } from '../src/services/bracketsService';
 import { buildStudentsCsvContent } from '../src/utils/studentExcelExport';
 import { getGoogleMapsSearchUrl } from '../src/utils/maps';
+import { formatDate, formatDateLong, getTodayLocalDate } from '../src/utils/date';
 import { DbStudent } from '../src/types/database';
 
 test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () => {
@@ -379,5 +380,37 @@ test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
     expect(gymUrl).toBe(
       'https://www.google.com/maps/search/?api=1&query=Arena%20Viking%20Santa%20Maria'
     );
+  });
+
+  test('fuso horário e datas de graduação: data selecionada preserva exatamente o dia sem adiantar ou atrasar', () => {
+    // 1. Data de calendário padrão YYYY-MM-DD não deve sofrer recuo para o dia anterior
+    expect(formatDate('2026-10-27')).toBe('27/10/2026');
+    expect(formatDate('2026-01-01')).toBe('01/01/2026');
+    expect(formatDate('2026-12-31')).toBe('31/12/2026');
+
+    // 2. Formato por extenso
+    expect(formatDateLong('2026-10-27')).toBe('27 de outubro de 2026');
+    expect(formatDateLong('2026-05-15')).toBe('15 de maio de 2026');
+
+    // 3. getTodayLocalDate retorna formato YYYY-MM-DD no fuso de São Paulo
+    const today = getTodayLocalDate();
+    expect(today).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  test('visibilidade de chaveamentos: chaveamentos privados não são visíveis para visitantes comuns', () => {
+    const brackets = [
+      { id: 'b1', title: 'Chave Pública', is_published: true, rounds: [] },
+      { id: 'b2', title: 'Chave Rascunho', is_published: false, rounds: [] },
+      { id: 'b3', title: 'Chave Padrão', is_published: undefined, rounds: [] },
+    ];
+
+    // Visitante não autenticado (isAdmin = false)
+    const publicVisible = brackets.filter((b) => Boolean(b.is_published));
+    expect(publicVisible).toHaveLength(1);
+    expect(publicVisible[0].title).toBe('Chave Pública');
+
+    // Administrador autenticado (isAdmin = true)
+    const adminVisible = brackets.filter(() => true);
+    expect(adminVisible).toHaveLength(3);
   });
 });

@@ -7,12 +7,14 @@ import { Pagination } from '../ui/Pagination';
 import { ALL_KHANS_SYSTEM } from '../../constants/khans';
 import { buildHashUrl, navigateTo } from '../../utils/routes';
 import { exportStudentsToExcel } from '../../utils/studentExcelExport';
+import { useAuth } from '../../hooks/useAuth';
 
 interface StudentsPageProps {
   initialSearchParams?: URLSearchParams;
 }
 
 export const StudentsPage: React.FC<StudentsPageProps> = ({ initialSearchParams }) => {
+  const { isAdmin } = useAuth();
   const getParam = (key: string, fallback: string = '') =>
     initialSearchParams?.get(key) || fallback;
 
@@ -90,6 +92,10 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ initialSearchParams 
   };
 
   const handleExportExcel = async () => {
+    if (!isAdmin) {
+      alert('Apenas usuários autenticados podem exportar a tabela de alunos.');
+      return;
+    }
     setIsExporting(true);
     try {
       const allStudents = await studentsService.getAllStudentsForExport(true);
@@ -165,20 +171,22 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({ initialSearchParams 
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
           </form>
 
-          <button
-            type="button"
-            onClick={handleExportExcel}
-            disabled={isExporting}
-            className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-sm bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white font-mono text-xs uppercase font-semibold transition-colors disabled:opacity-50"
-            title="Exportar alunos para planilha Excel (.csv)"
-          >
-            {isExporting ? (
-              <RefreshCw size={14} className="animate-spin text-emerald-500" />
-            ) : (
-              <FileSpreadsheet size={14} className="text-emerald-500" />
-            )}
-            <span>Exportar Excel</span>
-          </button>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={handleExportExcel}
+              disabled={isExporting}
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-sm bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white font-mono text-xs uppercase font-semibold transition-colors disabled:opacity-50"
+              title="Exportar alunos para planilha Excel (.csv) - Acesso de Administrador"
+            >
+              {isExporting ? (
+                <RefreshCw size={14} className="animate-spin text-emerald-500" />
+              ) : (
+                <FileSpreadsheet size={14} className="text-emerald-500" />
+              )}
+              <span>Exportar Excel</span>
+            </button>
+          )}
         </div>
       </div>
 

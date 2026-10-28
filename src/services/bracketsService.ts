@@ -34,17 +34,33 @@ export const bracketsService = {
       throw new Error('Supabase não configurado.');
     }
 
-    const { data, error } = await supabase
+    const insertPayload = {
+      event_id: input.event_id,
+      title: input.title.trim(),
+      category_name: input.category_name?.trim() || null,
+      bracket_type: input.bracket_type || 'single_elimination',
+      rounds: input.rounds as unknown as Record<string, unknown>[],
+      is_published: input.is_published ?? false,
+    };
+
+    let { data, error } = await supabase
       .from('event_brackets')
-      .insert({
-        event_id: input.event_id,
-        title: input.title.trim(),
-        category_name: input.category_name?.trim() || null,
-        bracket_type: input.bracket_type || 'single_elimination',
-        rounds: input.rounds as unknown as Record<string, unknown>[],
-      })
+      .insert(insertPayload as never)
       .select()
       .single();
+
+    // Fallback resiliente: se a coluna is_published ainda não tiver sido criada no banco remoto
+    if (error && error.message?.includes('is_published')) {
+      const fallbackPayload = { ...insertPayload };
+      delete (fallbackPayload as Record<string, unknown>).is_published;
+      const retry = await supabase
+        .from('event_brackets')
+        .insert(fallbackPayload as never)
+        .select()
+        .single();
+      data = retry.data;
+      error = retry.error;
+    }
 
     if (error || !data) {
       throw new Error(`Erro ao criar chaveamento: ${error?.message || 'Falha ao salvar'}`);
@@ -69,19 +85,40 @@ export const bracketsService = {
       updatePayload.category_name = updates.category_name?.trim() || null;
     if (updates.bracket_type !== undefined) updatePayload.bracket_type = updates.bracket_type;
     if (updates.rounds !== undefined) updatePayload.rounds = updates.rounds;
+    if (updates.is_published !== undefined) updatePayload.is_published = updates.is_published;
 
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('event_brackets')
-      .update(updatePayload)
+      .update(updatePayload as never)
       .eq('id', id)
       .select()
       .single();
+
+    // Fallback se is_published não existir ainda
+    if (error && error.message?.includes('is_published')) {
+      delete updatePayload.is_published;
+      const retry = await supabase
+        .from('event_brackets')
+        .update(updatePayload as never)
+        .eq('id', id)
+        .select()
+        .single();
+      data = retry.data;
+      error = retry.error;
+    }
 
     if (error || !data) {
       throw new Error(`Erro ao atualizar chaveamento: ${error?.message || 'Falha ao atualizar'}`);
     }
 
     return data as unknown as DbEventBracket;
+  },
+
+  /**
+   * Alterna rapidamente a visibilidade do chaveamento entre público e privado
+   */
+  async toggleBracketPublished(id: string, isPublished: boolean): Promise<DbEventBracket> {
+    return this.updateBracket({ id, is_published: isPublished });
   },
 
   /**

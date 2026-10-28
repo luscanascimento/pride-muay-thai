@@ -217,6 +217,7 @@ export interface Database {
           category_name?: string | null;
           bracket_type?: string;
           rounds?: unknown;
+          is_published?: boolean;
           created_at?: string;
           updated_at?: string;
           created_by?: string | null;
@@ -230,6 +231,7 @@ export interface Database {
           category_name?: string | null;
           bracket_type?: string;
           rounds?: unknown;
+          is_published?: boolean;
           created_at?: string;
           updated_at?: string;
           created_by?: string | null;

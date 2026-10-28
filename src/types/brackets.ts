@@ -30,6 +30,7 @@ export interface DbEventBracket {
   category_name: string | null;
   bracket_type: BracketType;
   rounds: BracketRound[];
+  is_published?: boolean;
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -43,6 +44,7 @@ export interface CreateBracketInput {
   category_name?: string | null;
   bracket_type?: BracketType;
   rounds: BracketRound[];
+  is_published?: boolean;
 }
 
 export interface UpdateBracketInput {
@@ -51,4 +53,5 @@ export interface UpdateBracketInput {
   category_name?: string | null;
   bracket_type?: BracketType;
   rounds?: BracketRound[];
+  is_published?: boolean;
 }

@@ -13,6 +13,7 @@ import { KhanProgressSelector } from './KhanProgressSelector';
 import { GraduationHistory } from './GraduationHistory';
 import { generateSlug } from '../../utils/slug';
 import { navigateTo } from '../../utils/routes';
+import { getTodayLocalDate } from '../../utils/date';
 import { GYMS_DATA } from '../../data/gymsAndTeamData';
 
 interface StudentFormProps {
@@ -31,9 +32,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({ studentId }) => {
   const [currentKhan, setCurrentKhan] = useState(1);
   const [initialKhan, setInitialKhan] = useState(1);
   const [isCorrectionMode, setIsCorrectionMode] = useState(false);
-  const [graduationDate, setGraduationDate] = useState(() => {
-    return new Date().toISOString().slice(0, 10);
-  });
+  const [graduationDate, setGraduationDate] = useState(() => getTodayLocalDate());
   const [existingGraduations, setExistingGraduations] = useState<StudentWithGraduations['graduations']>([]);
 
   const [isLoadingStudent, setIsLoadingStudent] = useState(isEditing);
@@ -59,6 +58,13 @@ export const StudentForm: React.FC<StudentFormProps> = ({ studentId }) => {
         setCurrentKhan(data.current_khan);
         setInitialKhan(data.current_khan);
         setExistingGraduations(data.graduations);
+
+        const currentGrad = data.graduations?.find((g) => g.khan_level === data.current_khan);
+        if (currentGrad?.achieved_at) {
+          setGraduationDate(currentGrad.achieved_at);
+        } else {
+          setGraduationDate(getTodayLocalDate());
+        }
       })
       .catch((err) => {
         if (!isMounted) return;
@@ -92,6 +98,12 @@ export const StudentForm: React.FC<StudentFormProps> = ({ studentId }) => {
     setCurrentKhan(targetKhan);
     if (isCorrection) {
       setIsCorrectionMode(true);
+    }
+    const foundGrad = existingGraduations.find((g) => g.khan_level === targetKhan);
+    if (foundGrad?.achieved_at) {
+      setGraduationDate(foundGrad.achieved_at);
+    } else {
+      setGraduationDate(getTodayLocalDate());
     }
   };
 

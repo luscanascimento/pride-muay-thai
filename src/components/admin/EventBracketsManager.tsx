@@ -70,6 +70,15 @@ export const EventBracketsManager: React.FC<EventBracketsManagerProps> = ({
     }
   };
 
+  const handleTogglePublished = async (bracket: DbEventBracket) => {
+    try {
+      await bracketsService.toggleBracketPublished(bracket.id, !bracket.is_published);
+      await fetchBrackets();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Erro ao alternar visibilidade do chaveamento.');
+    }
+  };
+
   const handleDownloadDirect = async (bracket: DbEventBracket) => {
     setExportingId(bracket.id);
     try {
@@ -146,9 +155,23 @@ export const EventBracketsManager: React.FC<EventBracketsManagerProps> = ({
                   <span className="font-fight text-lg text-white uppercase tracking-wider line-clamp-1">
                     {b.title}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
-                    {b.rounds?.length || 0} rodadas
-                  </span>
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleTogglePublished(b)}
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono uppercase font-semibold border transition-colors ${
+                        b.is_published
+                          ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60 hover:bg-emerald-900/60'
+                          : 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:text-zinc-300'
+                      }`}
+                      title="Clique para alternar visibilidade pública/privada"
+                    >
+                      {b.is_published ? '● Público' : '○ Privado'}
+                    </button>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800">
+                      {b.rounds?.length || 0} rodadas
+                    </span>
+                  </div>
                 </div>
                 {b.category_name && (
                   <p className="text-xs font-mono text-red-400 mt-0.5">

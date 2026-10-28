@@ -29,6 +29,7 @@ export const BracketModal: React.FC<BracketModalProps> = ({
 
   const [title, setTitle] = useState(bracket?.title || 'Torneio GP');
   const [categoryName, setCategoryName] = useState(bracket?.category_name || '');
+  const [isPublished, setIsPublished] = useState<boolean>(Boolean(bracket?.is_published));
   const [bracketType] = useState<BracketType>(
     bracket?.bracket_type || 'single_elimination'
   );
@@ -132,6 +133,7 @@ export const BracketModal: React.FC<BracketModalProps> = ({
           category_name: categoryName.trim() || null,
           bracket_type: bracketType,
           rounds,
+          is_published: isPublished,
         });
       } else {
         await bracketsService.createBracket({
@@ -140,6 +142,7 @@ export const BracketModal: React.FC<BracketModalProps> = ({
           category_name: categoryName.trim() || null,
           bracket_type: bracketType,
           rounds,
+          is_published: isPublished,
         });
       }
       onSaved();
@@ -238,6 +241,31 @@ export const BracketModal: React.FC<BracketModalProps> = ({
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
+          </div>
+
+          {/* Opção de Tornar Público ou Privado */}
+          <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+            <div>
+              <span className="text-xs font-mono uppercase font-semibold text-white block">
+                Visibilidade Pública do Chaveamento
+              </span>
+              <span className="text-xs text-zinc-400 block mt-0.5">
+                {isPublished
+                  ? 'Público: visível para todos os visitantes na página de detalhes do evento.'
+                  : 'Oculto / Privado: visível exclusivamente para administradores logados.'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsPublished(!isPublished)}
+              className={`px-3 py-1.5 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                isPublished
+                  ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
+                  : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+              }`}
+            >
+              {isPublished ? '● Público' : '○ Privado'}
+            </button>
           </div>
 
           {/* Templates rápidos */}
