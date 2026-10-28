@@ -18,6 +18,7 @@ import { Pagination } from '../ui/Pagination';
 import { ALL_KHANS_SYSTEM, getKhanRank } from '../../constants/khans';
 import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
+import { getGymNames } from '../../utils/gyms';
 
 export const StudentsAdmin: React.FC = () => {
   const [students, setStudents] = useState<DbStudent[]>([]);
@@ -234,6 +235,15 @@ export const StudentsAdmin: React.FC = () => {
                     <td className="py-3.5 px-4 font-semibold text-white">
                       <span>{student.name}</span>
                       <span className="text-[11px] font-mono text-zinc-500 block truncate">/{student.slug}</span>
+                      {student.gym_ids && student.gym_ids.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1 max-w-xs">
+                          {getGymNames(student.gym_ids).map((name) => (
+                            <span key={name} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400">
+                              {name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </td>
                     <td className="py-3.5 px-4 whitespace-nowrap text-xs font-mono text-zinc-300">
                       <div className="flex items-center gap-1.5">

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Award, ChevronRight } from 'lucide-react';
+import { Award, ChevronRight, MapPin } from 'lucide-react';
 import { DbStudent } from '../../types/database';
 import { PrajiedBadge, PrajiedRope } from '../ui/PrajiedBadge';
 import { getKhanRank } from '../../constants/khans';
 import { navigateTo } from '../../utils/routes';
+import { getGymNames } from '../../utils/gyms';
 
 interface StudentCardProps {
   student: DbStudent;
@@ -12,6 +13,7 @@ interface StudentCardProps {
 
 export const StudentCard: React.FC<StudentCardProps> = ({ student, onNavigate }) => {
   const rank = getKhanRank(student.current_khan);
+  const gymNames = getGymNames(student.gym_ids);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -44,6 +46,13 @@ export const StudentCard: React.FC<StudentCardProps> = ({ student, onNavigate })
           <Award size={13} className="text-red-500 flex-shrink-0" />
           <span className="font-semibold text-zinc-300">{rank.title}</span>
         </div>
+
+        {gymNames.length > 0 && (
+          <div className="flex items-center gap-1.5 mt-2 text-xs text-zinc-400 line-clamp-1">
+            <MapPin size={12} className="text-red-500/80 flex-shrink-0" />
+            <span className="truncate">{gymNames.join(', ')}</span>
+          </div>
+        )}
       </div>
 
       {/* Bottom CTA */}

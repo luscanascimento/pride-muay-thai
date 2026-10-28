@@ -7,6 +7,7 @@ import {
   Shield,
   RefreshCw,
   AlertTriangle,
+  MapPin,
 } from 'lucide-react';
 import { studentsService, StudentWithGraduations } from '../../services/studentsService';
 import { PrajiedBadge, PrajiedRope } from '../ui/PrajiedBadge';
@@ -14,6 +15,7 @@ import { Button } from '../ui/Button';
 import { getKhanRank, ALL_KHANS_SYSTEM } from '../../constants/khans';
 import { formatDate } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
+import { getGymNames } from '../../utils/gyms';
 import prideLogoCutout from '../../assets/pride-muay-thai-cutout.png';
 
 interface StudentDetailPageProps {
@@ -87,6 +89,7 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({ slug, onBa
   }
 
   const currentRank = getKhanRank(student.current_khan);
+  const gymNames = getGymNames(student.gym_ids);
 
   // Mapear datas de graduação pelo nível do Khan
   const graduationDatesMap = new Map<number, string | null>();
@@ -154,6 +157,23 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({ slug, onBa
             <p className="text-zinc-400 text-xs sm:text-sm mt-3 leading-relaxed max-w-xl">
               {currentRank.description}
             </p>
+
+            {gymNames.length > 0 && (
+              <div className="mt-4 pt-3 border-t border-zinc-800/80 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                <span className="text-zinc-500 text-xs font-mono uppercase flex items-center gap-1 font-semibold">
+                  <MapPin size={13} className="text-red-500" />
+                  {gymNames.length > 1 ? 'Academias:' : 'Academia:'}
+                </span>
+                {gymNames.map((name) => (
+                  <span
+                    key={name}
+                    className="inline-flex items-center px-2.5 py-0.5 rounded text-xs bg-zinc-900 text-zinc-200 border border-zinc-800 font-medium"
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </header>

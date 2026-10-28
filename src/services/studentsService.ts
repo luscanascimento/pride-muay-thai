@@ -29,6 +29,7 @@ export interface CreateStudentInput {
   is_active?: boolean;
   is_published?: boolean;
   graduation_date?: string | null;
+  gym_ids?: string[];
 }
 
 export interface UpdateStudentInput {
@@ -37,6 +38,7 @@ export interface UpdateStudentInput {
   slug?: string;
   is_active?: boolean;
   is_published?: boolean;
+  gym_ids?: string[];
 }
 
 export const studentsService = {
@@ -222,6 +224,7 @@ export const studentsService = {
         current_khan: studentData.current_khan,
         is_active: studentData.is_active ?? true,
         is_published: studentData.is_published ?? true,
+        gym_ids: studentData.gym_ids ?? [],
       })
       .select()
       .single();

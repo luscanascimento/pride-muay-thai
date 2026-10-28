@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { parseHashRoute, buildHashUrl } from '../src/utils/routes';
 import { generateSlug } from '../src/utils/slug';
 import { ALL_KHANS_SYSTEM, isValidKhan } from '../src/constants/khans';
+import { getGymNames } from '../src/utils/gyms';
 
 test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () => {
   test('o canal do YouTube possui link oficial, atributos de segurança e acessibilidade no rodapé e na seção de contato', async ({
@@ -215,5 +216,19 @@ test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
     expect(names).toContain('Lucas Nascimento');
     expect(names).toContain('Paulo Roberto');
     expect(names).toContain('Renan Fernandes');
+  });
+
+  test('suporte a academias opcionais para alunos mapeia IDs conhecidos e aceita nulo/vazio', () => {
+    // Aluno sem academia cadastrada (opcional)
+    expect(getGymNames(undefined)).toEqual([]);
+    expect(getGymNames([])).toEqual([]);
+
+    // Aluno com uma ou mais academias oficiais
+    const gyms = getGymNames(['arena-viking-santa-maria', 'ct3-artes-marciais']);
+    expect(gyms).toContain('Arena Viking Santa Maria');
+    expect(gyms).toContain('CT3 Artes Marciais');
+
+    // Suporte a academia externa / customizada
+    expect(getGymNames(['Academia Externa'])).toEqual(['Academia Externa']);
   });
 });

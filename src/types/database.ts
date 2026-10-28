@@ -54,6 +54,7 @@ export interface DbStudent {
   is_active: boolean;
   is_published: boolean;
   image_url: string | null;
+  gym_ids?: string[];
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -158,6 +159,7 @@ export interface Database {
           is_active?: boolean;
           is_published?: boolean;
           image_url?: string | null;
+          gym_ids?: string[];
           created_at?: string;
           updated_at?: string;
           created_by?: string | null;
@@ -172,6 +174,7 @@ export interface Database {
           is_active?: boolean;
           is_published?: boolean;
           image_url?: string | null;
+          gym_ids?: string[];
           created_at?: string;
           updated_at?: string;
           created_by?: string | null;

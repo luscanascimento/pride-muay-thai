@@ -47,6 +47,7 @@ create table if not exists public.students (
   is_active boolean not null default true,
   is_published boolean not null default true,
   image_url text null, -- Reservado para uso futuro; sem upload nesta versão
+  gym_ids text[] not null default '{}', -- Academias onde o aluno treina (opcional)
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   created_by uuid references auth.users(id) on delete set null,
@@ -77,6 +78,7 @@ create index if not exists idx_students_name on public.students(name);
 create index if not exists idx_students_current_khan on public.students(current_khan);
 create index if not exists idx_students_active_published on public.students(is_active, is_published);
 create index if not exists idx_students_slug on public.students(slug);
+create index if not exists idx_students_gym_ids on public.students using gin(gym_ids);
 
 create index if not exists idx_student_graduations_student_khan on public.student_graduations(student_id, khan_level);
 

@@ -6,12 +6,14 @@ import {
   CheckCircle,
   Eye,
   Calendar,
+  MapPin,
 } from 'lucide-react';
 import { studentsService, StudentWithGraduations } from '../../services/studentsService';
 import { KhanProgressSelector } from './KhanProgressSelector';
 import { GraduationHistory } from './GraduationHistory';
 import { generateSlug } from '../../utils/slug';
 import { navigateTo } from '../../utils/routes';
+import { GYMS_DATA } from '../../data/gymsAndTeamData';
 
 interface StudentFormProps {
   studentId?: string; // Se presente, modo de edição; se não, modo de criação
@@ -25,6 +27,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({ studentId }) => {
   const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [isPublished, setIsPublished] = useState(true);
+  const [selectedGymIds, setSelectedGymIds] = useState<string[]>([]);
   const [currentKhan, setCurrentKhan] = useState(1);
   const [initialKhan, setInitialKhan] = useState(1);
   const [isCorrectionMode, setIsCorrectionMode] = useState(false);
@@ -52,6 +55,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({ studentId }) => {
         setIsSlugManuallyEdited(true);
         setIsActive(data.is_active);
         setIsPublished(data.is_published);
+        setSelectedGymIds(data.gym_ids || []);
         setCurrentKhan(data.current_khan);
         setInitialKhan(data.current_khan);
         setExistingGraduations(data.graduations);
@@ -91,6 +95,12 @@ export const StudentForm: React.FC<StudentFormProps> = ({ studentId }) => {
     }
   };
 
+  const handleToggleGym = (gymId: string) => {
+    setSelectedGymIds((prev) =>
+      prev.includes(gymId) ? prev.filter((id) => id !== gymId) : [...prev, gymId]
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFeedback(null);
@@ -122,6 +132,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({ studentId }) => {
           slug: slug.trim(),
           is_active: isActive,
           is_published: isPublished,
+          gym_ids: selectedGymIds,
         });
 
         // Se o Khan foi alterado ou se forneceu uma nova graduação, invoca RPC transacional
@@ -152,6 +163,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({ studentId }) => {
           is_active: isActive,
           is_published: isPublished,
           graduation_date: graduationDate || null,
+          gym_ids: selectedGymIds,
         });
 
         setFeedback({ type: 'success', message: 'Aluno cadastrado com sucesso!' });
@@ -316,6 +328,56 @@ export const StudentForm: React.FC<StudentFormProps> = ({ studentId }) => {
                 className="w-5 h-5 rounded border-zinc-700 text-red-600 focus:ring-red-500 bg-zinc-900 cursor-pointer"
               />
             </div>
+          </div>
+
+          {/* Academia ou Academias (Opcional) */}
+          <div className="p-5 rounded-2xl bg-[#0c0c10] border border-zinc-800">
+            <div className="flex items-center gap-2 mb-1.5">
+              <MapPin size={16} className="text-red-500" />
+              <h2 className="font-fight text-base sm:text-lg text-white uppercase tracking-wider">
+                Academia ou Academias <span className="text-zinc-500 text-xs font-mono lowercase">(opcional)</span>
+              </h2>
+            </div>
+            <p className="text-xs text-zinc-400 mb-3.5">
+              Selecione as unidades da Pride Muay Thai onde o aluno realiza seus treinos semanais.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-64 overflow-y-auto pr-1">
+              {GYMS_DATA.map((gym) => {
+                const isSelected = selectedGymIds.includes(gym.id);
+                return (
+                  <button
+                    key={gym.id}
+                    type="button"
+                    onClick={() => handleToggleGym(gym.id)}
+                    className={`text-left p-2.5 rounded-xl border transition-all flex flex-col justify-between ${
+                      isSelected
+                        ? 'bg-red-950/40 border-red-500/80 text-white shadow-sm ring-1 ring-red-500/40'
+                        : 'bg-zinc-900/60 border-zinc-800/80 text-zinc-300 hover:border-zinc-700 hover:text-white'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="font-semibold text-xs leading-snug line-clamp-1">{gym.name}</span>
+                      <span
+                        className={`w-4 h-4 rounded flex items-center justify-center flex-shrink-0 text-[10px] font-bold ${
+                          isSelected ? 'bg-red-600 text-white' : 'border border-zinc-700 bg-zinc-800'
+                        }`}
+                      >
+                        {isSelected ? '✓' : ''}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono text-zinc-500 mt-1">
+                      {gym.city}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            {selectedGymIds.length > 0 && (
+              <p className="text-[11px] font-mono text-red-400 mt-3">
+                {selectedGymIds.length} {selectedGymIds.length === 1 ? 'academia selecionada' : 'academias selecionadas'}.
+              </p>
+            )}
           </div>
 
           {/* Cumulative Khan Selector */}

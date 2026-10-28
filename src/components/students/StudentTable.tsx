@@ -1,10 +1,11 @@
 import React from 'react';
-import { ChevronRight, AlertCircle, RefreshCw, Award } from 'lucide-react';
+import { ChevronRight, AlertCircle, RefreshCw, Award, MapPin } from 'lucide-react';
 import { DbStudent } from '../../types/database';
 import { PrajiedBadge } from '../ui/PrajiedBadge';
 import { StudentCard } from './StudentCard';
 import { getKhanRank } from '../../constants/khans';
 import { navigateTo } from '../../utils/routes';
+import { getGymNames } from '../../utils/gyms';
 
 interface StudentTableProps {
   students: DbStudent[];
@@ -86,12 +87,14 @@ export const StudentTable: React.FC<StudentTableProps> = ({
               <th scope="col" className="py-3.5 px-6">Nome do Aluno</th>
               <th scope="col" className="py-3.5 px-6">Nível Atual</th>
               <th scope="col" className="py-3.5 px-6">Prajied Oficial</th>
+              <th scope="col" className="py-3.5 px-6">Academia(s)</th>
               <th scope="col" className="py-3.5 px-6 text-right">Trajetória</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/60 text-sm">
             {students.map((student) => {
               const rank = getKhanRank(student.current_khan);
+              const gymNames = getGymNames(student.gym_ids);
               return (
                 <tr
                   key={student.id}
@@ -120,6 +123,23 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                   </td>
                   <td className="py-4 px-6 align-middle whitespace-nowrap">
                     <PrajiedBadge level={student.current_khan} size="sm" showRankTitle={false} />
+                  </td>
+                  <td className="py-4 px-6 align-middle text-xs text-zinc-400">
+                    {gymNames.length > 0 ? (
+                      <div className="flex flex-wrap gap-1 max-w-xs">
+                        {gymNames.map((name) => (
+                          <span
+                            key={name}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 text-[11px]"
+                          >
+                            <MapPin size={11} className="text-red-500" />
+                            {name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-zinc-600 font-mono">—</span>
+                    )}
                   </td>
                   <td className="py-4 px-6 align-middle text-right whitespace-nowrap">
                     <a
