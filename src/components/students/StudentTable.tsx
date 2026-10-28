@@ -76,7 +76,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
       {/* Mobile view: Cards grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:hidden gap-4">
         {students.map((student) => (
-          <StudentCard key={student.id} student={student} onNavigate={handleDetail} />
+          <StudentCard key={`card-${student.id}`} student={student} onNavigate={handleDetail} />
         ))}
       </div>
 

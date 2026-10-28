@@ -21,7 +21,9 @@ export const PrajiedRope: React.FC<PrajiedRopeProps> = ({
   className = '' 
 }) => {
   const rank = getKhanRank(level);
-  const primary = customPrimary || rank.primaryColor;
+  const rawPrimary = customPrimary || rank.primaryColor;
+  // Para graduação preta (Khan 12 e 13), usamos #3f3f46 para garantir excelente contraste no fundo escuro
+  const primary = rawPrimary === '#18181b' ? '#3f3f46' : rawPrimary;
   const tip = customTip !== undefined ? customTip : (rank.tipColor || primary);
   const isWhiteTip = Boolean(customTip || rank.tipColor);
 
@@ -34,10 +36,6 @@ export const PrajiedRope: React.FC<PrajiedRopeProps> = ({
 
   const { width, height } = sizeMap[size];
 
-  // Unique gradient IDs per level/color
-  const cordGradId = `cord-grad-${level}-${size}-${(customPrimary || '').replace('#', '')}`;
-  const knotGradId = `knot-grad-${level}-${size}-${(customPrimary || '').replace('#', '')}`;
-
   return (
     <svg
       width={width}
@@ -48,91 +46,78 @@ export const PrajiedRope: React.FC<PrajiedRopeProps> = ({
       className={`inline-block flex-shrink-0 drop-shadow-md ${className}`}
       aria-label={`Prajied ${rank.level}º Khan (${rank.colorName})`}
     >
-      <defs>
-        {/* Main braided cord gradient */}
-        <linearGradient id={cordGradId} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={primary === '#18181b' ? '#3f3f46' : primary} />
-          <stop offset="50%" stopColor={primary} />
-          <stop offset="100%" stopColor={primary === '#18181b' ? '#09090b' : primary} stopOpacity="0.85" />
-        </linearGradient>
-
-        {/* Sacred metallic knot binding */}
-        <linearGradient id={knotGradId} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#f59e0b" />
-          <stop offset="50%" stopColor="#fef08a" />
-          <stop offset="100%" stopColor="#b45309" />
-        </linearGradient>
-
-        {/* Braided texture pattern */}
-        <pattern id={`braid-pat-${level}`} width="4" height="4" patternUnits="userSpaceOnUse">
-          <path d="M0 4L4 0M0 0L4 4" stroke="rgba(255,255,255,0.2)" strokeWidth="0.8" />
-        </pattern>
-      </defs>
-
-      {/* Armband Loop (top circular curve) */}
+      {/* Armband Loop (top circular curve com cor primária direta sem dependência frágil de gradient ID) */}
       <path
         d="M6 14 C6 5, 30 5, 30 14 C30 20, 6 20, 6 14 Z"
-        stroke={`url(#${cordGradId})`}
+        stroke={primary}
         strokeWidth="4"
         fill="none"
         strokeLinecap="round"
       />
-      {/* Texture overlay on loop */}
+      {/* Braided highlight accent no loop superior */}
       <path
-        d="M6 14 C6 5, 30 5, 30 14 C30 20, 6 20, 6 14 Z"
-        stroke={`url(#braid-pat-${level})`}
-        strokeWidth="3.5"
+        d="M8 13 C8 7, 28 7, 28 13"
+        stroke="rgba(255, 255, 255, 0.35)"
+        strokeWidth="1.2"
         fill="none"
         strokeLinecap="round"
       />
 
-      {/* Sacred Binding Knot */}
+      {/* Sacred Binding Knot (Nó sagrado dourado) */}
       <rect
         x="13"
         y="16"
         width="10"
         height="5"
         rx="2"
-        fill={`url(#${knotGradId})`}
+        fill="#f59e0b"
         stroke="#78350f"
         strokeWidth="0.5"
       />
+      <rect
+        x="15"
+        y="17"
+        width="6"
+        height="2"
+        rx="1"
+        fill="#fef08a"
+      />
 
       {/* Left Tassel / Cord end */}
-      {/* Upper part of tassel (Primary color) */}
+      {/* Upper part of tassel (Cor primária) */}
       <path
         d="M15 21 L13 34"
-        stroke={`url(#${cordGradId})`}
+        stroke={primary}
         strokeWidth="3"
         strokeLinecap="round"
       />
-      {/* Tip of left tassel (White if ponta branca, otherwise primary) */}
+      {/* Tip of left tassel (Branca se ponta branca, ou primária) */}
       <path
         d="M13 34 L12 44"
-        stroke={isWhiteTip ? tip : `url(#${cordGradId})`}
+        stroke={isWhiteTip ? tip : primary}
         strokeWidth="3"
         strokeLinecap="round"
       />
 
       {/* Right Tassel / Cord end */}
-      {/* Upper part of tassel (Primary color) */}
+      {/* Upper part of tassel (Cor primária) */}
       <path
         d="M21 21 L23 34"
-        stroke={`url(#${cordGradId})`}
+        stroke={primary}
         strokeWidth="3"
         strokeLinecap="round"
       />
-      {/* Tip of right tassel (White if ponta branca, otherwise primary) */}
+      {/* Tip of right tassel (Branca se ponta branca, ou primária) */}
       <path
         d="M23 34 L24 44"
-        stroke={isWhiteTip ? tip : `url(#${cordGradId})`}
+        stroke={isWhiteTip ? tip : primary}
         strokeWidth="3"
         strokeLinecap="round"
       />
 
       {/* Fringe / tassel small threads at the very end */}
-      <circle cx="12" cy="45" r="1.2" fill={isWhiteTip ? '#ffffff' : primary} />
-      <circle cx="24" cy="45" r="1.2" fill={isWhiteTip ? '#ffffff' : primary} />
+      <circle cx="12" cy="45" r="1.3" fill={isWhiteTip ? '#ffffff' : primary} />
+      <circle cx="24" cy="45" r="1.3" fill={isWhiteTip ? '#ffffff' : primary} />
     </svg>
   );
 };
@@ -158,8 +143,15 @@ export const PrajiedBadge: React.FC<PrajiedBadgeProps> = ({
   // Border and accent styling depending on Khan color
   const getGlowBorder = () => {
     switch (rank.level) {
+      case 16:
+      case 15:
+        return 'border-amber-400/80 bg-amber-950/70 shadow-amber-950/40';
+      case 14:
+        return 'border-slate-400/80 bg-slate-950/70 shadow-slate-900/30';
       case 13:
         return 'border-zinc-500/80 bg-zinc-950/90 shadow-zinc-700/20';
+      case 12:
+        return 'border-zinc-600/80 bg-zinc-950/90 shadow-zinc-800/30';
       case 11:
         return 'border-red-500/80 bg-gradient-to-r from-red-950/80 to-zinc-950/90 shadow-red-950/40';
       case 10:
@@ -170,6 +162,16 @@ export const PrajiedBadge: React.FC<PrajiedBadgeProps> = ({
         return 'border-amber-800/70 bg-amber-950/60 shadow-amber-950/30';
       case 7:
         return 'border-blue-500/80 bg-gradient-to-r from-blue-950/80 to-zinc-950/90 shadow-blue-950/30';
+      case 6:
+        return 'border-blue-600/70 bg-blue-950/50 shadow-blue-950/20';
+      case 5:
+      case 4:
+        return 'border-emerald-600/70 bg-emerald-950/50 shadow-emerald-950/20';
+      case 3:
+      case 2:
+        return 'border-yellow-500/70 bg-yellow-950/40 shadow-yellow-950/20';
+      case 1:
+        return 'border-slate-400/60 bg-slate-900/50';
       default:
         return 'border-zinc-700 bg-zinc-900';
     }
