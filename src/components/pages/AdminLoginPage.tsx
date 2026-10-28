@@ -51,8 +51,8 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onSuccess }) => 
   };
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md p-8 sm:p-10 rounded-3xl bg-[#0d0d12] border border-zinc-800 shadow-2xl relative overflow-hidden">
+    <div className="min-h-[85vh] flex flex-col items-center justify-center px-4 pt-32 sm:pt-36 md:pt-40 pb-20">
+      <div className="w-full max-w-md p-8 sm:p-10 rounded-3xl bg-[#0d0d12] border border-zinc-800 shadow-2xl relative overflow-hidden my-auto">
         {/* Glow */}
         <div className="absolute top-0 right-1/2 translate-x-1/2 w-64 h-64 bg-red-600/5 rounded-full blur-[100px] pointer-events-none" />
 

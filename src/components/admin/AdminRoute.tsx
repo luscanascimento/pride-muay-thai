@@ -14,7 +14,7 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = 
 
   if (isInitialLoading) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center p-6">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center p-6 pt-32 pb-20">
         <RefreshCw size={36} className="animate-spin text-red-500 mb-4" />
         <p className="text-zinc-400 font-mono text-sm">Validando permissões de acesso...</p>
       </div>
