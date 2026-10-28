@@ -29,6 +29,7 @@ import { BRAND } from '../../constants/brand';
 import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
 import { getGoogleMapsSearchUrl } from '../../utils/maps';
+import { formatDisplayPrice } from '../../utils/currency';
 
 interface EventDetailPageProps {
   slug: string;
@@ -228,8 +229,8 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
               <Tag size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
               <div>
                 <span className="block text-[11px] font-mono uppercase tracking-wider text-zinc-400">Valor / Inscrição</span>
-                <span className="text-sm sm:text-base font-semibold text-white mt-0.5 block">
-                  {event.price}
+                <span className="text-sm sm:text-base font-semibold text-white mt-0.5 block font-mono">
+                  {formatDisplayPrice(event.price)}
                 </span>
               </div>
             </div>
@@ -274,7 +275,7 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
                   Pagamento & Inscrição via PIX
                 </h2>
                 <span className="text-xs text-zinc-400 font-mono">
-                  {event.price ? `Valor: ${event.price}` : 'Chave PIX Oficial da Organização'}
+                  {event.price ? `Valor: ${formatDisplayPrice(event.price)}` : 'Chave PIX Oficial da Organização'}
                 </span>
               </div>
             </div>
@@ -293,9 +294,16 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
               <span className="text-base sm:text-xl font-mono font-bold text-emerald-400 tracking-wider block select-all">
                 {event.pix_key || '12991746964'}
               </span>
-              <span className="text-xs text-zinc-400 mt-1 block">
-                Beneficiário: Renan Fernandes (Hulkinho) — Pride Muay Thai
-              </span>
+              <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                {event.price && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 font-mono text-xs font-semibold">
+                    Valor: {formatDisplayPrice(event.price)}
+                  </span>
+                )}
+                <span className="text-xs text-zinc-400">
+                  Beneficiário: Renan Fernandes (Hulkinho) — Pride Muay Thai
+                </span>
+              </div>
             </div>
 
             <button

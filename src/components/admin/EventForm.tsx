@@ -15,6 +15,7 @@ import { eventsService, CreateEventInput } from '../../services/eventsService';
 import { EventCategory, EventStatus } from '../../types/database';
 import { generateSlug } from '../../utils/slug';
 import { navigateTo } from '../../utils/routes';
+import { maskCurrencyInput, normalizeCurrencyBrl } from '../../utils/currency';
 import { EventBracketsManager } from './EventBracketsManager';
 
 interface EventFormProps {
@@ -81,7 +82,7 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
         setRegistrationInfo(event.registration_info || '');
         setRegistrationUrl(event.registration_url || '');
         setContact(event.contact || '');
-        setPrice(event.price || '');
+        setPrice(normalizeCurrencyBrl(event.price || ''));
         setShowPix(Boolean(event.show_pix));
         setPixKey(event.pix_key || '12991746964');
         setShowInstagram(Boolean(event.show_instagram));
@@ -127,6 +128,25 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
   const handleSlugChange = (val: string) => {
     setIsSlugManuallyEdited(true);
     setSlug(generateSlug(val));
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    setPrice(maskCurrencyInput(raw));
+  };
+
+  const handlePricePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text');
+    if (pasted) {
+      setPrice(normalizeCurrencyBrl(pasted));
+    }
+  };
+
+  const handlePriceBlur = () => {
+    if (price.trim()) {
+      setPrice(normalizeCurrencyBrl(price));
+    }
   };
 
   const handleSubmit = async (targetStatus?: EventStatus) => {
@@ -193,7 +213,7 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
         registration_info: registrationInfo.trim() || null,
         registration_url: registrationUrl.trim() || null,
         contact: contact.trim() || null,
-        price: price.trim() || null,
+        price: price.trim() ? normalizeCurrencyBrl(price) : null,
         show_pix: showPix,
         pix_key: pixKey.trim() || '12991746964',
         show_instagram: showInstagram,
@@ -558,20 +578,28 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Valor do Evento */}
+              {/* Valor do Evento com máscara de R$ */}
               <div>
                 <label htmlFor="event-price" className="block text-xs font-mono uppercase tracking-wider text-zinc-300 mb-1.5">
-                  Valor / Taxa de Inscrição <span className="text-zinc-500 font-normal lowercase">(opcional)</span>
+                  Valor do PIX / Inscrição <span className="text-zinc-500 font-normal lowercase">(opcional)</span>
                 </label>
-                <input
-                  id="event-price"
-                  type="text"
-                  maxLength={60}
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  placeholder="Ex: R$ 50,00, Gratuito, 1kg de Alimento..."
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500"
-                />
+                <div className="relative">
+                  <input
+                    id="event-price"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={30}
+                    value={price}
+                    onChange={handlePriceChange}
+                    onPaste={handlePricePaste}
+                    onBlur={handlePriceBlur}
+                    placeholder="R$ 60,00"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
+                  />
+                </div>
+                <span className="text-[11px] font-mono text-zinc-500 mt-1 block">
+                  Máscara automática: digite os números (ex: 6000 para R$ 60,00)
+                </span>
               </div>
 
               {/* Chave PIX (editável com padrão Renan 12991746964) */}

@@ -5,6 +5,7 @@ import { EventStatusBadge } from './EventStatusBadge';
 import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
 import { getGoogleMapsSearchUrl } from '../../utils/maps';
+import { formatDisplayPrice } from '../../utils/currency';
 
 interface EventCardProps {
   event: DbEvent;
@@ -66,7 +67,9 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onNavigate }) => {
         {event.price && (
           <div className="flex items-center gap-2">
             <Tag size={14} className="text-emerald-500 flex-shrink-0" />
-            <span className="font-semibold text-emerald-400">{event.price}</span>
+            <span className="font-semibold text-emerald-400 font-mono">
+              {formatDisplayPrice(event.price)}
+            </span>
           </div>
         )}
         <div className="flex items-center gap-2">

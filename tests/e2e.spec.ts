@@ -17,6 +17,11 @@ import {
   PAULO_ROBERTO_ID,
   LUCAS_NASCIMENTO_ID,
 } from '../src/utils/superAdmins';
+import {
+  maskCurrencyInput,
+  normalizeCurrencyBrl,
+  formatDisplayPrice,
+} from '../src/utils/currency';
 
 test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () => {
   test('o canal do YouTube possui link oficial, atributos de segurança e acessibilidade no rodapé e na seção de contato', async ({
@@ -518,5 +523,37 @@ test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
     expect(canDeleteUser(LUCAS_NASCIMENTO_ID, RENAN_FERNANDES_ID)).toBe(false);
     expect(canDeleteUser(RENAN_FERNANDES_ID, DELEGATED_ADMIN_ID)).toBe(true);
     expect(canDeleteUser(DELEGATED_ADMIN_ID, ANOTHER_ADMIN_ID)).toBe(false);
+  });
+
+  test('máscara de valor do PIX e exibição obrigatória com R$ antes do número', () => {
+    // 1. Digitação progressiva com máscara em tempo real
+    expect(maskCurrencyInput('')).toBe('');
+    expect(maskCurrencyInput('0')).toBe('');
+    expect(maskCurrencyInput('6')).toBe('R$ 0,06');
+    expect(maskCurrencyInput('60')).toBe('R$ 0,60');
+    expect(maskCurrencyInput('600')).toBe('R$ 6,00');
+    expect(maskCurrencyInput('6000')).toBe('R$ 60,00');
+    expect(maskCurrencyInput('60000')).toBe('R$ 600,00');
+    expect(maskCurrencyInput('150000')).toBe('R$ 1.500,00');
+
+    // 2. Normalização de entradas (números inteiros, decimais com vírgula ou ponto, colados ou salvos no banco)
+    expect(normalizeCurrencyBrl('60')).toBe('R$ 60,00');
+    expect(normalizeCurrencyBrl('60,00')).toBe('R$ 60,00');
+    expect(normalizeCurrencyBrl('60.00')).toBe('R$ 60,00');
+    expect(normalizeCurrencyBrl('R$60,00')).toBe('R$ 60,00');
+    expect(normalizeCurrencyBrl('R$ 60,00')).toBe('R$ 60,00');
+    expect(normalizeCurrencyBrl('R$ 60')).toBe('R$ 60,00');
+    expect(normalizeCurrencyBrl('1500')).toBe('R$ 1.500,00');
+    expect(normalizeCurrencyBrl('1.250,50')).toBe('R$ 1.250,50');
+    expect(normalizeCurrencyBrl('')).toBe('');
+    expect(normalizeCurrencyBrl(null)).toBe('');
+
+    // 3. Formatação para exibição: garante SEMPRE o prefixo 'R$' antes do número
+    expect(formatDisplayPrice('60')).toBe('R$ 60,00');
+    expect(formatDisplayPrice('60,00')).toBe('R$ 60,00');
+    expect(formatDisplayPrice('R$60,00')).toBe('R$ 60,00');
+    expect(formatDisplayPrice('R$ 60,00')).toBe('R$ 60,00');
+    expect(formatDisplayPrice('')).toBe('');
+    expect(formatDisplayPrice(null)).toBe('');
   });
 });
