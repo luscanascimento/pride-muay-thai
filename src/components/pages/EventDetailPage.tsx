@@ -11,6 +11,10 @@ import {
   RefreshCw,
   Trophy,
   Edit,
+  Tag,
+  Copy,
+  Check,
+  QrCode,
 } from 'lucide-react';
 import { eventsService } from '../../services/eventsService';
 import { bracketsService } from '../../services/bracketsService';
@@ -20,6 +24,8 @@ import { DbEventBracket } from '../../types/brackets';
 import { EventStatusBadge } from '../events/EventStatusBadge';
 import { BracketView } from '../brackets/BracketView';
 import { Button } from '../ui/Button';
+import { InstagramIcon, YoutubeIcon } from '../ui/Icons';
+import { BRAND } from '../../constants/brand';
 import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
 import { getGoogleMapsSearchUrl } from '../../utils/maps';
@@ -34,6 +40,7 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
   const [event, setEvent] = useState<DbEvent | null>(null);
   const [brackets, setBrackets] = useState<DbEventBracket[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [copiedPix, setCopiedPix] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -78,6 +85,17 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
       onBack();
     } else {
       navigateTo('/eventos');
+    }
+  };
+
+  const handleCopyPix = async () => {
+    const key = event?.pix_key || '12991746964';
+    try {
+      await navigator.clipboard.writeText(key);
+      setCopiedPix(true);
+      setTimeout(() => setCopiedPix(false), 2500);
+    } catch {
+      alert(`Chave PIX: ${key}`);
     }
   };
 
@@ -157,12 +175,14 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
           {event.title}
         </h1>
 
-        <p className="text-zinc-300 text-base sm:text-lg mt-4 leading-relaxed font-normal">
-          {event.summary}
-        </p>
+        {event.summary && (
+          <p className="text-zinc-300 text-base sm:text-lg mt-4 leading-relaxed font-normal">
+            {event.summary}
+          </p>
+        )}
 
         {/* Highlight metadata cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 pt-6 border-t border-zinc-800/80">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${event.price ? 'lg:grid-cols-3' : ''} gap-4 mt-8 pt-6 border-t border-zinc-800/80`}>
           <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex items-start gap-3">
             <Calendar size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
             <div>
@@ -202,6 +222,18 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
             </div>
             <ExternalLink size={16} className="text-zinc-500 group-hover:text-red-400 transition-colors flex-shrink-0 mt-0.5" />
           </a>
+
+          {event.price && (
+            <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex items-start gap-3 sm:col-span-2 lg:col-span-1">
+              <Tag size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <span className="block text-[11px] font-mono uppercase tracking-wider text-zinc-400">Valor / Inscrição</span>
+                <span className="text-sm sm:text-base font-semibold text-white mt-0.5 block">
+                  {event.price}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
@@ -229,11 +261,73 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
         </section>
       )}
 
-      {/* Registration details */}
-      {(event.registration_info || event.registration_url) && !isCancelled && (
+      {/* Pagamento & Inscrição via PIX (Opcional) */}
+      {event.show_pix && !isCancelled && (
+        <section className="mb-10 p-6 sm:p-7 rounded-2xl bg-[#0b100d] border border-emerald-900/60 shadow-xl">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-emerald-950">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-emerald-950/80 border border-emerald-800/60 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                <QrCode size={20} />
+              </div>
+              <div>
+                <h2 className="font-fight text-xl sm:text-2xl text-white uppercase tracking-wider">
+                  Pagamento & Inscrição via PIX
+                </h2>
+                <span className="text-xs text-zinc-400 font-mono">
+                  {event.price ? `Valor: ${event.price}` : 'Chave PIX Oficial da Organização'}
+                </span>
+              </div>
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-800/40 text-emerald-400 font-mono text-xs uppercase font-semibold">
+              <CheckCircle size={13} />
+              <span>Chave Verificada</span>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-xl bg-zinc-950 border border-zinc-800">
+            <div>
+              <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-1">
+                Chave PIX
+              </span>
+              <span className="text-base sm:text-xl font-mono font-bold text-emerald-400 tracking-wider block select-all">
+                {event.pix_key || '12991746964'}
+              </span>
+              <span className="text-xs text-zinc-400 mt-1 block">
+                Beneficiário: Renan Fernandes (Hulkinho) — Pride Muay Thai
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleCopyPix}
+              className={`inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm font-mono text-xs uppercase font-semibold transition-all ${
+                copiedPix
+                  ? 'bg-emerald-600 text-white shadow-emerald-glow'
+                  : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 hover:border-zinc-700'
+              }`}
+            >
+              {copiedPix ? (
+                <>
+                  <Check size={15} />
+                  <span>Chave Copiada!</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={15} />
+                  <span>Copiar Chave PIX</span>
+                </>
+              )}
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* Registration details, Social Channels & Actions */}
+      {(event.registration_info || event.registration_url || event.show_instagram || event.show_youtube) && !isCancelled && (
         <section className="mb-10 p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-red-950/30 to-zinc-900/60 border border-red-900/50 shadow-2xl">
           <h2 className="font-fight text-2xl sm:text-3xl text-white uppercase tracking-wider mb-3">
-            Como Participar & Inscrições
+            Como Participar & Acompanhar
           </h2>
 
           {event.registration_info && (
@@ -242,8 +336,8 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
             </p>
           )}
 
-          {event.registration_url && (
-            <div>
+          <div className="flex flex-wrap items-center gap-3">
+            {event.registration_url && (
               <Button
                 as="a"
                 href={event.registration_url}
@@ -255,8 +349,40 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
                 <span>Inscrever-se no Evento</span>
                 <ExternalLink size={18} />
               </Button>
-            </div>
-          )}
+            )}
+
+            {event.show_instagram && (
+              <Button
+                as="a"
+                href={BRAND.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="secondary"
+                size="lg"
+                className="border-pink-900/40 hover:border-pink-600/70 text-zinc-200 hover:text-white"
+              >
+                <InstagramIcon size={18} className="text-pink-500" />
+                <span>Instagram Oficial</span>
+                <ExternalLink size={14} className="text-zinc-500" />
+              </Button>
+            )}
+
+            {event.show_youtube && (
+              <Button
+                as="a"
+                href={BRAND.youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="secondary"
+                size="lg"
+                className="border-red-900/40 hover:border-red-600/70 text-zinc-200 hover:text-white"
+              >
+                <YoutubeIcon size={18} className="text-red-500" />
+                <span>Canal no YouTube</span>
+                <ExternalLink size={14} className="text-zinc-500" />
+              </Button>
+            )}
+          </div>
         </section>
       )}
 

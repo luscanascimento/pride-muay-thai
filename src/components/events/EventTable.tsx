@@ -114,7 +114,7 @@ export const EventTable: React.FC<EventTableProps> = ({
                       {event.title}
                     </a>
                     <p className="text-xs text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
-                      {event.summary}
+                      {event.summary || event.description}
                     </p>
                   </td>
                   <td className="py-4 px-4 align-top whitespace-nowrap text-xs text-zinc-300">

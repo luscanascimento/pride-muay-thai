@@ -35,6 +35,11 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
   const [registrationInfo, setRegistrationInfo] = useState('');
   const [registrationUrl, setRegistrationUrl] = useState('');
   const [contact, setContact] = useState('');
+  const [price, setPrice] = useState('');
+  const [showPix, setShowPix] = useState(false);
+  const [pixKey, setPixKey] = useState('12991746964');
+  const [showInstagram, setShowInstagram] = useState(false);
+  const [showYouTube, setShowYouTube] = useState(false);
 
   const [isLoadingEvent, setIsLoadingEvent] = useState(isEditing);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +68,11 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
         setRegistrationInfo(event.registration_info || '');
         setRegistrationUrl(event.registration_url || '');
         setContact(event.contact || '');
+        setPrice(event.price || '');
+        setShowPix(Boolean(event.show_pix));
+        setPixKey(event.pix_key || '12991746964');
+        setShowInstagram(Boolean(event.show_instagram));
+        setShowYouTube(Boolean(event.show_youtube));
 
         // Formatar para formato do input datetime-local: YYYY-MM-DDTHH:mm
         if (event.event_date) {
@@ -122,10 +132,6 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
       setFeedback({ type: 'error', message: 'O slug do evento é obrigatório.' });
       return;
     }
-    if (!summary.trim()) {
-      setFeedback({ type: 'error', message: 'O resumo do evento é obrigatório.' });
-      return;
-    }
     if (summary.length > 300) {
       setFeedback({ type: 'error', message: 'O resumo não pode exceder 300 caracteres.' });
       return;
@@ -169,6 +175,11 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
         registration_info: registrationInfo.trim() || null,
         registration_url: registrationUrl.trim() || null,
         contact: contact.trim() || null,
+        price: price.trim() || null,
+        show_pix: showPix,
+        pix_key: pixKey.trim() || '12991746964',
+        show_instagram: showInstagram,
+        show_youtube: showYouTube,
       };
 
       if (isEditing && eventId) {
@@ -403,7 +414,7 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label htmlFor="event-summary" className="text-xs font-mono uppercase tracking-wider text-zinc-300">
-                Resumo Editorial (Listagem) *
+                Resumo Editorial (Listagem) <span className="text-zinc-500 font-normal lowercase">(opcional)</span>
               </label>
               <span className={`text-[10px] font-mono ${summary.length > 300 ? 'text-red-500' : 'text-zinc-500'}`}>
                 {summary.length}/300
@@ -411,7 +422,6 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
             </div>
             <textarea
               id="event-summary"
-              required
               rows={2}
               maxLength={300}
               value={summary}
@@ -514,6 +524,127 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
                 placeholder="Ex: WhatsApp da Pride (12) 99174-6964"
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
+            </div>
+          </div>
+
+          {/* Valores, Pagamento PIX & Redes Sociais */}
+          <div className="p-5 rounded-2xl bg-[#0e0e14] border border-zinc-800/90 space-y-5">
+            <div className="border-b border-zinc-800/80 pb-3">
+              <span className="text-xs font-mono uppercase tracking-wider text-red-500 font-bold block">
+                Valores, Pagamento PIX & Redes Sociais
+              </span>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                Configure os valores de entrada, chave PIX e botões de redes sociais do evento.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Valor do Evento */}
+              <div>
+                <label htmlFor="event-price" className="block text-xs font-mono uppercase tracking-wider text-zinc-300 mb-1.5">
+                  Valor / Taxa de Inscrição <span className="text-zinc-500 font-normal lowercase">(opcional)</span>
+                </label>
+                <input
+                  id="event-price"
+                  type="text"
+                  maxLength={60}
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="Ex: R$ 50,00, Gratuito, 1kg de Alimento..."
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+
+              {/* Chave PIX (editável com padrão Renan 12991746964) */}
+              <div>
+                <label htmlFor="event-pix-key" className="block text-xs font-mono uppercase tracking-wider text-zinc-300 mb-1.5">
+                  Chave PIX para Inscrição / Pagamento
+                </label>
+                <input
+                  id="event-pix-key"
+                  type="text"
+                  maxLength={100}
+                  value={pixKey}
+                  onChange={(e) => setPixKey(e.target.value)}
+                  placeholder="12991746964"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
+                />
+                <span className="text-[10px] text-zinc-500 font-mono block mt-1">
+                  Padrão: 12991746964 (Renan Hulkinho)
+                </span>
+              </div>
+            </div>
+
+            {/* Toggles de Exibição */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-zinc-800/80">
+              {/* Toggle PIX */}
+              <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+                <div>
+                  <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
+                    Mostrar Chave PIX
+                  </span>
+                  <span className="text-[11px] text-zinc-400 block">
+                    {showPix ? 'Exibindo no evento' : 'Oculto'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowPix(!showPix)}
+                  className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                    showPix
+                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
+                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                  }`}
+                >
+                  {showPix ? '● Ativo' : '○ Não'}
+                </button>
+              </div>
+
+              {/* Toggle Instagram */}
+              <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+                <div>
+                  <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
+                    Botão do Instagram
+                  </span>
+                  <span className="text-[11px] text-zinc-400 block">
+                    {showInstagram ? 'Exibindo no evento' : 'Oculto'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowInstagram(!showInstagram)}
+                  className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                    showInstagram
+                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
+                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                  }`}
+                >
+                  {showInstagram ? '● Ativo' : '○ Não'}
+                </button>
+              </div>
+
+              {/* Toggle YouTube */}
+              <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+                <div>
+                  <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
+                    Botão do YouTube
+                  </span>
+                  <span className="text-[11px] text-zinc-400 block">
+                    {showYouTube ? 'Exibindo no evento' : 'Oculto'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowYouTube(!showYouTube)}
+                  className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                    showYouTube
+                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
+                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                  }`}
+                >
+                  {showYouTube ? '● Ativo' : '○ Não'}
+                </button>
+              </div>
             </div>
           </div>
 

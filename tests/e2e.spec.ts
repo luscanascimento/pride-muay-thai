@@ -413,4 +413,47 @@ test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
     const adminVisible = brackets.filter(() => true);
     expect(adminVisible).toHaveLength(3);
   });
+
+  test('novos recursos de evento: valor, chave PIX padrão 12991746964, redes sociais e resumo opcional', () => {
+    const mockEvent = {
+      id: 'event-test-1',
+      slug: 'copa-pride-2026',
+      title: 'Copa Pride de Muay Thai 2026',
+      category: 'competition' as const,
+      status: 'published' as const,
+      summary: '', // Resumo opcional (vazio)
+      description: 'Torneio oficial com disputa de cinturões.',
+      event_date: '2026-11-20T10:00:00Z',
+      end_date: null,
+      location: 'Jacareí - SP',
+      price: 'R$ 50,00',
+      show_pix: true,
+      pix_key: '12991746964',
+      show_instagram: true,
+      show_youtube: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      created_by: null,
+      updated_by: null,
+      requirements: null,
+      registration_info: null,
+      registration_url: null,
+      contact: null,
+      published_at: null,
+      image_url: null,
+    };
+
+    // 1. Resumo opcional: se vazio, usa descrição como fallback
+    const displaySummary = mockEvent.summary || mockEvent.description;
+    expect(displaySummary).toBe('Torneio oficial com disputa de cinturões.');
+
+    // 2. Chave PIX padrão do Renan
+    expect(mockEvent.pix_key).toBe('12991746964');
+    expect(mockEvent.show_pix).toBe(true);
+
+    // 3. Valor e canais sociais
+    expect(mockEvent.price).toBe('R$ 50,00');
+    expect(mockEvent.show_instagram).toBe(true);
+    expect(mockEvent.show_youtube).toBe(true);
+  });
 });

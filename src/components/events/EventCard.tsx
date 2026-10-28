@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, MapPin, ChevronRight, AlertTriangle } from 'lucide-react';
+import { Calendar, MapPin, ChevronRight, AlertTriangle, Tag } from 'lucide-react';
 import { DbEvent } from '../../types/database';
 import { EventStatusBadge } from './EventStatusBadge';
 import { formatDateTime } from '../../utils/date';
@@ -51,9 +51,11 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onNavigate }) => {
       </h3>
 
       {/* Summary */}
-      <p className="text-zinc-400 text-sm mt-2 line-clamp-3 leading-relaxed">
-        {event.summary}
-      </p>
+      {(event.summary || event.description) && (
+        <p className="text-zinc-400 text-sm mt-2 line-clamp-3 leading-relaxed">
+          {event.summary || event.description}
+        </p>
+      )}
 
       {/* Details metadata */}
       <div className="mt-4 pt-4 border-t border-zinc-800/80 flex flex-col gap-2 text-xs text-zinc-300">
@@ -61,6 +63,12 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onNavigate }) => {
           <Calendar size={14} className="text-red-500 flex-shrink-0" />
           <span>{formatDateTime(event.event_date)}</span>
         </div>
+        {event.price && (
+          <div className="flex items-center gap-2">
+            <Tag size={14} className="text-emerald-500 flex-shrink-0" />
+            <span className="font-semibold text-emerald-400">{event.price}</span>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <MapPin size={14} className="text-red-500 flex-shrink-0" />
           <a

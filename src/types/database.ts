@@ -39,6 +39,11 @@ export interface DbEvent {
   status: EventStatus;
   published_at: string | null;
   image_url: string | null;
+  price?: string | null;
+  show_pix?: boolean;
+  pix_key?: string | null;
+  show_instagram?: boolean;
+  show_youtube?: boolean;
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -109,7 +114,7 @@ export interface Database {
           slug: string;
           category: EventCategory;
           title: string;
-          summary: string;
+          summary?: string;
           description: string;
           event_date: string;
           end_date?: string | null;
@@ -121,6 +126,11 @@ export interface Database {
           status?: EventStatus;
           published_at?: string | null;
           image_url?: string | null;
+          price?: string | null;
+          show_pix?: boolean;
+          pix_key?: string | null;
+          show_instagram?: boolean;
+          show_youtube?: boolean;
           created_at?: string;
           updated_at?: string;
           created_by?: string | null;
@@ -144,6 +154,11 @@ export interface Database {
           status?: EventStatus;
           published_at?: string | null;
           image_url?: string | null;
+          price?: string | null;
+          show_pix?: boolean;
+          pix_key?: string | null;
+          show_instagram?: boolean;
+          show_youtube?: boolean;
           created_at?: string;
           updated_at?: string;
           created_by?: string | null;

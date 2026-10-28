@@ -29,7 +29,7 @@ export interface CreateEventInput {
   slug: string;
   category: EventCategory;
   title: string;
-  summary: string;
+  summary?: string;
   description: string;
   event_date: string;
   end_date?: string | null;
@@ -40,6 +40,11 @@ export interface CreateEventInput {
   contact?: string | null;
   status?: EventStatus;
   published_at?: string | null;
+  price?: string | null;
+  show_pix?: boolean;
+  pix_key?: string | null;
+  show_instagram?: boolean;
+  show_youtube?: boolean;
 }
 
 export interface UpdateEventInput extends Partial<CreateEventInput> {
@@ -204,18 +209,39 @@ export const eventsService = {
     const status = input.status || 'draft';
     const published_at = status === 'published' ? new Date().toISOString() : null;
 
-    const { data, error } = await supabase
+    const payload = {
+      ...input,
+      summary: input.summary || '',
+      status,
+      published_at,
+    };
+
+    let { data, error } = await supabase
       .from('events')
-      .insert({
-        ...input,
-        status,
-        published_at,
-      })
+      .insert(payload as never)
       .select()
       .single();
 
-    if (error) {
-      throw new Error(`Erro ao criar evento: ${error.message}`);
+    // Fallback caso as novas colunas ainda não existam no banco remoto
+    if (error && (error.message?.includes('price') || error.message?.includes('pix') || error.message?.includes('instagram') || error.message?.includes('youtube'))) {
+      const fallbackPayload = { ...payload };
+      delete (fallbackPayload as Record<string, unknown>).price;
+      delete (fallbackPayload as Record<string, unknown>).show_pix;
+      delete (fallbackPayload as Record<string, unknown>).pix_key;
+      delete (fallbackPayload as Record<string, unknown>).show_instagram;
+      delete (fallbackPayload as Record<string, unknown>).show_youtube;
+
+      const retry = await supabase
+        .from('events')
+        .insert(fallbackPayload as never)
+        .select()
+        .single();
+      data = retry.data;
+      error = retry.error;
+    }
+
+    if (error || !data) {
+      throw new Error(`Erro ao criar evento: ${error?.message || 'Falha ao salvar'}`);
     }
 
     return data;
@@ -238,18 +264,40 @@ export const eventsService = {
       published_at = existing?.published_at || new Date().toISOString();
     }
 
-    const { data, error } = await supabase
+    const payload = {
+      ...updates,
+      ...(updates.summary !== undefined ? { summary: updates.summary || '' } : {}),
+      ...(published_at !== undefined ? { published_at } : {}),
+    };
+
+    let { data, error } = await supabase
       .from('events')
-      .update({
-        ...updates,
-        ...(published_at !== undefined ? { published_at } : {}),
-      })
+      .update(payload as never)
       .eq('id', id)
       .select()
       .single();
 
-    if (error) {
-      throw new Error(`Erro ao atualizar evento: ${error.message}`);
+    // Fallback caso as novas colunas ainda não existam no banco remoto
+    if (error && (error.message?.includes('price') || error.message?.includes('pix') || error.message?.includes('instagram') || error.message?.includes('youtube'))) {
+      const fallbackPayload = { ...payload };
+      delete (fallbackPayload as Record<string, unknown>).price;
+      delete (fallbackPayload as Record<string, unknown>).show_pix;
+      delete (fallbackPayload as Record<string, unknown>).pix_key;
+      delete (fallbackPayload as Record<string, unknown>).show_instagram;
+      delete (fallbackPayload as Record<string, unknown>).show_youtube;
+
+      const retry = await supabase
+        .from('events')
+        .update(fallbackPayload as never)
+        .eq('id', id)
+        .select()
+        .single();
+      data = retry.data;
+      error = retry.error;
+    }
+
+    if (error || !data) {
+      throw new Error(`Erro ao atualizar evento: ${error?.message || 'Falha ao atualizar'}`);
     }
 
     return data;
