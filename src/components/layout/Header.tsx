@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, MapPin } from 'lucide-react';
+import { Menu, X, MapPin, LogIn } from 'lucide-react';
 import { BRAND } from '../../constants/brand';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
 import { Button } from '../ui/Button';
@@ -70,7 +70,17 @@ export const Header: React.FC = () => {
         </nav>
 
         {/* Desktop CTA Button */}
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-2.5">
+          <Button
+            as="a"
+            href="#/admin/login"
+            variant="secondary"
+            size="sm"
+            className="rounded-sm"
+          >
+            <LogIn size={16} />
+            Login
+          </Button>
           <Button
             as="a"
             href="#onde-treinar"
@@ -112,6 +122,17 @@ export const Header: React.FC = () => {
               </a>
             ))}
             <div className="pt-4 flex flex-col gap-3">
+              <Button
+                as="a"
+                href="#/admin/login"
+                variant="secondary"
+                size="lg"
+                onClick={closeMenu}
+                className="w-full justify-center"
+              >
+                <LogIn size={20} />
+                Login
+              </Button>
               <Button
                 as="a"
                 href="#onde-treinar"
