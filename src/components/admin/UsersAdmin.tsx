@@ -5,7 +5,6 @@ import {
   RefreshCw,
   KeyRound,
   Trash2,
-  Lock,
   X,
   Check,
   AlertCircle,
@@ -131,37 +130,6 @@ export const UsersAdmin: React.FC = () => {
           <Plus size={16} />
           <span>Novo Usuário</span>
         </button>
-      </div>
-
-      {/* Regras e Governança */}
-      <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-zinc-950 border border-zinc-800/90 text-xs text-zinc-300 leading-relaxed grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-amber-950/40 border border-amber-800/50 text-amber-400 flex-shrink-0 mt-0.5">
-            <Lock size={16} />
-          </div>
-          <div>
-            <strong className="text-white font-mono uppercase block mb-0.5">
-              Contas Fundadoras Fixas:
-            </strong>
-            <span>
-              As contas de Renan Fernandes, Paulo Roberto e Lucas Nascimento possuem acesso total permanente e são imutáveis por terceiros. Um fundador não pode alterar a senha de outro.
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-blue-950/40 border border-blue-800/50 text-blue-400 flex-shrink-0 mt-0.5">
-            <UserCheck size={16} />
-          </div>
-          <div>
-            <strong className="text-white font-mono uppercase block mb-0.5">
-              Administradores Delegados:
-            </strong>
-            <span>
-              Novos usuários criados podem gerenciar alunos e criar eventos, mas só conseguem editar os eventos criados por eles mesmos. Não têm permissão para editar usuários ou eventos alheios.
-            </span>
-          </div>
-        </div>
       </div>
 
       {/* Users Table */}
