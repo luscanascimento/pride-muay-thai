@@ -45,6 +45,7 @@ export interface CreateEventInput {
   pix_key?: string | null;
   show_instagram?: boolean;
   show_youtube?: boolean;
+  created_by?: string | null;
 }
 
 export interface UpdateEventInput extends Partial<CreateEventInput> {

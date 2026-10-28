@@ -11,7 +11,10 @@ import {
   AlertTriangle,
   RefreshCw,
   Calendar,
+  Lock,
 } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
+import { canUserEditEvent } from '../../utils/superAdmins';
 import { eventsService, AdminEventsFilter } from '../../services/eventsService';
 import { DbEvent, EventCategory, EventStatus } from '../../types/database';
 import { EventStatusBadge } from '../events/EventStatusBadge';
@@ -20,6 +23,7 @@ import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
 
 export const EventsAdmin: React.FC = () => {
+  const { session } = useAuth();
   const [events, setEvents] = useState<DbEvent[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -65,6 +69,10 @@ export const EventsAdmin: React.FC = () => {
   }, [fetchEvents]);
 
   const handleTogglePublish = async (event: DbEvent) => {
+    if (!canUserEditEvent(session?.user?.id, event)) {
+      alert('Permissão negada. Você só pode gerenciar os eventos criados por você.');
+      return;
+    }
     try {
       const nextStatus: EventStatus = event.status === 'published' ? 'draft' : 'published';
       await eventsService.updateEvent({
@@ -79,6 +87,11 @@ export const EventsAdmin: React.FC = () => {
 
   const handleConfirmCancel = async () => {
     if (!eventToCancel) return;
+    if (!canUserEditEvent(session?.user?.id, eventToCancel)) {
+      alert('Permissão negada. Você só pode gerenciar os eventos criados por você.');
+      setEventToCancel(null);
+      return;
+    }
     setIsCancelling(true);
     try {
       await eventsService.updateEvent({
@@ -96,6 +109,11 @@ export const EventsAdmin: React.FC = () => {
 
   const handleConfirmDelete = async () => {
     if (!eventToDelete) return;
+    if (!canUserEditEvent(session?.user?.id, eventToDelete)) {
+      alert('Permissão negada. Você só pode gerenciar os eventos criados por você.');
+      setEventToDelete(null);
+      return;
+    }
     setIsDeleting(true);
     try {
       await eventsService.deleteEvent(eventToDelete.id);
@@ -232,92 +250,107 @@ export const EventsAdmin: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/60 text-sm">
-              {events.map((event) => (
-                <tr key={event.id} className="hover:bg-zinc-800/20 transition-colors">
-                  <td className="py-3.5 px-4 max-w-xs font-semibold text-white">
-                    <span className="line-clamp-2">{event.title}</span>
-                    <span className="text-[11px] font-mono text-zinc-500 block truncate">/{event.slug}</span>
-                  </td>
-                  <td className="py-3.5 px-4 whitespace-nowrap">
-                    <EventStatusBadge category={event.category} />
-                  </td>
-                  <td className="py-3.5 px-4 whitespace-nowrap text-xs font-mono text-zinc-300">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar size={13} className="text-red-500" />
-                      <span>{formatDateTime(event.event_date)}</span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 text-xs text-zinc-300 max-w-[150px] truncate">
-                    {event.location}
-                  </td>
-                  <td className="py-3.5 px-4 whitespace-nowrap">
-                    <EventStatusBadge status={event.status} />
-                  </td>
-                  <td className="py-3.5 px-4 whitespace-nowrap text-xs font-mono text-zinc-400">
-                    {formatDateTime(event.updated_at)}
-                  </td>
-                  <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                    <div className="inline-flex items-center gap-1.5">
-                      {/* View public */}
-                      <a
-                        href={`#/eventos/${event.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 transition-colors"
-                        title="Ver página pública"
-                      >
-                        <Eye size={15} />
-                      </a>
-
-                      {/* Edit */}
-                      <button
-                        type="button"
-                        onClick={() => navigateTo(`/admin/eventos/${event.id}/editar`)}
-                        className="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 transition-colors"
-                        title="Editar evento"
-                      >
-                        <Edit size={15} />
-                      </button>
-
-                      {/* Toggle Publish / Draft */}
-                      <button
-                        type="button"
-                        onClick={() => handleTogglePublish(event)}
-                        className={`p-1.5 rounded transition-colors ${
-                          event.status === 'published'
-                            ? 'text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/40'
-                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                        }`}
-                        title={event.status === 'published' ? 'Despublicar (voltar para rascunho)' : 'Publicar no site'}
-                      >
-                        {event.status === 'published' ? <CheckCircle size={15} /> : <XCircle size={15} />}
-                      </button>
-
-                      {/* Cancel event button */}
-                      {event.status !== 'cancelled' && (
-                        <button
-                          type="button"
-                          onClick={() => setEventToCancel(event)}
-                          className="p-1.5 text-amber-500 hover:text-amber-400 rounded hover:bg-amber-950/40 transition-colors"
-                          title="Cancelar evento (mantém a publicação e exibe cancelamento)"
+              {events.map((event) => {
+                const canEdit = canUserEditEvent(session?.user?.id, event);
+                return (
+                  <tr key={event.id} className="hover:bg-zinc-800/20 transition-colors">
+                    <td className="py-3.5 px-4 max-w-xs font-semibold text-white">
+                      <span className="line-clamp-2">{event.title}</span>
+                      <span className="text-[11px] font-mono text-zinc-500 block truncate">/{event.slug}</span>
+                    </td>
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <EventStatusBadge category={event.category} />
+                    </td>
+                    <td className="py-3.5 px-4 whitespace-nowrap text-xs font-mono text-zinc-300">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar size={13} className="text-red-500" />
+                        <span>{formatDateTime(event.event_date)}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-xs text-zinc-300 max-w-[150px] truncate">
+                      {event.location}
+                    </td>
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <EventStatusBadge status={event.status} />
+                    </td>
+                    <td className="py-3.5 px-4 whitespace-nowrap text-xs font-mono text-zinc-400">
+                      {formatDateTime(event.updated_at)}
+                    </td>
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <div className="inline-flex items-center gap-1.5">
+                        {/* View public */}
+                        <a
+                          href={`#/eventos/${event.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 transition-colors"
+                          title="Ver página pública"
                         >
-                          <AlertTriangle size={15} />
-                        </button>
-                      )}
+                          <Eye size={15} />
+                        </a>
 
-                      {/* Delete */}
-                      <button
-                        type="button"
-                        onClick={() => setEventToDelete(event)}
-                        className="p-1.5 text-red-500 hover:text-red-400 rounded hover:bg-red-950/40 transition-colors"
-                        title="Excluir evento"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        {canEdit ? (
+                          <>
+                            {/* Edit */}
+                            <button
+                              type="button"
+                              onClick={() => navigateTo(`/admin/eventos/${event.id}/editar`)}
+                              className="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 transition-colors"
+                              title="Editar evento"
+                            >
+                              <Edit size={15} />
+                            </button>
+
+                            {/* Toggle Publish / Draft */}
+                            <button
+                              type="button"
+                              onClick={() => handleTogglePublish(event)}
+                              className={`p-1.5 rounded transition-colors ${
+                                event.status === 'published'
+                                  ? 'text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/40'
+                                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                              }`}
+                              title={event.status === 'published' ? 'Despublicar (voltar para rascunho)' : 'Publicar no site'}
+                            >
+                              {event.status === 'published' ? <CheckCircle size={15} /> : <XCircle size={15} />}
+                            </button>
+
+                            {/* Cancel event button */}
+                            {event.status !== 'cancelled' && (
+                              <button
+                                type="button"
+                                onClick={() => setEventToCancel(event)}
+                                className="p-1.5 text-amber-500 hover:text-amber-400 rounded hover:bg-amber-950/40 transition-colors"
+                                title="Cancelar evento (mantém a publicação e exibe cancelamento)"
+                              >
+                                <AlertTriangle size={15} />
+                              </button>
+                            )}
+
+                            {/* Delete */}
+                            <button
+                              type="button"
+                              onClick={() => setEventToDelete(event)}
+                              className="p-1.5 text-red-500 hover:text-red-400 rounded hover:bg-red-950/40 transition-colors"
+                              title="Excluir evento"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </>
+                        ) : (
+                          <span
+                            className="inline-flex items-center gap-1 text-[11px] font-mono text-zinc-500 bg-zinc-900/60 px-2 py-1 rounded border border-zinc-800"
+                            title="Apenas o autor deste evento ou fundadores podem editá-lo"
+                          >
+                            <Lock size={12} className="text-zinc-500" />
+                            <span>Bloqueado</span>
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

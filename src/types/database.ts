@@ -18,6 +18,8 @@ export type EventStatus = 'draft' | 'published' | 'cancelled';
 export interface DbAdminUser {
   user_id: string;
   display_name: string;
+  email?: string | null;
+  role?: 'super_admin' | 'admin' | string;
   created_at: string;
   [key: string]: unknown;
 }
@@ -273,6 +275,35 @@ export interface Database {
           [key: string]: unknown;
         };
         Returns: void;
+      };
+      admin_create_user: {
+        Args: {
+          new_email: string;
+          new_password: string;
+          new_display_name: string;
+          new_role?: string;
+          [key: string]: unknown;
+        };
+        Returns: {
+          user_id: string;
+          email: string;
+          display_name: string;
+        };
+      };
+      admin_reset_user_password: {
+        Args: {
+          target_user_id: string;
+          new_password: string;
+          [key: string]: unknown;
+        };
+        Returns: boolean;
+      };
+      admin_delete_user: {
+        Args: {
+          target_user_id: string;
+          [key: string]: unknown;
+        };
+        Returns: boolean;
       };
     };
     Enums: {

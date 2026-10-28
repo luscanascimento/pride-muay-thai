@@ -58,6 +58,26 @@ export const authService = {
   },
 
   /**
+   * Altera a senha do próprio usuário logado
+   */
+  async changeOwnPassword(newPassword: string): Promise<void> {
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase não configurado.');
+    }
+    if (!newPassword || newPassword.length < 6) {
+      throw new Error('A nova senha deve possuir pelo menos 6 caracteres.');
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) {
+      throw new Error(`Erro ao alterar senha: ${error.message}`);
+    }
+  },
+
+  /**
    * Obtém a sessão atual e verifica o perfil do administrador
    */
   async getCurrentAdmin(): Promise<AdminSession | null> {

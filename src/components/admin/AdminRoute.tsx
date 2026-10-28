@@ -1,8 +1,10 @@
-import React from 'react';
-import { LogOut, Calendar, Users, LayoutDashboard, Globe, RefreshCw } from 'lucide-react';
+import React, { useState } from 'react';
+import { LogOut, Calendar, Users, LayoutDashboard, Globe, RefreshCw, KeyRound, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { AdminLoginPage } from '../pages/AdminLoginPage';
 import { navigateTo } from '../../utils/routes';
+import { isInitialSuperAdmin } from '../../utils/superAdmins';
+import { ChangePasswordModal } from './ChangePasswordModal';
 
 interface AdminRouteProps {
   children: React.ReactNode;
@@ -11,6 +13,7 @@ interface AdminRouteProps {
 
 export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = '/admin' }) => {
   const { session, isInitialLoading, isAdmin, signOut } = useAuth();
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   if (isInitialLoading) {
     return (
@@ -83,11 +86,36 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = 
                 <Users size={14} />
                 <span>Alunos</span>
               </button>
+
+              {isInitialSuperAdmin(session.user.id) && (
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/admin/usuarios')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-colors ${
+                    currentPath.startsWith('/admin/usuarios')
+                      ? 'bg-zinc-800 text-white font-semibold'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <ShieldCheck size={14} className="text-amber-400" />
+                  <span>Usuários</span>
+                </button>
+              )}
             </nav>
           </div>
 
-          {/* Quick Actions (View Site & Logout) */}
-          <div className="flex items-center gap-3">
+          {/* Quick Actions (Password, View Site & Logout) */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setShowPasswordModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-mono uppercase text-zinc-300 hover:text-white hover:bg-zinc-800 border border-zinc-700/60 transition-colors"
+              title="Trocar minha senha"
+            >
+              <KeyRound size={14} className="text-red-400" />
+              <span className="hidden sm:inline">Alterar Senha</span>
+            </button>
+
             <button
               type="button"
               onClick={() => navigateTo('')}
@@ -114,6 +142,10 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </div>
+
+      {showPasswordModal && (
+        <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />
+      )}
     </div>
   );
 };

@@ -14,4 +14,5 @@ export type AppRoute =
   | { type: 'admin-students-list'; searchParams: URLSearchParams }
   | { type: 'admin-student-create' }
   | { type: 'admin-student-detail'; id: string }
-  | { type: 'admin-student-edit'; id: string };
+  | { type: 'admin-student-edit'; id: string }
+  | { type: 'admin-users-list' };

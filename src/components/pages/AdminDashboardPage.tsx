@@ -1,12 +1,14 @@
 import React from 'react';
-import { Calendar, Users, Plus, Globe, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Calendar, Users, Plus, Globe, ArrowRight, ShieldCheck, UserCheck } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/Button';
 import { navigateTo } from '../../utils/routes';
+import { isInitialSuperAdmin } from '../../utils/superAdmins';
 
 export const AdminDashboardPage: React.FC = () => {
   const { session } = useAuth();
   const displayName = session?.adminUser.display_name || 'Administrador';
+  const isSuper = isInitialSuperAdmin(session?.user?.id);
 
   return (
     <div>
@@ -42,7 +44,7 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* Grid of administrative modules */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className={`grid grid-cols-1 md:grid-cols-2 ${isSuper ? 'lg:grid-cols-3' : ''} gap-6`}>
         {/* Events Module Card */}
         <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-zinc-900/90 to-zinc-950 border border-zinc-800 shadow-xl flex flex-col justify-between">
           <div>
@@ -112,6 +114,47 @@ export const AdminDashboardPage: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {/* Super Admins Management Card */}
+        {isSuper && (
+          <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-zinc-900/90 to-zinc-950 border border-amber-500/30 shadow-xl flex flex-col justify-between">
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-amber-950/40 border border-amber-800/50 flex items-center justify-center text-amber-400 mb-4">
+                <UserCheck size={24} />
+              </div>
+              <div className="inline-flex items-center gap-1 text-[11px] font-mono text-amber-400 uppercase tracking-wider font-semibold mb-1">
+                <ShieldCheck size={12} />
+                <span>Exclusivo Fundadores</span>
+              </div>
+              <h2 className="font-fight text-2xl text-white uppercase tracking-wider">
+                Gestão de Usuários
+              </h2>
+              <p className="text-zinc-400 text-sm mt-2 leading-relaxed">
+                Cadastre novos administradores delegados, gerencie acessos e resete credenciais. Contas fundadoras possuem proteção total de exclusão e reset mútuo.
+              </p>
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-zinc-800/80 flex flex-wrap items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => navigateTo('/admin/usuarios')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-amber-600 hover:bg-amber-500 text-black font-mono text-xs uppercase font-bold transition-colors shadow-md"
+              >
+                <Plus size={14} />
+                <span>Gerenciar Acessos</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigateTo('/admin/usuarios')}
+                className="inline-flex items-center gap-1 text-xs font-mono uppercase text-zinc-300 hover:text-white transition-colors"
+              >
+                <span>Ver lista</span>
+                <ArrowRight size={14} className="text-amber-500" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

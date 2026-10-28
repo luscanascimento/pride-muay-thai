@@ -8,6 +8,15 @@ import { buildStudentsCsvContent } from '../src/utils/studentExcelExport';
 import { getGoogleMapsSearchUrl } from '../src/utils/maps';
 import { formatDate, formatDateLong, getTodayLocalDate } from '../src/utils/date';
 import { DbStudent } from '../src/types/database';
+import {
+  isInitialSuperAdmin,
+  canUserEditEvent,
+  canResetUserPassword,
+  canDeleteUser,
+  RENAN_FERNANDES_ID,
+  PAULO_ROBERTO_ID,
+  LUCAS_NASCIMENTO_ID,
+} from '../src/utils/superAdmins';
 
 test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () => {
   test('o canal do YouTube possui link oficial, atributos de segurança e acessibilidade no rodapé e na seção de contato', async ({
@@ -455,5 +464,59 @@ test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
     expect(mockEvent.price).toBe('R$ 50,00');
     expect(mockEvent.show_instagram).toBe(true);
     expect(mockEvent.show_youtube).toBe(true);
+  });
+
+  test('gestão de usuários e permissões de Super Admins fundadores vs administradores delegados', () => {
+    const DELEGATED_ADMIN_ID = '99999999-9999-9999-9999-999999999999';
+    const ANOTHER_ADMIN_ID = '88888888-8888-8888-8888-888888888888';
+
+    // 1. Rota de gestão de usuários
+    const userRoute = parseHashRoute('#/admin/usuarios');
+    expect(userRoute.type).toBe('admin-users-list');
+
+    // 2. Reconhecimento estrito dos 3 fundadores iniciais
+    expect(isInitialSuperAdmin(RENAN_FERNANDES_ID)).toBe(true);
+    expect(isInitialSuperAdmin(PAULO_ROBERTO_ID)).toBe(true);
+    expect(isInitialSuperAdmin(LUCAS_NASCIMENTO_ID)).toBe(true);
+    expect(isInitialSuperAdmin(DELEGATED_ADMIN_ID)).toBe(false);
+    expect(isInitialSuperAdmin(null)).toBe(false);
+
+    // 3. Permissão de edição de eventos
+    const founderEvent = { created_by: RENAN_FERNANDES_ID };
+    const delegatedEvent = { created_by: DELEGATED_ADMIN_ID };
+    const legacyEvent = { created_by: null };
+
+    // Fundadores têm full access e podem editar qualquer evento
+    expect(canUserEditEvent(RENAN_FERNANDES_ID, founderEvent)).toBe(true);
+    expect(canUserEditEvent(PAULO_ROBERTO_ID, founderEvent)).toBe(true);
+    expect(canUserEditEvent(LUCAS_NASCIMENTO_ID, delegatedEvent)).toBe(true);
+    expect(canUserEditEvent(RENAN_FERNANDES_ID, legacyEvent)).toBe(true);
+
+    // Administrador delegado SÓ pode editar o evento que ele próprio criou
+    expect(canUserEditEvent(DELEGATED_ADMIN_ID, delegatedEvent)).toBe(true);
+    expect(canUserEditEvent(DELEGATED_ADMIN_ID, founderEvent)).toBe(false);
+    expect(canUserEditEvent(DELEGATED_ADMIN_ID, legacyEvent)).toBe(false);
+    expect(canUserEditEvent(ANOTHER_ADMIN_ID, delegatedEvent)).toBe(false);
+
+    // 4. Reset de senha: fundadores podem resetar novos admins, mas NÃO podem resetar uns aos outros
+    // Fundador resetando delegado: PERMITIDO
+    expect(canResetUserPassword(RENAN_FERNANDES_ID, DELEGATED_ADMIN_ID)).toBe(true);
+    expect(canResetUserPassword(PAULO_ROBERTO_ID, DELEGATED_ADMIN_ID)).toBe(true);
+    expect(canResetUserPassword(LUCAS_NASCIMENTO_ID, DELEGATED_ADMIN_ID)).toBe(true);
+
+    // Fundador tentando resetar outro fundador: BLOQUEADO ("menos um do outro")
+    expect(canResetUserPassword(RENAN_FERNANDES_ID, PAULO_ROBERTO_ID)).toBe(false);
+    expect(canResetUserPassword(PAULO_ROBERTO_ID, LUCAS_NASCIMENTO_ID)).toBe(false);
+    expect(canResetUserPassword(LUCAS_NASCIMENTO_ID, RENAN_FERNANDES_ID)).toBe(false);
+
+    // Delegado tentando resetar qualquer um: BLOQUEADO
+    expect(canResetUserPassword(DELEGATED_ADMIN_ID, ANOTHER_ADMIN_ID)).toBe(false);
+    expect(canResetUserPassword(DELEGATED_ADMIN_ID, RENAN_FERNANDES_ID)).toBe(false);
+
+    // 5. Exclusão de contas: fundadores são imutáveis e nunca podem ser excluídos
+    expect(canDeleteUser(RENAN_FERNANDES_ID, PAULO_ROBERTO_ID)).toBe(false);
+    expect(canDeleteUser(LUCAS_NASCIMENTO_ID, RENAN_FERNANDES_ID)).toBe(false);
+    expect(canDeleteUser(RENAN_FERNANDES_ID, DELEGATED_ADMIN_ID)).toBe(true);
+    expect(canDeleteUser(DELEGATED_ADMIN_ID, ANOTHER_ADMIN_ID)).toBe(false);
   });
 });

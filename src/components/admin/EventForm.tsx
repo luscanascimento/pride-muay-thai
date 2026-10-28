@@ -7,7 +7,10 @@ import {
   CheckCircle,
   Eye,
   Trophy,
+  Lock,
 } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
+import { canUserEditEvent } from '../../utils/superAdmins';
 import { eventsService, CreateEventInput } from '../../services/eventsService';
 import { EventCategory, EventStatus } from '../../types/database';
 import { generateSlug } from '../../utils/slug';
@@ -19,7 +22,9 @@ interface EventFormProps {
 }
 
 export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
+  const { session } = useAuth();
   const isEditing = Boolean(eventId);
+  const [canEdit, setCanEdit] = useState(true);
 
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -56,6 +61,14 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
       .getEventById(eventId)
       .then((event) => {
         if (!isMounted || !event) return;
+        const allowed = canUserEditEvent(session?.user?.id, event);
+        setCanEdit(allowed);
+        if (!allowed) {
+          setFeedback({
+            type: 'error',
+            message: 'Acesso restrito: este evento foi criado por outro usuário e você não possui permissão para editá-lo.',
+          });
+        }
         setTitle(event.title);
         setSlug(event.slug);
         setIsSlugManuallyEdited(true);
@@ -102,7 +115,7 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
     return () => {
       isMounted = false;
     };
-  }, [eventId]);
+  }, [eventId, session?.user?.id]);
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
@@ -118,6 +131,11 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
 
   const handleSubmit = async (targetStatus?: EventStatus) => {
     setFeedback(null);
+
+    if (isEditing && !canEdit) {
+      setFeedback({ type: 'error', message: 'Você não possui permissão para salvar alterações neste evento.' });
+      return;
+    }
 
     // Validações
     if (!title.trim()) {
@@ -180,6 +198,7 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
         pix_key: pixKey.trim() || '12991746964',
         show_instagram: showInstagram,
         show_youtube: showYouTube,
+        created_by: session?.user?.id || null,
       };
 
       if (isEditing && eventId) {
@@ -659,36 +678,45 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
             </button>
 
             <div className="flex flex-wrap items-center gap-3">
-              {/* Save as Draft */}
-              <button
-                type="button"
-                disabled={isSubmitting}
-                onClick={() => handleSubmit('draft')}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-100 font-mono text-xs uppercase font-semibold transition-colors disabled:opacity-50"
-              >
-                <Save size={14} />
-                <span>Salvar como Rascunho</span>
-              </button>
+              {isEditing && !canEdit ? (
+                <div className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-sm bg-zinc-900 border border-zinc-800 text-zinc-400 font-mono text-xs">
+                  <Lock size={14} className="text-zinc-500" />
+                  <span>Edição bloqueada (pertence a outro organizador)</span>
+                </div>
+              ) : (
+                <>
+                  {/* Save as Draft */}
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={() => handleSubmit('draft')}
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-100 font-mono text-xs uppercase font-semibold transition-colors disabled:opacity-50"
+                  >
+                    <Save size={14} />
+                    <span>Salvar como Rascunho</span>
+                  </button>
 
-              {/* Publish directly */}
-              <button
-                type="button"
-                disabled={isSubmitting}
-                onClick={() => handleSubmit('published')}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-sm bg-red-600 hover:bg-red-500 text-white font-mono text-xs uppercase font-semibold transition-colors shadow-red-glow disabled:opacity-50"
-              >
-                {isSubmitting ? (
-                  <>
-                    <RefreshCw size={14} className="animate-spin" />
-                    <span>Salvando...</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle size={14} />
-                    <span>Publicar Agora</span>
-                  </>
-                )}
-              </button>
+                  {/* Publish directly */}
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={() => handleSubmit('published')}
+                    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-sm bg-red-600 hover:bg-red-500 text-white font-mono text-xs uppercase font-semibold transition-colors shadow-red-glow disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <RefreshCw size={14} className="animate-spin" />
+                        <span>Salvando...</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle size={14} />
+                        <span>Publicar Agora</span>
+                      </>
+                    )}
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </form>
