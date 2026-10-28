@@ -11,6 +11,9 @@ import {
   AlertCircle,
   UserCheck,
   ShieldAlert,
+  Code2,
+  Award,
+  Crown,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { userService } from '../../services/userService';
@@ -19,6 +22,10 @@ import {
   isInitialSuperAdmin,
   canResetUserPassword,
   canDeleteUser,
+  getUserRoleDisplayLabel,
+  RENAN_FERNANDES_ID,
+  PAULO_ROBERTO_ID,
+  LUCAS_NASCIMENTO_ID,
 } from '../../utils/superAdmins';
 import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
@@ -211,15 +218,30 @@ export const UsersAdmin: React.FC = () => {
                     </td>
 
                     <td className="py-3.5 px-4 whitespace-nowrap">
-                      {userIsSuper ? (
+                      {user.user_id === LUCAS_NASCIMENTO_ID ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-mono uppercase font-bold bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 shadow-sm">
+                          <Code2 size={13} className="text-cyan-400" />
+                          <span>{getUserRoleDisplayLabel(user.user_id)}</span>
+                        </span>
+                      ) : user.user_id === PAULO_ROBERTO_ID ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-mono uppercase font-bold bg-amber-950/60 text-amber-300 border border-amber-800/60 shadow-sm">
+                          <Award size={13} className="text-amber-400" />
+                          <span>{getUserRoleDisplayLabel(user.user_id)}</span>
+                        </span>
+                      ) : user.user_id === RENAN_FERNANDES_ID ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-mono uppercase font-bold bg-red-950/60 text-red-300 border border-red-800/60 shadow-sm">
+                          <Crown size={13} className="text-red-400" />
+                          <span>{getUserRoleDisplayLabel(user.user_id)}</span>
+                        </span>
+                      ) : userIsSuper ? (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-mono uppercase font-bold bg-amber-950/60 text-amber-400 border border-amber-800/50 shadow-sm">
                           <ShieldCheck size={13} />
-                          <span>Fundador / Full Access</span>
+                          <span>{getUserRoleDisplayLabel(user.user_id)}</span>
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-mono uppercase font-semibold bg-zinc-900 text-zinc-300 border border-zinc-800">
                           <UserCheck size={13} className="text-blue-400" />
-                          <span>Administrador Delegado</span>
+                          <span>{getUserRoleDisplayLabel(user.user_id)}</span>
                         </span>
                       )}
                     </td>

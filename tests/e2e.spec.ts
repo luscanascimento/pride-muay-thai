@@ -13,6 +13,7 @@ import {
   canUserEditEvent,
   canResetUserPassword,
   canDeleteUser,
+  getUserRoleDisplayLabel,
   RENAN_FERNANDES_ID,
   PAULO_ROBERTO_ID,
   LUCAS_NASCIMENTO_ID,
@@ -523,6 +524,12 @@ test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
     expect(canDeleteUser(LUCAS_NASCIMENTO_ID, RENAN_FERNANDES_ID)).toBe(false);
     expect(canDeleteUser(RENAN_FERNANDES_ID, DELEGATED_ADMIN_ID)).toBe(true);
     expect(canDeleteUser(DELEGATED_ADMIN_ID, ANOTHER_ADMIN_ID)).toBe(false);
+
+    // 6. Rótulos visuais de papel no sistema (ribbons personalizados)
+    expect(getUserRoleDisplayLabel(LUCAS_NASCIMENTO_ID)).toBe('Desenvolvedor / Full Access');
+    expect(getUserRoleDisplayLabel(PAULO_ROBERTO_ID)).toBe('Professor / Full Access');
+    expect(getUserRoleDisplayLabel(RENAN_FERNANDES_ID)).toBe('Fundador / Full Access');
+    expect(getUserRoleDisplayLabel(DELEGATED_ADMIN_ID)).toBe('Administrador Delegado');
   });
 
   test('máscara de valor do PIX e exibição obrigatória com R$ antes do número', () => {

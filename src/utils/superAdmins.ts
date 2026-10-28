@@ -78,3 +78,26 @@ export function canDeleteUser(
   if (isInitialSuperAdmin(targetUserId)) return false;
   return true;
 }
+
+/**
+ * Retorna o rótulo visual personalizado para o "Papel no Sistema" de cada usuário:
+ * - Lucas Nascimento: 'Desenvolvedor / Full Access'
+ * - Paulo Roberto: 'Professor / Full Access'
+ * - Renan Fernandes: 'Fundador / Full Access'
+ * - Outros administradores: 'Administrador Delegado'
+ */
+export function getUserRoleDisplayLabel(userId: string | null | undefined): string {
+  if (userId === LUCAS_NASCIMENTO_ID) {
+    return 'Desenvolvedor / Full Access';
+  }
+  if (userId === PAULO_ROBERTO_ID) {
+    return 'Professor / Full Access';
+  }
+  if (userId === RENAN_FERNANDES_ID) {
+    return 'Fundador / Full Access';
+  }
+  if (isInitialSuperAdmin(userId)) {
+    return 'Fundador / Full Access';
+  }
+  return 'Administrador Delegado';
+}
