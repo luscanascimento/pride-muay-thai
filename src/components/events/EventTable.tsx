@@ -5,6 +5,7 @@ import { EventStatusBadge } from './EventStatusBadge';
 import { EventCard } from './EventCard';
 import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
+import { getGoogleMapsSearchUrl } from '../../utils/maps';
 
 interface EventTableProps {
   events: DbEvent[];
@@ -125,7 +126,16 @@ export const EventTable: React.FC<EventTableProps> = ({
                   <td className="py-4 px-4 align-top text-xs text-zinc-300">
                     <div className="flex items-center gap-1.5 max-w-[200px] truncate">
                       <MapPin size={13} className="text-red-500 flex-shrink-0" />
-                      <span className="truncate">{event.location}</span>
+                      <a
+                        href={getGoogleMapsSearchUrl(event.location)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="truncate hover:text-red-400 hover:underline transition-colors"
+                        title="Abrir localização no Google Maps"
+                        aria-label={`Abrir ${event.location} no Google Maps`}
+                      >
+                        {event.location}
+                      </a>
                     </div>
                   </td>
                   <td className="py-4 px-4 align-top whitespace-nowrap">

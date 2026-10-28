@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   MapPin,
   Edit,
+  ExternalLink,
 } from 'lucide-react';
 import { studentsService, StudentWithGraduations } from '../../services/studentsService';
 import { useAuth } from '../../hooks/useAuth';
@@ -18,6 +19,7 @@ import { getKhanRank, ALL_KHANS_SYSTEM } from '../../constants/khans';
 import { formatDate } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
 import { getGymNames } from '../../utils/gyms';
+import { getGoogleMapsSearchUrl } from '../../utils/maps';
 import prideLogoCutout from '../../assets/pride-muay-thai-cutout.png';
 
 interface StudentDetailPageProps {
@@ -179,12 +181,17 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({ slug, onBa
                   {gymNames.length > 1 ? 'Academias:' : 'Academia:'}
                 </span>
                 {gymNames.map((name) => (
-                  <span
+                  <a
                     key={name}
-                    className="inline-flex items-center px-2.5 py-0.5 rounded text-xs bg-zinc-900 text-zinc-200 border border-zinc-800 font-medium"
+                    href={getGoogleMapsSearchUrl(name)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 hover:border-red-500/50 font-medium transition-colors group"
+                    title={`Abrir localização de ${name} no Google Maps`}
                   >
-                    {name}
-                  </span>
+                    <span>{name}</span>
+                    <ExternalLink size={11} className="text-zinc-500 group-hover:text-red-400 transition-colors" />
+                  </a>
                 ))}
               </div>
             )}

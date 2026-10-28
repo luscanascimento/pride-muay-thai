@@ -6,6 +6,7 @@ import { StudentCard } from './StudentCard';
 import { getKhanRank } from '../../constants/khans';
 import { navigateTo } from '../../utils/routes';
 import { getGymNames } from '../../utils/gyms';
+import { getGoogleMapsSearchUrl } from '../../utils/maps';
 
 interface StudentTableProps {
   students: DbStudent[];
@@ -128,13 +129,18 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                     {gymNames.length > 0 ? (
                       <div className="flex flex-wrap gap-1 max-w-xs">
                         {gymNames.map((name) => (
-                          <span
+                          <a
                             key={name}
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 text-[11px]"
+                            href={getGoogleMapsSearchUrl(name)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white text-[11px] transition-colors"
+                            title={`Abrir localização de ${name} no Google Maps`}
+                            aria-label={`Abrir ${name} no Google Maps`}
                           >
                             <MapPin size={11} className="text-red-500" />
                             {name}
-                          </span>
+                          </a>
                         ))}
                       </div>
                     ) : (

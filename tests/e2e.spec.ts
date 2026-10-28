@@ -5,6 +5,7 @@ import { ALL_KHANS_SYSTEM, isValidKhan } from '../src/constants/khans';
 import { getGymNames } from '../src/utils/gyms';
 import { bracketsService } from '../src/services/bracketsService';
 import { buildStudentsCsvContent } from '../src/utils/studentExcelExport';
+import { getGoogleMapsSearchUrl } from '../src/utils/maps';
 import { DbStudent } from '../src/types/database';
 
 test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () => {
@@ -360,5 +361,23 @@ test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
     expect(lines[3]).toContain('"Mariana Silva"');
     expect(lines[3]).toContain('"12º Khan (Preta)"');
     expect(lines[3]).toContain('"Arena Viking Santa Maria, CT3 Artes Marciais"');
+  });
+
+  test('localizações integradas ao Google Maps: geração de URLs e links seguros', () => {
+    // 1. Geração de URL para termo simples e com caracteres especiais/acentuação
+    const url1 = getGoogleMapsSearchUrl('Ginásio Municipal de Esportes, Jacareí - SP');
+    expect(url1).toBe(
+      'https://www.google.com/maps/search/?api=1&query=Gin%C3%A1sio%20Municipal%20de%20Esportes%2C%20Jacare%C3%AD%20-%20SP'
+    );
+
+    // 2. Geração para string vazia ou espaços
+    expect(getGoogleMapsSearchUrl('')).toBe('https://www.google.com/maps');
+    expect(getGoogleMapsSearchUrl('   ')).toBe('https://www.google.com/maps');
+
+    // 3. Geração para academias
+    const gymUrl = getGoogleMapsSearchUrl('Arena Viking Santa Maria');
+    expect(gymUrl).toBe(
+      'https://www.google.com/maps/search/?api=1&query=Arena%20Viking%20Santa%20Maria'
+    );
   });
 });

@@ -246,10 +246,17 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
                     </span>
 
                     {gym.coordinates ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950/60 text-emerald-400 border border-emerald-800/40">
+                      <a
+                        href={getGymExternalMapsUrl(gym)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-800/40 transition-colors"
+                        title="Abrir localização no Google Maps"
+                        aria-label={`Abrir localização de ${gym.name} no Google Maps`}
+                      >
                         <MapPin size={10} />
                         No Mapa
-                      </span>
+                      </a>
                     ) : (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-zinc-800/80 text-zinc-400 border border-zinc-700/50">
                         Endereço no WhatsApp
@@ -292,22 +299,22 @@ export const LocationsSection: React.FC<LocationsSectionProps> = ({
                   {/* Address info */}
                   <div className="mt-4 pt-3 border-t border-zinc-800/80">
                     {gym.address ? (
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="text-xs sm:text-sm text-zinc-300 flex items-start gap-2 leading-relaxed">
-                          <MapPin size={15} className="text-red-500 flex-shrink-0 mt-0.5" />
+                      <a
+                        href={getGymExternalMapsUrl(gym)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-start justify-between gap-2 group/loc transition-colors"
+                        title="Abrir localização no Google Maps"
+                        aria-label={`Abrir ${gym.name} no Google Maps`}
+                      >
+                        <p className="text-xs sm:text-sm text-zinc-300 group-hover/loc:text-red-300 flex items-start gap-2 leading-relaxed transition-colors">
+                          <MapPin size={15} className="text-red-500 flex-shrink-0 mt-0.5 group-hover/loc:scale-110 transition-transform" />
                           <span>{gym.address}</span>
                         </p>
-                        <a
-                          href={getGymExternalMapsUrl(gym)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-zinc-500 hover:text-red-400 p-1 flex-shrink-0 transition-colors"
-                          title="Abrir localização no Google Maps"
-                          aria-label={`Abrir ${gym.name} no Google Maps`}
-                        >
+                        <span className="text-zinc-500 group-hover/loc:text-red-400 p-1 flex-shrink-0 transition-colors">
                           <ExternalLink size={14} />
-                        </a>
-                      </div>
+                        </span>
+                      </a>
                     ) : (
                       <p className="text-xs text-zinc-400 flex items-start gap-2 italic">
                         <Info size={14} className="text-zinc-500 flex-shrink-0 mt-0.5" />

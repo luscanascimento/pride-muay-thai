@@ -4,6 +4,7 @@ import { DbEvent } from '../../types/database';
 import { EventStatusBadge } from './EventStatusBadge';
 import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
+import { getGoogleMapsSearchUrl } from '../../utils/maps';
 
 interface EventCardProps {
   event: DbEvent;
@@ -62,7 +63,17 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onNavigate }) => {
         </div>
         <div className="flex items-center gap-2">
           <MapPin size={14} className="text-red-500 flex-shrink-0" />
-          <span className="truncate">{event.location}</span>
+          <a
+            href={getGoogleMapsSearchUrl(event.location)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="truncate hover:text-red-400 hover:underline transition-colors"
+            title="Abrir localização no Google Maps"
+            aria-label={`Abrir ${event.location} no Google Maps`}
+          >
+            {event.location}
+          </a>
         </div>
       </div>
 

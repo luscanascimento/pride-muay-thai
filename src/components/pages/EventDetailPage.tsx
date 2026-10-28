@@ -22,6 +22,7 @@ import { BracketView } from '../brackets/BracketView';
 import { Button } from '../ui/Button';
 import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
+import { getGoogleMapsSearchUrl } from '../../utils/maps';
 
 interface EventDetailPageProps {
   slug: string;
@@ -175,15 +176,30 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex items-start gap-3">
-            <MapPin size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
-            <div>
-              <span className="block text-[11px] font-mono uppercase tracking-wider text-zinc-400">Localização</span>
-              <span className="text-sm sm:text-base font-semibold text-white mt-0.5 block">
-                {event.location}
-              </span>
+          <a
+            href={getGoogleMapsSearchUrl(event.location)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 hover:border-red-500/60 hover:bg-zinc-900/90 transition-all flex items-start justify-between gap-3 group"
+            title="Abrir localização no Google Maps"
+            aria-label={`Abrir ${event.location} no Google Maps`}
+          >
+            <div className="flex items-start gap-3">
+              <MapPin size={20} className="text-red-500 flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+              <div>
+                <span className="block text-[11px] font-mono uppercase tracking-wider text-zinc-400 group-hover:text-zinc-300">
+                  Localização
+                </span>
+                <span className="text-sm sm:text-base font-semibold text-white group-hover:text-red-400 transition-colors mt-0.5 block">
+                  {event.location}
+                </span>
+                <span className="text-[11px] font-mono text-zinc-500 group-hover:text-zinc-400 flex items-center gap-1 mt-1">
+                  Ver no Google Maps
+                </span>
+              </div>
             </div>
-          </div>
+            <ExternalLink size={16} className="text-zinc-500 group-hover:text-red-400 transition-colors flex-shrink-0 mt-0.5" />
+          </a>
         </div>
       </header>
 
