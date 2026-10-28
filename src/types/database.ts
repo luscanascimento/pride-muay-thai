@@ -72,6 +72,9 @@ export interface DbStudentGraduation {
   [key: string]: unknown;
 }
 
+export type { DbEventBracket, BracketRound, BracketMatch, BracketType, BracketWinner } from './brackets';
+import type { DbEventBracket } from './brackets';
+
 export interface GenericRelationship {
   foreignKeyName: string;
   columns: string[];
@@ -201,6 +204,36 @@ export interface Database {
           achieved_at?: string | null;
           created_at?: string;
           created_by?: string | null;
+          [key: string]: unknown;
+        };
+        Relationships: GenericRelationship[];
+      };
+      event_brackets: {
+        Row: DbEventBracket;
+        Insert: {
+          id?: string;
+          event_id: string;
+          title: string;
+          category_name?: string | null;
+          bracket_type?: string;
+          rounds?: unknown;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+          updated_by?: string | null;
+          [key: string]: unknown;
+        };
+        Update: {
+          id?: string;
+          event_id?: string;
+          title?: string;
+          category_name?: string | null;
+          bracket_type?: string;
+          rounds?: unknown;
+          created_at?: string;
+          updated_at?: string;
+          created_by?: string | null;
+          updated_by?: string | null;
           [key: string]: unknown;
         };
         Relationships: GenericRelationship[];

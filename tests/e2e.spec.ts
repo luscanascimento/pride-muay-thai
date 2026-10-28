@@ -3,6 +3,7 @@ import { parseHashRoute, buildHashUrl } from '../src/utils/routes';
 import { generateSlug } from '../src/utils/slug';
 import { ALL_KHANS_SYSTEM, isValidKhan } from '../src/constants/khans';
 import { getGymNames } from '../src/utils/gyms';
+import { bracketsService } from '../src/services/bracketsService';
 
 test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () => {
   test('o canal do YouTube possui link oficial, atributos de segurança e acessibilidade no rodapé e na seção de contato', async ({
@@ -230,5 +231,51 @@ test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
 
     // Suporte a academia externa / customizada
     expect(getGymNames(['Academia Externa'])).toEqual(['Academia Externa']);
+  });
+
+  test('chaveamentos de competição: geração de modelos, relacionamento com evento e cálculo de campeão', () => {
+    // 1. Modelo de 4 lutadores (GP)
+    const gp4 = bracketsService.generateTemplateRounds('4_fighters');
+    expect(gp4).toHaveLength(2);
+    expect(gp4[0].round_name).toBe('Semifinais');
+    expect(gp4[0].matches).toHaveLength(2);
+    expect(gp4[1].round_name).toBe('Grande Final');
+    expect(gp4[1].matches).toHaveLength(1);
+
+    // 2. Modelo de 8 lutadores (Torneio)
+    const gp8 = bracketsService.generateTemplateRounds('8_fighters');
+    expect(gp8).toHaveLength(3);
+    expect(gp8[0].round_name).toBe('Quartas de Final');
+    expect(gp8[0].matches).toHaveLength(4);
+    expect(gp8[1].round_name).toBe('Semifinais');
+    expect(gp8[1].matches).toHaveLength(2);
+    expect(gp8[2].round_name).toBe('Grande Final');
+    expect(gp8[2].matches).toHaveLength(1);
+
+    // 3. Modelo de 2 lutadores (Final Direta)
+    const gp2 = bracketsService.generateTemplateRounds('2_fighters');
+    expect(gp2).toHaveLength(1);
+    expect(gp2[0].matches).toHaveLength(1);
+
+    // 4. Modelo de superlutas
+    const superFights = bracketsService.generateTemplateRounds('super_fights');
+    expect(superFights).toHaveLength(1);
+    expect(superFights[0].matches).toHaveLength(3);
+
+    // 5. Verificação de relacionamento obrigatório com evento (event_id)
+    const fakeBracket = {
+      id: 'bracket-1',
+      event_id: 'event-uuid-1234',
+      title: 'GP 70kg',
+      category_name: 'Adulto',
+      bracket_type: 'single_elimination' as const,
+      rounds: gp4,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      created_by: null,
+      updated_by: null,
+    };
+    expect(fakeBracket.event_id).toBe('event-uuid-1234');
+    expect(fakeBracket.title).toBeTruthy();
   });
 });

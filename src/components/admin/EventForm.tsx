@@ -6,11 +6,13 @@ import {
   AlertCircle,
   CheckCircle,
   Eye,
+  Trophy,
 } from 'lucide-react';
 import { eventsService, CreateEventInput } from '../../services/eventsService';
 import { EventCategory, EventStatus } from '../../types/database';
 import { generateSlug } from '../../utils/slug';
 import { navigateTo } from '../../utils/routes';
+import { EventBracketsManager } from './EventBracketsManager';
 
 interface EventFormProps {
   eventId?: string; // Se fornecido, modo de edição; se não, modo de criação
@@ -560,6 +562,26 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
           </div>
         </form>
       </div>
+
+      {/* Seção de Chaveamentos de Lutas (Opcional, com relacionamento obrigatório com o evento) */}
+      {isEditing && eventId ? (
+        <div className="mt-8">
+          <EventBracketsManager
+            eventId={eventId}
+            eventTitle={title || 'Evento'}
+            eventDate={eventDate}
+            category={category}
+          />
+        </div>
+      ) : (
+        <div className="mt-8 p-6 rounded-2xl bg-[#0c0c10] border border-zinc-800 text-center">
+          <Trophy size={28} className="text-zinc-600 mx-auto mb-2" />
+          <h3 className="font-fight text-base text-zinc-300 uppercase">Chaveamentos de Competição</h3>
+          <p className="text-xs text-zinc-500 mt-1 max-w-md mx-auto">
+            Ao salvar este evento, você poderá criar chaveamentos de lutas (GP, superlutas, etc.), definir vencedores e baixar as imagens oficiais em alta resolução.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

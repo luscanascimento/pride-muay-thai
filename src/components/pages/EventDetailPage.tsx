@@ -9,10 +9,14 @@ import {
   FileText,
   CheckCircle,
   RefreshCw,
+  Trophy,
 } from 'lucide-react';
 import { eventsService } from '../../services/eventsService';
+import { bracketsService } from '../../services/bracketsService';
 import { DbEvent } from '../../types/database';
+import { DbEventBracket } from '../../types/brackets';
 import { EventStatusBadge } from '../events/EventStatusBadge';
+import { BracketView } from '../brackets/BracketView';
 import { Button } from '../ui/Button';
 import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
@@ -24,6 +28,7 @@ interface EventDetailPageProps {
 
 export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }) => {
   const [event, setEvent] = useState<DbEvent | null>(null);
+  const [brackets, setBrackets] = useState<DbEventBracket[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,12 +39,20 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
 
     eventsService
       .getPublicEventBySlug(slug)
-      .then((data) => {
+      .then(async (data) => {
         if (!isMounted) return;
         if (!data) {
           setError('Evento não encontrado ou indisponível.');
         } else {
           setEvent(data);
+          try {
+            const bData = await bracketsService.getBracketsByEventId(data.id);
+            if (isMounted) {
+              setBrackets(bData);
+            }
+          } catch {
+            // Chaveamento é opcional; falha silenciosa para não travar a página de detalhes
+          }
         }
       })
       .catch((err: unknown) => {
@@ -212,6 +225,26 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
               </Button>
             </div>
           )}
+        </section>
+      )}
+
+      {/* Chaveamentos de Competição / Lutas (Opcional) */}
+      {brackets.length > 0 && (
+        <section className="mb-12 space-y-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Trophy size={24} className="text-red-500" />
+            <h2 className="font-fight text-2xl sm:text-3xl text-white uppercase tracking-wider">
+              Chaveamentos & Lutas Oficiais
+            </h2>
+          </div>
+          {brackets.map((b) => (
+            <BracketView
+              key={b.id}
+              bracket={b}
+              eventTitle={event.title}
+              eventDate={formatDateTime(event.event_date)}
+            />
+          ))}
         </section>
       )}
 
