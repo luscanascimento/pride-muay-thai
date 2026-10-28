@@ -8,8 +8,10 @@ import {
   RefreshCw,
   AlertTriangle,
   MapPin,
+  Edit,
 } from 'lucide-react';
 import { studentsService, StudentWithGraduations } from '../../services/studentsService';
+import { useAuth } from '../../hooks/useAuth';
 import { PrajiedBadge, PrajiedRope } from '../ui/PrajiedBadge';
 import { Button } from '../ui/Button';
 import { getKhanRank, ALL_KHANS_SYSTEM } from '../../constants/khans';
@@ -24,6 +26,7 @@ interface StudentDetailPageProps {
 }
 
 export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({ slug, onBack }) => {
+  const { isAdmin } = useAuth();
   const [student, setStudent] = useState<StudentWithGraduations | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -103,8 +106,8 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({ slug, onBa
 
   return (
     <article className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto min-h-[75vh]">
-      {/* Back button */}
-      <div className="mb-6">
+      {/* Top action bar: Back button + Admin Edit button */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <button
           type="button"
           onClick={handleBack}
@@ -113,6 +116,17 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({ slug, onBa
           <ArrowLeft size={16} className="text-red-500" />
           <span>Voltar para lista de alunos</span>
         </button>
+
+        {isAdmin && (
+          <button
+            type="button"
+            onClick={() => navigateTo(`/admin/alunos/${student.id}/editar`)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-sm bg-zinc-900 border border-zinc-700/80 hover:border-red-500/80 text-zinc-200 hover:text-white text-xs font-mono uppercase font-semibold transition-all shadow-sm group"
+          >
+            <Edit size={14} className="text-red-500 group-hover:scale-110 transition-transform" />
+            <span>Editar Aluno</span>
+          </button>
+        )}
       </div>
 
       {/* Hero identity card (Composição visual com logotipo oficial e Prajied, sem avatar falso) */}

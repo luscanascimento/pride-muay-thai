@@ -10,9 +10,11 @@ import {
   CheckCircle,
   RefreshCw,
   Trophy,
+  Edit,
 } from 'lucide-react';
 import { eventsService } from '../../services/eventsService';
 import { bracketsService } from '../../services/bracketsService';
+import { useAuth } from '../../hooks/useAuth';
 import { DbEvent } from '../../types/database';
 import { DbEventBracket } from '../../types/brackets';
 import { EventStatusBadge } from '../events/EventStatusBadge';
@@ -27,6 +29,7 @@ interface EventDetailPageProps {
 }
 
 export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }) => {
+  const { isAdmin } = useAuth();
   const [event, setEvent] = useState<DbEvent | null>(null);
   const [brackets, setBrackets] = useState<DbEventBracket[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -104,8 +107,8 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
 
   return (
     <article className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto min-h-[75vh]">
-      {/* Return button */}
-      <div className="mb-6">
+      {/* Top action bar: Return button + Admin Edit button */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <button
           type="button"
           onClick={handleBack}
@@ -114,6 +117,17 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
           <ArrowLeft size={16} className="text-red-500" />
           <span>Voltar para lista de eventos</span>
         </button>
+
+        {isAdmin && (
+          <button
+            type="button"
+            onClick={() => navigateTo(`/admin/eventos/${event.id}/editar`)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-sm bg-zinc-900 border border-zinc-700/80 hover:border-red-500/80 text-zinc-200 hover:text-white text-xs font-mono uppercase font-semibold transition-all shadow-sm group"
+          >
+            <Edit size={14} className="text-red-500 group-hover:scale-110 transition-transform" />
+            <span>Editar Evento</span>
+          </button>
+        )}
       </div>
 
       {/* Prominent Cancellation Banner if Cancelled */}

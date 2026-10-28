@@ -157,6 +157,20 @@ test.describe('Fase 5: Autenticação e Proteção do Painel Administrativo', ()
     const alert = page.locator('[role="alert"]');
     await expect(alert).toBeVisible();
   });
+
+  test('guards de edição: rotas de edição de aluno e evento bloqueadas para usuários não autenticados', async ({
+    page,
+  }) => {
+    // Tenta acessar edição de aluno sem estar logado
+    await page.goto('/#/admin/alunos/123-aluno-teste/editar');
+    await expect(page.locator('#admin-email')).toBeVisible();
+    await expect(page.locator('#admin-password')).toBeVisible();
+
+    // Tenta acessar edição de evento sem estar logado
+    await page.goto('/#/admin/eventos/456-evento-teste/editar');
+    await expect(page.locator('#admin-email')).toBeVisible();
+    await expect(page.locator('#admin-password')).toBeVisible();
+  });
 });
 
 test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
