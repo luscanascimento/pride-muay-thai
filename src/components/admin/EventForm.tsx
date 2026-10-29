@@ -175,6 +175,20 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
     if (newCat !== 'graduation') {
       setGraduationRegistrationEnabled(false);
       setGraduationRegistrationDeadline('');
+    } else {
+      // Ao selecionar "Graduação", o formulário vem ativo por padrão!
+      setGraduationRegistrationEnabled(true);
+      if (!graduationRegistrationDeadline && eventDate) {
+        setGraduationRegistrationDeadline(eventDate);
+      }
+    }
+  };
+
+  const handleEventDateChange = (val: string) => {
+    setEventDate(val);
+    // Se for evento de graduação com formulário ativo e sem prazo definido, sugere a própria data de início
+    if (category === 'graduation' && graduationRegistrationEnabled && !graduationRegistrationDeadline) {
+      setGraduationRegistrationDeadline(val);
     }
   };
 
@@ -462,7 +476,7 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
                 type="datetime-local"
                 required
                 value={eventDate}
-                onChange={(e) => setEventDate(e.target.value)}
+                onChange={(e) => handleEventDateChange(e.target.value)}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
               />
             </div>

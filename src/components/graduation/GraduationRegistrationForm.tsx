@@ -8,11 +8,12 @@ import {
   UserCheck,
   RefreshCw,
   Send,
+  MessageSquare,
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { DbEvent } from '../../types/database';
 import { ALL_KHANS_SYSTEM, getKhanRank } from '../../constants/khans';
-import { suggestNextKhan } from '../../constants/graduation';
+import { suggestNextKhan, GRADUATION_PIX } from '../../constants/graduation';
 import { formatDateTime } from '../../utils/date';
 
 interface GraduationRegistrationFormProps {
@@ -293,6 +294,38 @@ export const GraduationRegistrationForm: React.FC<GraduationRegistrationFormProp
           </p>
         </div>
 
+        {/* Destaque Obrigatório: Envio de Comprovante com Nome Completo */}
+        <div className="mt-6 p-5 rounded-2xl bg-amber-950/50 border border-amber-600/70 text-left max-w-lg mx-auto shadow-xl">
+          <div className="flex items-start gap-3">
+            <div className="p-2.5 rounded-lg bg-amber-900/80 border border-amber-700 text-amber-300 flex-shrink-0 mt-0.5">
+              <MessageSquare size={20} />
+            </div>
+            <div className="space-y-2">
+              <span className="font-mono uppercase font-bold tracking-wider text-amber-300 text-xs block">
+                Atenção: Envio Obrigatório do Comprovante
+              </span>
+              <p className="text-zinc-200 text-xs sm:text-sm leading-relaxed">
+                Para confirmar a sua participação, envie o comprovante do pagamento PIX para o número{' '}
+                <strong className="text-white font-mono">{GRADUATION_PIX.displayKey}</strong> informando obrigatoriamente o{' '}
+                <strong className="text-amber-300 underline underline-offset-2">nome completo do aluno ({isManualName ? manualFullName : selectedStudent?.name})</strong>.
+              </p>
+              <div className="pt-1">
+                <a
+                  href={`https://wa.me/55${GRADUATION_PIX.key}?text=${encodeURIComponent(
+                    `Olá! Segue o comprovante de pagamento do exame de graduação.\nNome completo do aluno: ${isManualName ? manualFullName : selectedStudent?.name}\nKhan pretendido: ${targetKhan}º Khan\nEvento: ${event.title}`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs uppercase font-semibold transition-colors shadow-emerald-glow"
+                >
+                  <MessageSquare size={14} />
+                  <span>Enviar Comprovante via WhatsApp</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <button
           type="button"
           onClick={() => {
@@ -529,6 +562,14 @@ export const GraduationRegistrationForm: React.FC<GraduationRegistrationFormProp
               </option>
             ))}
           </select>
+        </div>
+
+        {/* Lembrete de Envio do Comprovante com Nome Completo */}
+        <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-600/50 flex items-start gap-3 text-xs text-zinc-300">
+          <MessageSquare size={16} className="text-amber-400 flex-shrink-0 mt-0.5" />
+          <p className="leading-relaxed">
+            <strong className="text-amber-300 font-mono uppercase">Importante:</strong> Após confirmar sua inscrição, faça o pagamento via PIX para o número <strong className="text-white font-mono">{GRADUATION_PIX.displayKey}</strong> e envie o comprovante informando o <strong className="text-white underline underline-offset-2">nome completo do aluno</strong> para validação da inscrição.
+          </p>
         </div>
 
         {/* Botão de Envio */}

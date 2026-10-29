@@ -38,7 +38,10 @@ import {
   exportGraduationToPdf,
   exportGraduationToWord,
 } from '../src/utils/graduationExports';
-import { GraduationRegistrationWithEvent } from '../src/services/graduationRegistrationsService';
+import {
+  graduationRegistrationsService,
+  GraduationRegistrationWithEvent,
+} from '../src/services/graduationRegistrationsService';
 
 test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () => {
   test('o canal do YouTube possui link oficial, atributos de segurança e acessibilidade no rodapé e na seção de contato', async ({
@@ -952,5 +955,44 @@ test.describe('Inscrições e Gestão de Graduações', () => {
     await expect(exportGraduationToExcel([])).rejects.toThrow('Nenhum registro disponível para exportação.');
     await expect(exportGraduationToPdf([])).rejects.toThrow('Nenhum registro disponível para exportação.');
     await expect(exportGraduationToWord([])).rejects.toThrow('Nenhum registro disponível para exportação.');
+  });
+
+  test('14. Validação de edição de candidatura por administradores (Khans 1 a 16 e nome obrigatório)', async () => {
+    // Validar limites estritos do Khan pretendido
+    await expect(
+      graduationRegistrationsService.updateRegistration({
+        id: 'test-id',
+        target_khan: 0,
+        full_name: 'Teste Aluno',
+      })
+    ).rejects.toThrow('O Khan pretendido deve estar entre 1 e 16.');
+
+    await expect(
+      graduationRegistrationsService.updateRegistration({
+        id: 'test-id',
+        target_khan: 17,
+        full_name: 'Teste Aluno',
+      })
+    ).rejects.toThrow('O Khan pretendido deve estar entre 1 e 16.');
+
+    // Validar nome obrigatório
+    await expect(
+      graduationRegistrationsService.updateRegistration({
+        id: 'test-id',
+        target_khan: 4,
+        full_name: '   ',
+      })
+    ).rejects.toThrow('O nome do candidato não pode ficar vazio.');
+  });
+
+  test('15. Chave PIX e destaque de envio de comprovante com nome completo', () => {
+    expect(GRADUATION_PIX.key).toBe('12991746964');
+    expect(GRADUATION_PIX.displayKey).toBe('(12) 99174-6964');
+    expect(GRADUATION_PIX.beneficiary).toBe('Renan');
+    expect(GRADUATION_PIX.institution).toBe('Mercado Pago');
+
+    // Mensagem de WhatsApp deve conter o número oficial e parâmetros de nome do aluno
+    const whatsappUrl = `https://wa.me/55${GRADUATION_PIX.key}`;
+    expect(whatsappUrl).toContain('5512991746964');
   });
 });

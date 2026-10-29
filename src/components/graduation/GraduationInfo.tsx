@@ -6,6 +6,7 @@ import {
   ShieldAlert,
   Award,
   CheckCircle,
+  MessageSquare,
 } from 'lucide-react';
 import {
   GRADUATION_PIX,
@@ -170,6 +171,33 @@ export const GraduationInfo: React.FC = () => {
               </>
             )}
           </button>
+        </div>
+
+        {/* Destaque Obrigatório: Envio de Comprovante */}
+        <div className="mt-4 p-4 rounded-xl bg-amber-950/40 border border-amber-600/70 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="p-2.5 rounded-lg bg-amber-900/60 border border-amber-700/80 text-amber-300 flex-shrink-0 mt-0.5">
+              <MessageSquare size={20} />
+            </div>
+            <div>
+              <span className="font-mono uppercase font-bold tracking-wider text-amber-300 text-xs flex items-center gap-1.5">
+                <span>Atenção: Envio Obrigatório do Comprovante</span>
+              </span>
+              <p className="text-zinc-200 text-xs sm:text-sm mt-1 leading-relaxed">
+                Após efetuar o pagamento via PIX, <strong className="text-white">envie o comprovante para o número {GRADUATION_PIX.displayKey}</strong> informando o <strong className="text-amber-300 underline underline-offset-2">nome completo do aluno</strong> para conferência e validação da graduação.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href={`https://wa.me/55${GRADUATION_PIX.key}?text=${encodeURIComponent('Olá! Segue o comprovante do PIX para o exame de graduação.\nNome completo do aluno: ')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-sm bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs uppercase font-semibold transition-colors flex-shrink-0 whitespace-nowrap shadow-emerald-glow"
+          >
+            <MessageSquare size={14} />
+            <span>Enviar no WhatsApp</span>
+          </a>
         </div>
       </section>
     </div>

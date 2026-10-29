@@ -16,6 +16,7 @@ import {
   User,
   UserCheck,
   Check,
+  Pencil,
 } from 'lucide-react';
 import {
   graduationRegistrationsService,
@@ -25,6 +26,10 @@ import {
 import { eventsService } from '../../services/eventsService';
 import { DbEvent, GraduationPaymentStatus } from '../../types/database';
 import { ALL_KHANS_SYSTEM, getKhanRank } from '../../constants/khans';
+import {
+  formatGraduationPrice,
+  getGraduationPriceForKhan,
+} from '../../constants/graduation';
 import { formatDateTime } from '../../utils/date';
 import { Pagination } from '../ui/Pagination';
 import {
@@ -68,6 +73,15 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
   const [exportType, setExportType] = useState<'excel' | 'pdf' | 'word' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successFeedback, setSuccessFeedback] = useState<string | null>(null);
+
+  // Estados para edição de candidatura por administradores
+  const [editingRegistration, setEditingRegistration] = useState<GraduationRegistrationWithEvent | null>(null);
+  const [editFullName, setEditFullName] = useState<string>('');
+  const [editTargetKhan, setEditTargetKhan] = useState<number>(1);
+  const [editCurrentKhan, setEditCurrentKhan] = useState<number | ''>('');
+  const [editPaymentStatus, setEditPaymentStatus] = useState<GraduationPaymentStatus>('pending');
+  const [isSavingEdit, setIsSavingEdit] = useState<boolean>(false);
+  const [editError, setEditError] = useState<string | null>(null);
 
   // Carrega lista de eventos da categoria 'graduation'
   useEffect(() => {
@@ -147,6 +161,59 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
       await fetchRegistrations();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Erro ao atualizar pagamento.');
+    }
+  };
+
+  // Abrir modal de edição para corrigir dados da candidatura
+  const handleOpenEditModal = (reg: GraduationRegistrationWithEvent) => {
+    setEditingRegistration(reg);
+    setEditFullName(reg.full_name);
+    setEditTargetKhan(reg.target_khan);
+    setEditCurrentKhan(reg.current_khan_at_registration ?? '');
+    setEditPaymentStatus(reg.payment_status);
+    setEditError(null);
+  };
+
+  const handleCloseEditModal = () => {
+    if (isSavingEdit) return;
+    setEditingRegistration(null);
+    setEditError(null);
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingRegistration) return;
+
+    if (!editFullName.trim()) {
+      setEditError('O nome do candidato é obrigatório.');
+      return;
+    }
+
+    if (editTargetKhan < 1 || editTargetKhan > 16) {
+      setEditError('O Khan pretendido deve estar entre 1 e 16.');
+      return;
+    }
+
+    setIsSavingEdit(true);
+    setEditError(null);
+
+    try {
+      await graduationRegistrationsService.updateRegistration({
+        id: editingRegistration.id,
+        full_name: editFullName.trim(),
+        target_khan: Number(editTargetKhan),
+        current_khan_at_registration: editCurrentKhan === '' ? null : Number(editCurrentKhan),
+        payment_status: editPaymentStatus,
+      });
+
+      setSuccessFeedback(`Inscrição de "${editFullName.trim()}" atualizada com sucesso!`);
+      setTimeout(() => setSuccessFeedback(null), 3000);
+      setEditingRegistration(null);
+      await fetchRegistrations();
+    } catch (err: unknown) {
+      setEditError(err instanceof Error ? err.message : 'Erro ao salvar alterações da inscrição.');
+    } finally {
+      setIsSavingEdit(false);
     }
   };
 
@@ -605,34 +672,46 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
                       )}
                     </td>
 
-                    {/* Ação: Alternar Pagamento */}
+                    {/* Ação: Editar e Alternar Pagamento */}
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                      <button
-                        type="button"
-                        onClick={() => handleTogglePayment(reg)}
-                        className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
-                          isPaid
-                            ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800'
-                            : 'bg-emerald-900/40 border-emerald-700/80 text-emerald-300 hover:bg-emerald-800/60'
-                        }`}
-                        title={
-                          isPaid
-                            ? 'Desmarcar pagamento (voltar para pendente)'
-                            : 'Confirmar pagamento manualmente'
-                        }
-                      >
-                        {isPaid ? (
-                          <>
-                            <XCircle size={13} />
-                            <span>Desmarcar</span>
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle size={13} />
-                            <span>Marcar Pago</span>
-                          </>
-                        )}
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditModal(reg)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-mono uppercase font-semibold border border-zinc-700/80 bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 hover:border-zinc-600 transition-colors"
+                          title="Editar candidatura (corrigir Khan, nome ou status)"
+                        >
+                          <Pencil size={12} className="text-zinc-400" />
+                          <span>Editar</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePayment(reg)}
+                          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                            isPaid
+                              ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800'
+                              : 'bg-emerald-900/40 border-emerald-700/80 text-emerald-300 hover:bg-emerald-800/60'
+                          }`}
+                          title={
+                            isPaid
+                              ? 'Desmarcar pagamento (voltar para pendente)'
+                              : 'Confirmar pagamento manualmente'
+                          }
+                        >
+                          {isPaid ? (
+                            <>
+                              <XCircle size={13} />
+                              <span>Desmarcar</span>
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle size={13} />
+                              <span>Marcar Pago</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -656,6 +735,158 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
         <p className="text-center text-xs font-mono text-zinc-500">
           Exibindo {registrations.length} de {totalCount} {totalCount === 1 ? 'inscrição' : 'inscrições'}
         </p>
+      )}
+
+      {/* Modal de Edição de Candidatura (Acesso Administrativo) */}
+      {editingRegistration && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-edit-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+        >
+          <div className="w-full max-w-lg bg-[#0e0e14] border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden p-6 relative">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-zinc-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-lg bg-red-950/80 border border-red-800/60 flex items-center justify-center text-red-400">
+                  <Pencil size={18} />
+                </div>
+                <div>
+                  <h3 id="modal-edit-title" className="font-fight text-lg text-white uppercase tracking-wider">
+                    Editar Candidatura
+                  </h3>
+                  <span className="text-xs text-zinc-400 font-mono">
+                    {editingRegistration.event?.title || 'Graduação'}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleCloseEditModal}
+                disabled={isSavingEdit}
+                className="p-1 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                aria-label="Fechar modal"
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            {editError && (
+              <div className="mb-4 p-3 rounded-lg bg-red-950/60 border border-red-800 text-red-200 text-xs flex items-center gap-2">
+                <AlertCircle size={15} className="flex-shrink-0" />
+                <span>{editError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSaveEdit} className="space-y-4">
+              {/* Nome do Candidato */}
+              <div>
+                <label htmlFor="edit-name" className="block text-xs font-mono uppercase text-zinc-300 mb-1">
+                  Nome do Aluno / Candidato *
+                </label>
+                <input
+                  id="edit-name"
+                  type="text"
+                  required
+                  maxLength={150}
+                  value={editFullName}
+                  onChange={(e) => setEditFullName(e.target.value)}
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+
+              {/* Khan Pretendido (Campo prioritário para correção) */}
+              <div>
+                <label htmlFor="edit-target-khan" className="block text-xs font-mono uppercase text-zinc-300 mb-1">
+                  Khan Pretendido no Exame *
+                </label>
+                <select
+                  id="edit-target-khan"
+                  value={editTargetKhan}
+                  onChange={(e) => setEditTargetKhan(Number(e.target.value))}
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
+                >
+                  {ALL_KHANS_SYSTEM.map((k) => {
+                    const price = getGraduationPriceForKhan(k.level);
+                    return (
+                      <option key={k.level} value={k.level}>
+                        {k.level}º Khan — {k.colorName} {price !== null ? `(${formatGraduationPrice(price)})` : ''}
+                      </option>
+                    );
+                  })}
+                </select>
+                <p className="text-[11px] text-zinc-500 font-mono mt-1">
+                  Altere caso o aluno tenha selecionado o Khan errado no formulário público.
+                </p>
+              </div>
+
+              {/* Khan Atual no momento da inscrição */}
+              <div>
+                <label htmlFor="edit-current-khan" className="block text-xs font-mono uppercase text-zinc-300 mb-1">
+                  Khan Atual (Snapshot da Inscrição)
+                </label>
+                <select
+                  id="edit-current-khan"
+                  value={editCurrentKhan}
+                  onChange={(e) => setEditCurrentKhan(e.target.value === '' ? '' : Number(e.target.value))}
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
+                >
+                  <option value="">Não informado / Em branco</option>
+                  {ALL_KHANS_SYSTEM.map((k) => (
+                    <option key={k.level} value={k.level}>
+                      {k.level}º Khan — {k.colorName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Status do Pagamento */}
+              <div>
+                <label htmlFor="edit-payment" className="block text-xs font-mono uppercase text-zinc-300 mb-1">
+                  Status do Pagamento
+                </label>
+                <select
+                  id="edit-payment"
+                  value={editPaymentStatus}
+                  onChange={(e) => setEditPaymentStatus(e.target.value as GraduationPaymentStatus)}
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
+                >
+                  <option value="pending">Pendente</option>
+                  <option value="paid">Confirmado (Pago)</option>
+                </select>
+              </div>
+
+              {/* Ações */}
+              <div className="pt-3 border-t border-zinc-800 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={handleCloseEditModal}
+                  disabled={isSavingEdit}
+                  className="px-4 py-2 rounded-sm border border-zinc-800 bg-zinc-900 text-zinc-300 hover:text-white font-mono text-xs uppercase transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingEdit}
+                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-sm bg-red-600 hover:bg-red-500 text-white font-mono text-xs uppercase font-semibold transition-colors disabled:opacity-50"
+                >
+                  {isSavingEdit ? (
+                    <>
+                      <RefreshCw size={14} className="animate-spin" />
+                      <span>Salvando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check size={14} />
+                      <span>Salvar Alterações</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -27,6 +27,14 @@ export interface GraduationStats {
   pending: number;
 }
 
+export interface UpdateGraduationRegistrationInput {
+  id: string;
+  target_khan: number;
+  full_name?: string;
+  current_khan_at_registration?: number | null;
+  payment_status?: GraduationPaymentStatus;
+}
+
 export const graduationRegistrationsService = {
   /**
    * Constrói a consulta base aplicando todos os filtros informados
@@ -185,6 +193,68 @@ export const graduationRegistrationsService = {
 
     if (error) {
       throw new Error(`Erro ao atualizar pagamento: ${error.message}`);
+    }
+
+    return true;
+  },
+
+  /**
+   * Atualiza dados de uma inscrição (Khan pretendido, nome, Khan atual ou status)
+   * Utilizado por usuários cadastrados (administradores) para corrigir erros de candidatos
+   */
+  async updateRegistration(input: UpdateGraduationRegistrationInput): Promise<boolean> {
+    if (input.target_khan < 1 || input.target_khan > 16) {
+      throw new Error('O Khan pretendido deve estar entre 1 e 16.');
+    }
+
+    if (
+      input.current_khan_at_registration !== undefined &&
+      input.current_khan_at_registration !== null &&
+      (input.current_khan_at_registration < 1 || input.current_khan_at_registration > 16)
+    ) {
+      throw new Error('O Khan atual deve estar entre 1 e 16.');
+    }
+
+    if (input.full_name !== undefined) {
+      const trimmed = input.full_name.trim();
+      if (!trimmed) {
+        throw new Error('O nome do candidato não pode ficar vazio.');
+      }
+    }
+
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase não configurado.');
+    }
+
+    const payload: Record<string, unknown> = {
+      target_khan: Number(input.target_khan),
+    };
+
+    if (input.full_name !== undefined) {
+      payload.full_name = input.full_name.trim();
+    }
+
+    if (input.current_khan_at_registration !== undefined) {
+      payload.current_khan_at_registration = input.current_khan_at_registration;
+    }
+
+    if (input.payment_status !== undefined) {
+      payload.payment_status = input.payment_status;
+      if (input.payment_status === 'paid') {
+        payload.paid_at = new Date().toISOString();
+      } else {
+        payload.paid_at = null;
+        payload.paid_by = null;
+      }
+    }
+
+    const { error } = await supabase
+      .from('graduation_registrations')
+      .update(payload)
+      .eq('id', input.id);
+
+    if (error) {
+      throw new Error(`Erro ao atualizar candidatura: ${error.message}`);
     }
 
     return true;
