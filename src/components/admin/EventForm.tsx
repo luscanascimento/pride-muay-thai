@@ -8,6 +8,9 @@ import {
   Eye,
   Trophy,
   Lock,
+  GraduationCap,
+  CalendarClock,
+  Users,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { canUserEditEvent } from '../../utils/superAdmins';
@@ -17,6 +20,12 @@ import { generateSlug } from '../../utils/slug';
 import { navigateTo } from '../../utils/routes';
 import { maskCurrencyInput, normalizeCurrencyBrl } from '../../utils/currency';
 import { EventBracketsManager } from './EventBracketsManager';
+import {
+  GRADUATION_PIX,
+  GRADUATION_MANDATORY_EQUIPMENT,
+  GRADUATION_PRICING_TABLE,
+  formatGraduationPrice,
+} from '../../constants/graduation';
 
 interface EventFormProps {
   eventId?: string; // Se fornecido, modo de edição; se não, modo de criação
@@ -46,6 +55,8 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
   const [pixKey, setPixKey] = useState('12991746964');
   const [showInstagram, setShowInstagram] = useState(false);
   const [showYouTube, setShowYouTube] = useState(false);
+  const [graduationRegistrationEnabled, setGraduationRegistrationEnabled] = useState(false);
+  const [graduationRegistrationDeadline, setGraduationRegistrationDeadline] = useState('');
 
   const [isLoadingEvent, setIsLoadingEvent] = useState(isEditing);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -87,6 +98,16 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
         setPixKey(event.pix_key || '12991746964');
         setShowInstagram(Boolean(event.show_instagram));
         setShowYouTube(Boolean(event.show_youtube));
+        setGraduationRegistrationEnabled(Boolean(event.graduation_registration_enabled));
+
+        if (event.graduation_registration_deadline) {
+          const d = new Date(event.graduation_registration_deadline);
+          const offset = d.getTimezoneOffset() * 60000;
+          const localIso = new Date(d.getTime() - offset).toISOString().slice(0, 16);
+          setGraduationRegistrationDeadline(localIso);
+        } else {
+          setGraduationRegistrationDeadline('');
+        }
 
         // Formatar para formato do input datetime-local: YYYY-MM-DDTHH:mm
         if (event.event_date) {
@@ -149,6 +170,14 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
     }
   };
 
+  const handleCategoryChange = (newCat: EventCategory) => {
+    setCategory(newCat);
+    if (newCat !== 'graduation') {
+      setGraduationRegistrationEnabled(false);
+      setGraduationRegistrationDeadline('');
+    }
+  };
+
   const handleSubmit = async (targetStatus?: EventStatus) => {
     setFeedback(null);
 
@@ -195,6 +224,25 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
       return;
     }
 
+    if (category === 'graduation' && graduationRegistrationEnabled) {
+      if (!graduationRegistrationDeadline) {
+        setFeedback({
+          type: 'error',
+          message: 'Ao habilitar o formulário de inscrição para graduação, o prazo final é obrigatório.',
+        });
+        return;
+      }
+      const deadlineTime = new Date(graduationRegistrationDeadline).getTime();
+      const eventStartTime = new Date(eventDate).getTime();
+      if (deadlineTime > eventStartTime) {
+        setFeedback({
+          type: 'error',
+          message: 'O prazo final de inscrições não pode ser posterior à data de início do evento.',
+        });
+        return;
+      }
+    }
+
     const finalStatus = targetStatus || status;
 
     setIsSubmitting(true);
@@ -218,6 +266,11 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
         pix_key: pixKey.trim() || '12991746964',
         show_instagram: showInstagram,
         show_youtube: showYouTube,
+        graduation_registration_enabled: category === 'graduation' ? graduationRegistrationEnabled : false,
+        graduation_registration_deadline:
+          category === 'graduation' && graduationRegistrationEnabled && graduationRegistrationDeadline
+            ? new Date(graduationRegistrationDeadline).toISOString()
+            : null,
         created_by: session?.user?.id || null,
       };
 
@@ -370,7 +423,7 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
               <select
                 id="event-category"
                 value={category}
-                onChange={(e) => setCategory(e.target.value as EventCategory)}
+                onChange={(e) => handleCategoryChange(e.target.value as EventCategory)}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500"
               >
                 <option value="competition">Competição</option>
@@ -694,6 +747,129 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
               </div>
             </div>
           </div>
+
+          {/* Seção Inscrições para Graduação (Exclusiva para categoria 'graduation') */}
+          {category === 'graduation' && (
+            <div className="p-5 sm:p-6 rounded-2xl bg-[#0f0e15] border border-red-900/50 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-red-950/80 border border-red-800/60 flex items-center justify-center text-red-400 flex-shrink-0">
+                    <GraduationCap size={22} />
+                  </div>
+                  <div>
+                    <h3 className="font-fight text-xl text-white uppercase tracking-wider">
+                      Inscrições para Graduação
+                    </h3>
+                    <p className="text-xs text-zinc-400 mt-0.5">
+                      Controle o formulário público de inscrição e o prazo limite para os alunos.
+                    </p>
+                  </div>
+                </div>
+
+                {isEditing && eventId && (
+                  <button
+                    type="button"
+                    onClick={() => navigateTo(`/admin/graduacoes?event_id=${eventId}`)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-red-950/60 border border-red-800/60 text-red-300 hover:text-white hover:bg-red-900/60 font-mono text-xs uppercase font-semibold transition-colors self-start sm:self-auto"
+                  >
+                    <Users size={14} />
+                    <span>Gerenciar Inscritos deste Evento</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Toggle e Prazo Final */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-4">
+                  <div>
+                    <label htmlFor="graduation-reg-toggle" className="text-xs font-mono uppercase text-zinc-200 block font-semibold cursor-pointer">
+                      Habilitar formulário público de inscrição
+                    </label>
+                    <span className="text-[11px] text-zinc-400 block mt-0.5">
+                      {graduationRegistrationEnabled
+                        ? 'Visitantes podem se inscrever até o prazo'
+                        : 'Inscrições públicas desabilitadas'}
+                    </span>
+                  </div>
+                  <button
+                    id="graduation-reg-toggle"
+                    type="button"
+                    role="switch"
+                    aria-checked={graduationRegistrationEnabled}
+                    onClick={() => setGraduationRegistrationEnabled(!graduationRegistrationEnabled)}
+                    className={`px-3 py-1.5 rounded text-xs font-mono uppercase font-semibold border transition-colors flex-shrink-0 ${
+                      graduationRegistrationEnabled
+                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
+                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                    }`}
+                  >
+                    {graduationRegistrationEnabled ? '● Habilitado' : '○ Desabilitado'}
+                  </button>
+                </div>
+
+                {graduationRegistrationEnabled ? (
+                  <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label htmlFor="graduation-deadline" className="text-xs font-mono uppercase tracking-wider text-zinc-300 flex items-center gap-1.5">
+                        <CalendarClock size={14} className="text-red-500" />
+                        <span>Prazo Final para Inscrições *</span>
+                      </label>
+                    </div>
+                    <input
+                      id="graduation-deadline"
+                      type="datetime-local"
+                      required={graduationRegistrationEnabled}
+                      value={graduationRegistrationDeadline}
+                      onChange={(e) => setGraduationRegistrationDeadline(e.target.value)}
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
+                    />
+                    <span className="text-[11px] font-mono text-amber-400/90 block mt-1.5">
+                      Após este prazo, novas inscrições serão bloqueadas automaticamente pelo banco de dados.
+                    </span>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-xl bg-zinc-950/50 border border-zinc-800/60 text-xs text-zinc-500 flex items-center">
+                    <span>Habilite o formulário acima para definir a data e horário limite de inscrição.</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Preview das Regras Fixas de Graduação */}
+              <div className="p-4 rounded-xl bg-zinc-950/80 border border-zinc-800/80 space-y-3">
+                <span className="text-xs font-mono uppercase tracking-wider text-red-400 font-bold block">
+                  Regras Oficiais & Tabela Fixa de Graduação (Automáticas)
+                </span>
+                <p className="text-xs text-zinc-400">
+                  Todo evento marcado como Graduação exibe automaticamente no site as seguintes informações padronizadas:
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-zinc-300 pt-2 border-t border-zinc-800/60">
+                  <div>
+                    <strong className="text-white font-mono uppercase block mb-1">Dados de Pagamento (PIX):</strong>
+                    <p className="text-zinc-400">
+                      Chave: <span className="font-mono text-zinc-200">{GRADUATION_PIX.displayKey}</span> ({GRADUATION_PIX.beneficiary} — {GRADUATION_PIX.institution})
+                    </p>
+                    <strong className="text-white font-mono uppercase block mt-3 mb-1">Equipamentos Obrigatórios:</strong>
+                    <ul className="list-disc list-inside text-zinc-400 space-y-0.5">
+                      {GRADUATION_MANDATORY_EQUIPMENT.map((eq) => (
+                        <li key={eq}>{eq}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <strong className="text-white font-mono uppercase block mb-1">Tabela de Valores Oficiais:</strong>
+                    <div className="max-h-40 overflow-y-auto space-y-1 font-mono text-[11px] pr-1">
+                      {GRADUATION_PRICING_TABLE.map((tier) => (
+                        <div key={tier.level} className="flex justify-between border-b border-zinc-800/40 py-0.5">
+                          <span className="text-zinc-400">{tier.level}º Khan ({tier.colorName})</span>
+                          <span className="text-white font-semibold">{formatGraduationPrice(tier.priceInCents)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Form Action Buttons */}
           <div className="pt-6 border-t border-zinc-800 flex flex-wrap items-center justify-between gap-4">

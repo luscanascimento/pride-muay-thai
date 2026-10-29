@@ -93,16 +93,25 @@ export const Header: React.FC = () => {
           </Button>
         </div>
 
-        {/* Mobile Hamburger Button */}
-        <div className="flex lg:hidden items-center">
+        {/* Mobile Actions: Compact Login + Hamburger Button */}
+        <div className="flex lg:hidden items-center gap-1.5 sm:gap-2">
+          <a
+            href="#/admin/login"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-md flex items-center justify-center text-zinc-300 hover:text-white bg-zinc-900/60 hover:bg-zinc-800 border border-zinc-800/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+            aria-label="Entrar no painel administrativo"
+            title="Entrar no painel administrativo"
+          >
+            <LogIn size={18} />
+          </a>
+
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-md text-zinc-300 hover:text-white hover:bg-zinc-800/80 focus-visible:ring-2 focus-visible:ring-red-500"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-md flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-800/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
             aria-label={mobileMenuOpen ? 'Fechar menu de navegação' : 'Abrir menu de navegação'}
             aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
@@ -122,17 +131,6 @@ export const Header: React.FC = () => {
               </a>
             ))}
             <div className="pt-4 flex flex-col gap-3">
-              <Button
-                as="a"
-                href="#/admin/login"
-                variant="secondary"
-                size="lg"
-                onClick={closeMenu}
-                className="w-full justify-center"
-              >
-                <LogIn size={20} />
-                Login
-              </Button>
               <Button
                 as="a"
                 href="#onde-treinar"

@@ -87,6 +87,10 @@ export function parseHashRoute(rawHash: string): AppRoute {
     return { type: 'admin-students-list', searchParams };
   }
 
+  if (path === '/admin/graduacoes') {
+    return { type: 'admin-graduation-registrations', searchParams };
+  }
+
   if (path === '/admin/usuarios') {
     return { type: 'admin-users-list' };
   }

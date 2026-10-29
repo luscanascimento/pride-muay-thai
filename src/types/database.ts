@@ -46,6 +46,8 @@ export interface DbEvent {
   pix_key?: string | null;
   show_instagram?: boolean;
   show_youtube?: boolean;
+  graduation_registration_enabled?: boolean;
+  graduation_registration_deadline?: string | null;
   created_at: string;
   updated_at: string;
   created_by: string | null;
@@ -76,6 +78,23 @@ export interface DbStudentGraduation {
   achieved_at: string | null;
   created_at: string;
   created_by: string | null;
+  [key: string]: unknown;
+}
+
+export type GraduationPaymentStatus = 'pending' | 'paid';
+
+export interface DbGraduationRegistration {
+  id: string;
+  event_id: string;
+  student_id: string | null;
+  full_name: string;
+  current_khan_at_registration: number | null;
+  target_khan: number;
+  payment_status: GraduationPaymentStatus;
+  paid_at: string | null;
+  paid_by: string | null;
+  created_at: string;
+  updated_at: string;
   [key: string]: unknown;
 }
 
@@ -133,6 +152,8 @@ export interface Database {
           pix_key?: string | null;
           show_instagram?: boolean;
           show_youtube?: boolean;
+          graduation_registration_enabled?: boolean;
+          graduation_registration_deadline?: string | null;
           created_at?: string;
           updated_at?: string;
           created_by?: string | null;
@@ -161,6 +182,8 @@ export interface Database {
           pix_key?: string | null;
           show_instagram?: boolean;
           show_youtube?: boolean;
+          graduation_registration_enabled?: boolean;
+          graduation_registration_deadline?: string | null;
           created_at?: string;
           updated_at?: string;
           created_by?: string | null;
@@ -257,6 +280,53 @@ export interface Database {
         };
         Relationships: GenericRelationship[];
       };
+      graduation_registrations: {
+        Row: DbGraduationRegistration;
+        Insert: {
+          id?: string;
+          event_id: string;
+          student_id?: string | null;
+          full_name: string;
+          current_khan_at_registration?: number | null;
+          target_khan: number;
+          payment_status?: GraduationPaymentStatus;
+          paid_at?: string | null;
+          paid_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          [key: string]: unknown;
+        };
+        Update: {
+          id?: string;
+          event_id?: string;
+          student_id?: string | null;
+          full_name?: string;
+          current_khan_at_registration?: number | null;
+          target_khan?: number;
+          payment_status?: GraduationPaymentStatus;
+          paid_at?: string | null;
+          paid_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          [key: string]: unknown;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "graduation_registrations_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "graduation_registrations_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -302,6 +372,22 @@ export interface Database {
         Args: {
           target_user_id: string;
           [key: string]: unknown;
+        };
+        Returns: boolean;
+      };
+      submit_graduation_registration: {
+        Args: {
+          p_event_id: string;
+          p_target_khan: number;
+          p_student_id?: string | null;
+          p_manual_name?: string | null;
+        };
+        Returns: string;
+      };
+      set_graduation_registration_paid: {
+        Args: {
+          p_registration_id: string;
+          p_is_paid: boolean;
         };
         Returns: boolean;
       };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Users, Plus, Globe, ArrowRight, ShieldCheck, UserCheck } from 'lucide-react';
+import { Calendar, Users, Plus, Globe, ArrowRight, ShieldCheck, UserCheck, GraduationCap } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/Button';
 import { navigateTo } from '../../utils/routes';
@@ -44,7 +44,7 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* Grid of administrative modules */}
-      <div className={`grid grid-cols-1 md:grid-cols-2 ${isSuper ? 'lg:grid-cols-3' : ''} gap-6`}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Events Module Card */}
         <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-zinc-900/90 to-zinc-950 border border-zinc-800 shadow-xl flex flex-col justify-between">
           <div>
@@ -75,6 +75,41 @@ export const AdminDashboardPage: React.FC = () => {
               className="inline-flex items-center gap-1 text-xs font-mono uppercase text-zinc-300 hover:text-white transition-colors"
             >
               <span>Listar todos</span>
+              <ArrowRight size={14} className="text-red-500" />
+            </button>
+          </div>
+        </div>
+
+        {/* Graduation Registrations Module Card */}
+        <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-zinc-900/90 to-zinc-950 border border-zinc-800 shadow-xl flex flex-col justify-between">
+          <div>
+            <div className="w-12 h-12 rounded-xl bg-red-950/40 border border-red-800/50 flex items-center justify-center text-red-400 mb-4">
+              <GraduationCap size={24} />
+            </div>
+            <h2 className="font-fight text-2xl text-white uppercase tracking-wider">
+              Inscrições de Graduação
+            </h2>
+            <p className="text-zinc-400 text-sm mt-2 leading-relaxed">
+              Acompanhe candidatos inscritos nos exames de graduação, confirme pagamentos manualmente, filtre por evento ou Khan e exporte relatórios em Word, PDF e Excel.
+            </p>
+          </div>
+
+          <div className="mt-8 pt-4 border-t border-zinc-800/80 flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => navigateTo('/admin/graduacoes')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-sm bg-red-600 hover:bg-red-500 text-white font-mono text-xs uppercase font-semibold transition-colors shadow-red-glow"
+            >
+              <GraduationCap size={14} />
+              <span>Ver Inscrições</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigateTo('/admin/graduacoes')}
+              className="inline-flex items-center gap-1 text-xs font-mono uppercase text-zinc-300 hover:text-white transition-colors"
+            >
+              <span>Acessar central</span>
               <ArrowRight size={14} className="text-red-500" />
             </button>
           </div>
@@ -117,7 +152,7 @@ export const AdminDashboardPage: React.FC = () => {
 
         {/* Super Admins Management Card */}
         {isSuper && (
-          <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-zinc-900/90 to-zinc-950 border border-amber-500/30 shadow-xl flex flex-col justify-between">
+          <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-zinc-900/90 to-zinc-950 border border-amber-500/30 shadow-xl flex flex-col justify-between md:col-span-2 lg:col-span-3">
             <div>
               <div className="w-12 h-12 rounded-xl bg-amber-950/40 border border-amber-800/50 flex items-center justify-center text-amber-400 mb-4">
                 <UserCheck size={24} />

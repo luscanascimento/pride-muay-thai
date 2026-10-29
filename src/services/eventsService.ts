@@ -45,6 +45,8 @@ export interface CreateEventInput {
   pix_key?: string | null;
   show_instagram?: boolean;
   show_youtube?: boolean;
+  graduation_registration_enabled?: boolean;
+  graduation_registration_deadline?: string | null;
   created_by?: string | null;
 }
 
@@ -223,6 +225,10 @@ export const eventsService = {
       .select()
       .single();
 
+    if (error && (error.message?.includes('graduation_registration') || error.message?.includes('chk_events_graduation'))) {
+      throw new Error('As colunas ou regras de inscrições para graduação não existem no banco de dados. Aplique a migration 007_graduation_registrations.sql.');
+    }
+
     // Fallback caso as novas colunas ainda não existam no banco remoto
     if (error && (error.message?.includes('price') || error.message?.includes('pix') || error.message?.includes('instagram') || error.message?.includes('youtube'))) {
       const fallbackPayload = { ...payload };
@@ -278,6 +284,10 @@ export const eventsService = {
       .select()
       .single();
 
+    if (error && (error.message?.includes('graduation_registration') || error.message?.includes('chk_events_graduation'))) {
+      throw new Error('As colunas ou regras de inscrições para graduação não existem no banco de dados. Aplique a migration 007_graduation_registrations.sql.');
+    }
+
     // Fallback caso as novas colunas ainda não existam no banco remoto
     if (error && (error.message?.includes('price') || error.message?.includes('pix') || error.message?.includes('instagram') || error.message?.includes('youtube'))) {
       const fallbackPayload = { ...payload };
@@ -302,6 +312,25 @@ export const eventsService = {
     }
 
     return data;
+  },
+
+  /**
+   * Lista todos os eventos da categoria 'graduation'
+   */
+  async getGraduationEvents(): Promise<DbEvent[]> {
+    if (!isSupabaseConfigured) return [];
+
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('category', 'graduation')
+      .order('event_date', { ascending: false });
+
+    if (error) {
+      throw new Error(`Erro ao buscar eventos de graduação: ${error.message}`);
+    }
+
+    return (data || []) as DbEvent[];
   },
 
   /**

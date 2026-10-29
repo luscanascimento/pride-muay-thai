@@ -31,6 +31,7 @@ import { EventForm } from './components/admin/EventForm';
 import { StudentsAdmin } from './components/admin/StudentsAdmin';
 import { StudentForm } from './components/admin/StudentForm';
 import { UsersAdmin } from './components/admin/UsersAdmin';
+import { GraduationRegistrationsAdmin } from './components/admin/GraduationRegistrationsAdmin';
 import { getProfessorById } from './data/gymsAndTeamData';
 import { AppRoute } from './types/routes';
 import { parseHashRoute, navigateTo } from './utils/routes';
@@ -127,6 +128,10 @@ export const App: React.FC = () => {
             ) : currentRoute.type === 'admin-students-list' ? (
               <AdminRoute currentPath="/admin/alunos">
                 <StudentsAdmin />
+              </AdminRoute>
+            ) : currentRoute.type === 'admin-graduation-registrations' ? (
+              <AdminRoute currentPath="/admin/graduacoes">
+                <GraduationRegistrationsAdmin initialSearchParams={currentRoute.searchParams} />
               </AdminRoute>
             ) : currentRoute.type === 'admin-users-list' ? (
               <AdminRoute currentPath="/admin/usuarios">

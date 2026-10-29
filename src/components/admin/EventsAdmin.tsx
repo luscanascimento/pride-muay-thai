@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Calendar,
   Lock,
+  GraduationCap,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { canUserEditEvent } from '../../utils/superAdmins';
@@ -288,6 +289,19 @@ export const EventsAdmin: React.FC = () => {
                         >
                           <Eye size={15} />
                         </a>
+
+                        {/* Inscrições da Graduação */}
+                        {event.category === 'graduation' && (
+                          <button
+                            type="button"
+                            onClick={() => navigateTo(`/admin/graduacoes?event_id=${event.id}`)}
+                            className="p-1.5 text-red-400 hover:text-red-300 rounded hover:bg-red-950/40 transition-colors"
+                            title="Inscrições da graduação"
+                            aria-label={`Ver inscrições da graduação ${event.title}`}
+                          >
+                            <GraduationCap size={15} />
+                          </button>
+                        )}
 
                         {canEdit ? (
                           <>

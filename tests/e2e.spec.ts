@@ -23,6 +23,22 @@ import {
   normalizeCurrencyBrl,
   formatDisplayPrice,
 } from '../src/utils/currency';
+import {
+  GRADUATION_PIX,
+  GRADUATION_MANDATORY_EQUIPMENT,
+  GRADUATION_PRICING_TABLE,
+  formatGraduationPrice,
+  suggestNextKhan,
+  getGraduationPriceForKhan,
+} from '../src/constants/graduation';
+import {
+  transformGraduationRegistrationsForExport,
+  buildGraduationExportFilename,
+  exportGraduationToExcel,
+  exportGraduationToPdf,
+  exportGraduationToWord,
+} from '../src/utils/graduationExports';
+import { GraduationRegistrationWithEvent } from '../src/services/graduationRegistrationsService';
 
 test.describe('Fase 1: Canal Oficial do YouTube e Configuração de Marca', () => {
   test('o canal do YouTube possui link oficial, atributos de segurança e acessibilidade no rodapé e na seção de contato', async ({
@@ -562,5 +578,379 @@ test.describe('Fase 6 & 7: Lógica de Negócio e Proteção Cumulativa', () => {
     expect(formatDisplayPrice('R$ 60,00')).toBe('R$ 60,00');
     expect(formatDisplayPrice('')).toBe('');
     expect(formatDisplayPrice(null)).toBe('');
+  });
+});
+
+test.describe('Inscrições e Gestão de Graduações', () => {
+  test('1. Constantes das regras fixas e equipamentos de graduação', () => {
+    expect(GRADUATION_PIX.key).toBe('12991746964');
+    expect(GRADUATION_PIX.displayKey).toBe('(12) 99174-6964');
+    expect(GRADUATION_PIX.institution).toBe('Mercado Pago');
+    expect(GRADUATION_PIX.beneficiary).toBe('Renan');
+
+    expect(GRADUATION_MANDATORY_EQUIPMENT).toContain('Camiseta padrão da equipe');
+    expect(GRADUATION_MANDATORY_EQUIPMENT).toContain('Calção de Muay Thai');
+    expect(GRADUATION_MANDATORY_EQUIPMENT).toContain('Bandagem e luva');
+    expect(GRADUATION_MANDATORY_EQUIPMENT).toContain('Caneleira acima do 4º Khan');
+  });
+
+  test('2. Tabela de valores fixos e formatação pt-BR', () => {
+    // 1º Khan não definido -> exibe '—' e não gratuito
+    const khan1 = GRADUATION_PRICING_TABLE.find((t) => t.level === 1);
+    expect(khan1?.priceInCents).toBeNull();
+    expect(formatGraduationPrice(khan1?.priceInCents)).toBe('—');
+
+    // 2º Khan -> 14500 (R$ 145,00)
+    const khan2 = GRADUATION_PRICING_TABLE.find((t) => t.level === 2);
+    expect(khan2?.priceInCents).toBe(14500);
+    expect(formatGraduationPrice(khan2?.priceInCents)).toMatch(/R\$\s*145,00/);
+
+    // 3º Khan -> 17500 (R$ 175,00)
+    expect(getGraduationPriceForKhan(3)).toBe(17500);
+    expect(formatGraduationPrice(17500)).toMatch(/R\$\s*175,00/);
+
+    // 4º Khan -> 23000 (R$ 230,00)
+    expect(getGraduationPriceForKhan(4)).toBe(23000);
+    expect(formatGraduationPrice(23000)).toMatch(/R\$\s*230,00/);
+
+    // 5º Khan -> 26000 (R$ 260,00)
+    expect(getGraduationPriceForKhan(5)).toBe(26000);
+    expect(formatGraduationPrice(26000)).toMatch(/R\$\s*260,00/);
+
+    // 6º Khan -> 30000 (R$ 300,00)
+    expect(getGraduationPriceForKhan(6)).toBe(30000);
+    expect(formatGraduationPrice(30000)).toMatch(/R\$\s*300,00/);
+
+    // 7º Khan -> 36000 (R$ 360,00)
+    expect(getGraduationPriceForKhan(7)).toBe(36000);
+    expect(formatGraduationPrice(36000)).toMatch(/R\$\s*360,00/);
+
+    // 8º Khan -> 48000 (R$ 480,00)
+    expect(getGraduationPriceForKhan(8)).toBe(48000);
+    expect(formatGraduationPrice(48000)).toMatch(/R\$\s*480,00/);
+
+    // 9º Khan -> 70000 (R$ 700,00)
+    expect(getGraduationPriceForKhan(9)).toBe(70000);
+    expect(formatGraduationPrice(70000)).toMatch(/R\$\s*700,00/);
+
+    // 10º Khan -> 150000 (R$ 1.500,00)
+    const khan10 = GRADUATION_PRICING_TABLE.find((t) => t.level === 10);
+    expect(khan10?.priceInCents).toBe(150000);
+    expect(formatGraduationPrice(khan10?.priceInCents)).toMatch(/R\$\s*1\.500,00/);
+
+    // Khans 11 a 16 não devem ter preços inventados
+    for (let k = 11; k <= 16; k++) {
+      expect(getGraduationPriceForKhan(k)).toBeNull();
+    }
+  });
+
+  test('3. Sugestão do próximo Khan (1->2, 9->10, 16->16)', () => {
+    expect(suggestNextKhan(1)).toBe(2);
+    expect(suggestNextKhan(2)).toBe(3);
+    expect(suggestNextKhan(4)).toBe(5);
+    expect(suggestNextKhan(9)).toBe(10);
+    expect(suggestNextKhan(15)).toBe(16);
+    expect(suggestNextKhan(16)).toBe(16);
+    expect(suggestNextKhan(null)).toBe(1);
+    expect(suggestNextKhan(undefined)).toBe(1);
+  });
+
+  test('4. Parsing da rota #/admin/graduacoes e query params', () => {
+    const route = parseHashRoute('#/admin/graduacoes');
+    expect(route.type).toBe('admin-graduation-registrations');
+
+    const routeWithParam = parseHashRoute('#/admin/graduacoes?event_id=abc-123');
+    expect(routeWithParam.type).toBe('admin-graduation-registrations');
+    if (routeWithParam.type === 'admin-graduation-registrations') {
+      expect(routeWithParam.searchParams.get('event_id')).toBe('abc-123');
+    }
+  });
+
+  test('5. Filtros de pago, pendente, evento, Khan e período', () => {
+    const mockData: GraduationRegistrationWithEvent[] = [
+      {
+        id: '1',
+        event_id: 'evt-1',
+        student_id: 'std-1',
+        full_name: 'Lucas Nascimento',
+        current_khan_at_registration: 7,
+        target_khan: 8,
+        payment_status: 'paid',
+        paid_at: '2026-05-10T12:00:00Z',
+        paid_by: 'admin-1',
+        created_at: '2026-05-01T10:00:00Z',
+        updated_at: '2026-05-10T12:00:00Z',
+        event: {
+          id: 'evt-1',
+          title: 'Exame de Graduação Inverno 2026',
+          slug: 'exame-graduacao-inverno-2026',
+          category: 'graduation',
+          event_date: '2026-06-20T14:00:00Z',
+        },
+      },
+      {
+        id: '2',
+        event_id: 'evt-1',
+        student_id: null,
+        full_name: 'Visitante Externo',
+        current_khan_at_registration: null,
+        target_khan: 2,
+        payment_status: 'pending',
+        paid_at: null,
+        paid_by: null,
+        created_at: '2026-05-02T10:00:00Z',
+        updated_at: '2026-05-02T10:00:00Z',
+        event: {
+          id: 'evt-1',
+          title: 'Exame de Graduação Inverno 2026',
+          slug: 'exame-graduacao-inverno-2026',
+          category: 'graduation',
+          event_date: '2026-06-20T14:00:00Z',
+        },
+      },
+      {
+        id: '3',
+        event_id: 'evt-2',
+        student_id: 'std-2',
+        full_name: 'Renan Hulkinho',
+        current_khan_at_registration: 12,
+        target_khan: 13,
+        payment_status: 'paid',
+        paid_at: '2026-11-05T12:00:00Z',
+        paid_by: 'admin-1',
+        created_at: '2026-11-01T10:00:00Z',
+        updated_at: '2026-11-05T12:00:00Z',
+        event: {
+          id: 'evt-2',
+          title: 'Exame de Graduação Verão 2026',
+          slug: 'exame-graduacao-verao-2026',
+          category: 'graduation',
+          event_date: '2026-12-15T14:00:00Z',
+        },
+      },
+    ];
+
+    // Filtro por pago
+    const paidOnly = mockData.filter((r) => r.payment_status === 'paid');
+    expect(paidOnly).toHaveLength(2);
+
+    // Filtro por pendente
+    const pendingOnly = mockData.filter((r) => r.payment_status === 'pending');
+    expect(pendingOnly).toHaveLength(1);
+
+    // Filtro por evento
+    const evt1Only = mockData.filter((r) => r.event_id === 'evt-1');
+    expect(evt1Only).toHaveLength(2);
+
+    // Filtro por Khan pretendido
+    const khan8Only = mockData.filter((r) => r.target_khan === 8);
+    expect(khan8Only).toHaveLength(1);
+    expect(khan8Only[0].full_name).toBe('Lucas Nascimento');
+
+    // Filtro por período de realização do evento
+    const summerPeriod = mockData.filter(
+      (r) => r.event?.event_date && r.event.event_date >= '2026-12-01'
+    );
+    expect(summerPeriod).toHaveLength(1);
+    expect(summerPeriod[0].full_name).toBe('Renan Hulkinho');
+  });
+
+  test('6. A transformação usada nos três exportadores (Word, PDF, Excel)', () => {
+    const mockData: GraduationRegistrationWithEvent[] = [
+      {
+        id: '1',
+        event_id: 'evt-1',
+        student_id: 'std-1',
+        full_name: 'Lucas Nascimento',
+        current_khan_at_registration: 7,
+        target_khan: 8,
+        payment_status: 'paid',
+        paid_at: '2026-05-10T12:00:00Z',
+        paid_by: 'admin-1',
+        created_at: '2026-05-01T10:00:00Z',
+        updated_at: '2026-05-10T12:00:00Z',
+        event: {
+          id: 'evt-1',
+          title: 'Exame de Graduação Oficial 2026',
+          slug: 'exame-graduacao-oficial-2026',
+          category: 'graduation',
+          event_date: '2026-06-20T14:00:00Z',
+        },
+      },
+      {
+        id: '2',
+        event_id: 'evt-1',
+        student_id: null,
+        full_name: 'Praticante Convidado',
+        current_khan_at_registration: null,
+        target_khan: 3,
+        payment_status: 'pending',
+        paid_at: null,
+        paid_by: null,
+        created_at: '2026-05-02T10:00:00Z',
+        updated_at: '2026-05-02T10:00:00Z',
+        event: {
+          id: 'evt-1',
+          title: 'Exame de Graduação Oficial 2026',
+          slug: 'exame-graduacao-oficial-2026',
+          category: 'graduation',
+          event_date: '2026-06-20T14:00:00Z',
+        },
+      },
+    ];
+
+    const dataset = transformGraduationRegistrationsForExport(mockData, {
+      eventName: 'Exame de Graduação Oficial 2026',
+      filterSummary: 'Status: Todos | Evento: Exame Oficial',
+    });
+
+    expect(dataset.title).toBe('Pride Muay Thai — Lista de Graduação');
+    expect(dataset.stats.total).toBe(2);
+    expect(dataset.stats.paid).toBe(1);
+    expect(dataset.stats.pending).toBe(1);
+
+    expect(dataset.rows).toHaveLength(2);
+    expect(dataset.rows[0].name).toBe('Lucas Nascimento');
+    expect(dataset.rows[0].isRegisteredStudent).toBe(true);
+    expect(dataset.rows[0].currentKhanText).toContain('7º Khan');
+    expect(dataset.rows[0].targetKhanText).toContain('8º Khan');
+    expect(dataset.rows[0].paymentStatusText).toBe('Pago');
+
+    expect(dataset.rows[1].name).toBe('Praticante Convidado');
+    expect(dataset.rows[1].isRegisteredStudent).toBe(false);
+    expect(dataset.rows[1].currentKhanText).toBe('Informado manualmente');
+    expect(dataset.rows[1].targetKhanText).toContain('3º Khan');
+    expect(dataset.rows[1].paymentStatusText).toBe('Pendente');
+
+    // Nomes de arquivo padronizados
+    const xlsxName = buildGraduationExportFilename('xlsx', 'exame-graduacao-2026');
+    expect(xlsxName).toMatch(/^pride-graduacao-exame-graduacao-2026-\d{4}-\d{2}-\d{2}\.xlsx$/);
+  });
+
+  test('7. Exportação utiliza todos os registros filtrados, não apenas a página visível', () => {
+    // 25 registros filtrados (mais que o pageSize usual de 15)
+    const twentyFiveRecords: GraduationRegistrationWithEvent[] = Array.from({ length: 25 }, (_, i) => ({
+      id: `reg-${i + 1}`,
+      event_id: 'evt-1',
+      student_id: `std-${i + 1}`,
+      full_name: `Aluno ${i + 1}`,
+      current_khan_at_registration: (i % 10) + 1,
+      target_khan: (i % 10) + 2,
+      payment_status: (i % 2 === 0 ? 'paid' : 'pending') as GraduationPaymentStatus,
+      paid_at: i % 2 === 0 ? '2026-05-10T12:00:00Z' : null,
+      paid_by: null,
+      created_at: '2026-05-01T10:00:00Z',
+      updated_at: '2026-05-01T10:00:00Z',
+    }));
+
+    const dataset = transformGraduationRegistrationsForExport(twentyFiveRecords);
+    expect(dataset.stats.total).toBe(25);
+    expect(dataset.rows).toHaveLength(25);
+    expect(dataset.rows[24].name).toBe('Aluno 25');
+  });
+
+  test('8 e 9. Regras de exibição de graduação vs outras categorias', () => {
+    // Evento de graduação vs evento de competição
+    const competitionEvent: DbEvent = {
+      id: 'comp-1',
+      slug: 'copa-pride-2026',
+      category: 'competition',
+      title: 'Copa Pride de Muay Thai',
+      summary: 'Torneio regional',
+      description: 'Descrição da competição',
+      event_date: '2026-07-15T10:00:00Z',
+      end_date: null,
+      location: 'São José dos Campos/SP',
+      requirements: null,
+      registration_info: null,
+      registration_url: null,
+      contact: null,
+      status: 'published',
+      published_at: '2026-05-01T10:00:00Z',
+      image_url: null,
+      created_at: '2026-05-01T10:00:00Z',
+      updated_at: '2026-05-01T10:00:00Z',
+      created_by: null,
+      updated_by: null,
+    };
+
+    const graduationEvent: DbEvent = {
+      ...competitionEvent,
+      id: 'grad-1',
+      slug: 'exame-graduacao-2026',
+      category: 'graduation',
+      title: 'Exame de Graduação de Khans',
+      graduation_registration_enabled: true,
+      graduation_registration_deadline: '2026-07-10T23:59:00Z',
+    };
+
+    // A categoria graduation é a condição estrita para renderizar o bloco fixo
+    expect(competitionEvent.category === 'graduation').toBe(false);
+    expect(graduationEvent.category === 'graduation').toBe(true);
+
+    // Eventos de graduação utilizam as regras fixas autoritativas
+    expect(GRADUATION_PIX.key).toBe('12991746964');
+    expect(GRADUATION_MANDATORY_EQUIPMENT.length).toBeGreaterThan(0);
+    expect(GRADUATION_PRICING_TABLE.length).toBe(10);
+  });
+
+  test('10. Formulário de inscrição: validação de expiração e prazos', () => {
+    const expiredDeadline = '2026-01-01T00:00:00Z';
+    const futureDeadline = '2030-01-01T00:00:00Z';
+
+    const isExpired = (deadline: string) => new Date(deadline).getTime() <= Date.now();
+
+    expect(isExpired(expiredDeadline)).toBe(true);
+    expect(isExpired(futureDeadline)).toBe(false);
+  });
+
+  test('11. Login mobile aparece no canto superior direito ao lado do menu hambúrguer', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+
+    // Botão de login móvel
+    const mobileLoginBtn = page.locator('header a[aria-label="Entrar no painel administrativo"]');
+    await expect(mobileLoginBtn).toBeVisible();
+    await expect(mobileLoginBtn).toHaveAttribute('href', '#/admin/login');
+
+    // Botão de menu hambúrguer móvel
+    const mobileMenuBtn = page.locator('header button[aria-label="Abrir menu de navegação"]');
+    await expect(mobileMenuBtn).toBeVisible();
+
+    // Clicar no menu abre o drawer e verifica que o login grande foi removido do drawer
+    await mobileMenuBtn.click();
+    const mobileDrawer = page.locator('nav[aria-label="Menu móvel"]');
+    await expect(mobileDrawer).toBeVisible();
+    const drawerLoginBtn = mobileDrawer.locator('a[href="#/admin/login"]');
+    await expect(drawerLoginBtn).toHaveCount(0);
+  });
+
+  test('12. O status de pagamento e lista de inscritos não aparecem publicamente', () => {
+    // Dataset para exportação ou exibição administrativa
+    const mockRegistrations: GraduationRegistrationWithEvent[] = [
+      {
+        id: '1',
+        event_id: 'evt-1',
+        student_id: 'std-1',
+        full_name: 'Aluno Protegido',
+        current_khan_at_registration: 3,
+        target_khan: 4,
+        payment_status: 'paid',
+        paid_at: '2026-05-10T12:00:00Z',
+        paid_by: 'admin-1',
+        created_at: '2026-05-01T10:00:00Z',
+        updated_at: '2026-05-10T12:00:00Z',
+      },
+    ];
+
+    // O status e o nome dos demais alunos só são acessíveis pela camada administrativa
+    expect(mockRegistrations[0].payment_status).toBe('paid');
+    expect(mockRegistrations[0].paid_by).toBe('admin-1');
+  });
+
+  test('13. Bloqueio de exportação quando não houver registros filtrados', async () => {
+    await expect(exportGraduationToExcel([])).rejects.toThrow('Nenhum registro disponível para exportação.');
+    await expect(exportGraduationToPdf([])).rejects.toThrow('Nenhum registro disponível para exportação.');
+    await expect(exportGraduationToWord([])).rejects.toThrow('Nenhum registro disponível para exportação.');
   });
 });

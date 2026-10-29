@@ -30,6 +30,8 @@ import { formatDateTime } from '../../utils/date';
 import { navigateTo } from '../../utils/routes';
 import { getGoogleMapsSearchUrl } from '../../utils/maps';
 import { formatDisplayPrice } from '../../utils/currency';
+import { GraduationInfo } from '../graduation/GraduationInfo';
+import { GraduationRegistrationForm } from '../graduation/GraduationRegistrationForm';
 
 interface EventDetailPageProps {
   slug: string;
@@ -126,6 +128,7 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
   }
 
   const isCancelled = event.status === 'cancelled';
+  const isGraduation = event.category === 'graduation';
 
   return (
     <article className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto min-h-[75vh]">
@@ -183,7 +186,7 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
         )}
 
         {/* Highlight metadata cards */}
-        <div className={`grid grid-cols-1 sm:grid-cols-2 ${event.price ? 'lg:grid-cols-3' : ''} gap-4 mt-8 pt-6 border-t border-zinc-800/80`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${!isGraduation && event.price ? 'lg:grid-cols-3' : ''} gap-4 mt-8 pt-6 border-t border-zinc-800/80`}>
           <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex items-start gap-3">
             <Calendar size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
             <div>
@@ -224,7 +227,7 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
             <ExternalLink size={16} className="text-zinc-500 group-hover:text-red-400 transition-colors flex-shrink-0 mt-0.5" />
           </a>
 
-          {event.price && (
+          {!isGraduation && event.price && (
             <div className="p-4 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex items-start gap-3 sm:col-span-2 lg:col-span-1">
               <Tag size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
               <div>
@@ -262,8 +265,16 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
         </section>
       )}
 
-      {/* Pagamento & Inscrição via PIX (Opcional) */}
-      {event.show_pix && !isCancelled && (
+      {/* Bloco Oficial e Fixo de Graduação (Regras, Equipamentos, Tabela de Valores, PIX e Inscrição) */}
+      {isGraduation && (
+        <>
+          <GraduationInfo />
+          {!isCancelled && <GraduationRegistrationForm event={event} />}
+        </>
+      )}
+
+      {/* Pagamento & Inscrição via PIX (Opcional - eventos comuns não-graduação) */}
+      {!isGraduation && event.show_pix && !isCancelled && (
         <section className="mb-10 p-6 sm:p-7 rounded-2xl bg-[#0b100d] border border-emerald-900/60 shadow-xl">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-emerald-950">
             <div className="flex items-center gap-3">
