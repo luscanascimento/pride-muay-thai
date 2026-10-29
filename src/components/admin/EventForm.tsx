@@ -257,13 +257,13 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
         location: location.trim(),
         summary: summary.trim(),
         description: description.trim(),
-        requirements: requirements.trim() || null,
-        registration_info: registrationInfo.trim() || null,
-        registration_url: registrationUrl.trim() || null,
+        requirements: category === 'graduation' ? null : (requirements.trim() || null),
+        registration_info: category === 'graduation' ? null : (registrationInfo.trim() || null),
+        registration_url: category === 'graduation' ? null : (registrationUrl.trim() || null),
         contact: contact.trim() || null,
-        price: price.trim() ? normalizeCurrencyBrl(price) : null,
-        show_pix: showPix,
-        pix_key: pixKey.trim() || '12991746964',
+        price: category === 'graduation' ? null : (price.trim() ? normalizeCurrencyBrl(price) : null),
+        show_pix: category === 'graduation' ? false : showPix,
+        pix_key: category === 'graduation' ? '12991746964' : (pixKey.trim() || '12991746964'),
         show_instagram: showInstagram,
         show_youtube: showYouTube,
         graduation_registration_enabled: category === 'graduation' ? graduationRegistrationEnabled : false,
@@ -545,61 +545,49 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
             />
           </div>
 
-          {/* Requirements & Registration Instructions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="event-requirements" className="text-xs font-mono uppercase tracking-wider text-zinc-300">
-                  Requisitos de Participação
-                </label>
-                <span className="text-[10px] font-mono text-zinc-500">{requirements.length}/2000</span>
+          {/* Requirements & Registration Instructions (Ocultados para graduação) */}
+          {category !== 'graduation' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="event-requirements" className="text-xs font-mono uppercase tracking-wider text-zinc-300">
+                    Requisitos de Participação
+                  </label>
+                  <span className="text-[10px] font-mono text-zinc-500">{requirements.length}/2000</span>
+                </div>
+                <textarea
+                  id="event-requirements"
+                  rows={3}
+                  maxLength={2000}
+                  value={requirements}
+                  onChange={(e) => setRequirements(e.target.value)}
+                  placeholder="Ex: Graduação mínima no 4º Khan, kimono tradicional, luva 14oz..."
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 leading-relaxed"
+                />
               </div>
-              <textarea
-                id="event-requirements"
-                rows={3}
-                maxLength={2000}
-                value={requirements}
-                onChange={(e) => setRequirements(e.target.value)}
-                placeholder="Ex: Graduação mínima no 4º Khan, kimono tradicional, luva 14oz..."
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 leading-relaxed"
-              />
-            </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="registration-info" className="text-xs font-mono uppercase tracking-wider text-zinc-300">
-                  Instruções de Inscrição
-                </label>
-                <span className="text-[10px] font-mono text-zinc-500">{registrationInfo.length}/2000</span>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="registration-info" className="text-xs font-mono uppercase tracking-wider text-zinc-300">
+                    Instruções de Inscrição
+                  </label>
+                  <span className="text-[10px] font-mono text-zinc-500">{registrationInfo.length}/2000</span>
+                </div>
+                <textarea
+                  id="registration-info"
+                  rows={3}
+                  maxLength={2000}
+                  value={registrationInfo}
+                  onChange={(e) => setRegistrationInfo(e.target.value)}
+                  placeholder="Ex: Inscrições até 15 dias antes na secretaria da sua unidade..."
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 leading-relaxed"
+                />
               </div>
-              <textarea
-                id="registration-info"
-                rows={3}
-                maxLength={2000}
-                value={registrationInfo}
-                onChange={(e) => setRegistrationInfo(e.target.value)}
-                placeholder="Ex: Inscrições até 15 dias antes na secretaria da sua unidade..."
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 leading-relaxed"
-              />
             </div>
-          </div>
+          )}
 
           {/* Registration URL & Contact */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="registration-url" className="block text-xs font-mono uppercase tracking-wider text-zinc-300 mb-1.5">
-                Link Externo de Inscrição (Opcional)
-              </label>
-              <input
-                id="registration-url"
-                type="url"
-                value={registrationUrl}
-                onChange={(e) => setRegistrationUrl(e.target.value)}
-                placeholder="https://exemplo.com/inscricoes"
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
-              />
-            </div>
-
+          {category === 'graduation' ? (
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label htmlFor="event-contact" className="text-xs font-mono uppercase tracking-wider text-zinc-300">
@@ -617,136 +605,232 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
-          </div>
-
-          {/* Valores, Pagamento PIX & Redes Sociais */}
-          <div className="p-5 rounded-2xl bg-[#0e0e14] border border-zinc-800/90 space-y-5">
-            <div className="border-b border-zinc-800/80 pb-3">
-              <span className="text-xs font-mono uppercase tracking-wider text-red-500 font-bold block">
-                Valores, Pagamento PIX & Redes Sociais
-              </span>
-              <p className="text-xs text-zinc-400 mt-0.5">
-                Configure os valores de entrada, chave PIX e botões de redes sociais do evento.
-              </p>
-            </div>
-
+          ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Valor do Evento com máscara de R$ */}
               <div>
-                <label htmlFor="event-price" className="block text-xs font-mono uppercase tracking-wider text-zinc-300 mb-1.5">
-                  Valor do PIX / Inscrição <span className="text-zinc-500 font-normal lowercase">(opcional)</span>
-                </label>
-                <div className="relative">
-                  <input
-                    id="event-price"
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={30}
-                    value={price}
-                    onChange={handlePriceChange}
-                    onPaste={handlePricePaste}
-                    onBlur={handlePriceBlur}
-                    placeholder="R$ 60,00"
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
-                  />
-                </div>
-                <span className="text-[11px] font-mono text-zinc-500 mt-1 block">
-                  Máscara automática: digite os números (ex: 6000 para R$ 60,00)
-                </span>
-              </div>
-
-              {/* Chave PIX (editável com padrão Renan 12991746964) */}
-              <div>
-                <label htmlFor="event-pix-key" className="block text-xs font-mono uppercase tracking-wider text-zinc-300 mb-1.5">
-                  Chave PIX para Inscrição / Pagamento
+                <label htmlFor="registration-url" className="block text-xs font-mono uppercase tracking-wider text-zinc-300 mb-1.5">
+                  Link Externo de Inscrição (Opcional)
                 </label>
                 <input
-                  id="event-pix-key"
-                  type="text"
-                  maxLength={100}
-                  value={pixKey}
-                  onChange={(e) => setPixKey(e.target.value)}
-                  placeholder="12991746964"
+                  id="registration-url"
+                  type="url"
+                  value={registrationUrl}
+                  onChange={(e) => setRegistrationUrl(e.target.value)}
+                  placeholder="https://exemplo.com/inscricoes"
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
                 />
-                <span className="text-[10px] text-zinc-500 font-mono block mt-1">
-                  Padrão: 12991746964 (Renan Hulkinho)
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="event-contact" className="text-xs font-mono uppercase tracking-wider text-zinc-300">
+                    Contato de Dúvidas (Opcional)
+                  </label>
+                  <span className="text-[10px] font-mono text-zinc-500">{contact.length}/200</span>
+                </div>
+                <input
+                  id="event-contact"
+                  type="text"
+                  maxLength={200}
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  placeholder="Ex: WhatsApp da Pride (12) 99174-6964"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Valores, Pagamento PIX & Redes Sociais */}
+          {category === 'graduation' ? (
+            <div className="p-5 rounded-2xl bg-[#0e0e14] border border-zinc-800/90 space-y-4">
+              <div className="border-b border-zinc-800/80 pb-3">
+                <span className="text-xs font-mono uppercase tracking-wider text-red-500 font-bold block">
+                  Redes Sociais Oficiais
                 </span>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  Configure os botões de redes sociais do evento. As informações de chave PIX, tabela de valores e equipamentos da graduação são gerenciadas automaticamente pelas regras da Pride.
+                </p>
+              </div>
+
+              {/* Toggles de Exibição das Redes Sociais */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                {/* Toggle Instagram */}
+                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+                  <div>
+                    <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
+                      Botão do Instagram
+                    </span>
+                    <span className="text-[11px] text-zinc-400 block">
+                      {showInstagram ? 'Exibindo no evento' : 'Oculto'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowInstagram(!showInstagram)}
+                    className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                      showInstagram
+                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
+                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                    }`}
+                  >
+                    {showInstagram ? '● Ativo' : '○ Não'}
+                  </button>
+                </div>
+
+                {/* Toggle YouTube */}
+                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+                  <div>
+                    <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
+                      Botão do YouTube
+                    </span>
+                    <span className="text-[11px] text-zinc-400 block">
+                      {showYouTube ? 'Exibindo no evento' : 'Oculto'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowYouTube(!showYouTube)}
+                    className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                      showYouTube
+                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
+                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                    }`}
+                  >
+                    {showYouTube ? '● Ativo' : '○ Não'}
+                  </button>
+                </div>
               </div>
             </div>
-
-            {/* Toggles de Exibição */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-zinc-800/80">
-              {/* Toggle PIX */}
-              <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
-                <div>
-                  <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
-                    Mostrar Chave PIX
-                  </span>
-                  <span className="text-[11px] text-zinc-400 block">
-                    {showPix ? 'Exibindo no evento' : 'Oculto'}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowPix(!showPix)}
-                  className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
-                    showPix
-                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
-                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
-                  }`}
-                >
-                  {showPix ? '● Ativo' : '○ Não'}
-                </button>
+          ) : (
+            <div className="p-5 rounded-2xl bg-[#0e0e14] border border-zinc-800/90 space-y-5">
+              <div className="border-b border-zinc-800/80 pb-3">
+                <span className="text-xs font-mono uppercase tracking-wider text-red-500 font-bold block">
+                  Valores, Pagamento PIX & Redes Sociais
+                </span>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  Configure os valores de entrada, chave PIX e botões de redes sociais do evento.
+                </p>
               </div>
 
-              {/* Toggle Instagram */}
-              <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Valor do Evento com máscara de R$ */}
                 <div>
-                  <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
-                    Botão do Instagram
-                  </span>
-                  <span className="text-[11px] text-zinc-400 block">
-                    {showInstagram ? 'Exibindo no evento' : 'Oculto'}
+                  <label htmlFor="event-price" className="block text-xs font-mono uppercase tracking-wider text-zinc-300 mb-1.5">
+                    Valor do PIX / Inscrição <span className="text-zinc-500 font-normal lowercase">(opcional)</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="event-price"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={30}
+                      value={price}
+                      onChange={handlePriceChange}
+                      onPaste={handlePricePaste}
+                      onBlur={handlePriceBlur}
+                      placeholder="R$ 60,00"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
+                    />
+                  </div>
+                  <span className="text-[11px] font-mono text-zinc-500 mt-1 block">
+                    Máscara automática: digite os números (ex: 6000 para R$ 60,00)
                   </span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowInstagram(!showInstagram)}
-                  className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
-                    showInstagram
-                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
-                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
-                  }`}
-                >
-                  {showInstagram ? '● Ativo' : '○ Não'}
-                </button>
+
+                {/* Chave PIX (editável com padrão Renan 12991746964) */}
+                <div>
+                  <label htmlFor="event-pix-key" className="block text-xs font-mono uppercase tracking-wider text-zinc-300 mb-1.5">
+                    Chave PIX para Inscrição / Pagamento
+                  </label>
+                  <input
+                    id="event-pix-key"
+                    type="text"
+                    maxLength={100}
+                    value={pixKey}
+                    onChange={(e) => setPixKey(e.target.value)}
+                    placeholder="12991746964"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
+                  />
+                  <span className="text-[10px] text-zinc-500 font-mono block mt-1">
+                    Padrão: 12991746964 (Renan Hulkinho)
+                  </span>
+                </div>
               </div>
 
-              {/* Toggle YouTube */}
-              <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
-                <div>
-                  <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
-                    Botão do YouTube
-                  </span>
-                  <span className="text-[11px] text-zinc-400 block">
-                    {showYouTube ? 'Exibindo no evento' : 'Oculto'}
-                  </span>
+              {/* Toggles de Exibição */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-zinc-800/80">
+                {/* Toggle PIX */}
+                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+                  <div>
+                    <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
+                      Mostrar Chave PIX
+                    </span>
+                    <span className="text-[11px] text-zinc-400 block">
+                      {showPix ? 'Exibindo no evento' : 'Oculto'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowPix(!showPix)}
+                    className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                      showPix
+                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
+                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                    }`}
+                  >
+                    {showPix ? '● Ativo' : '○ Não'}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowYouTube(!showYouTube)}
-                  className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
-                    showYouTube
-                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
-                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
-                  }`}
-                >
-                  {showYouTube ? '● Ativo' : '○ Não'}
-                </button>
+
+                {/* Toggle Instagram */}
+                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+                  <div>
+                    <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
+                      Botão do Instagram
+                    </span>
+                    <span className="text-[11px] text-zinc-400 block">
+                      {showInstagram ? 'Exibindo no evento' : 'Oculto'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowInstagram(!showInstagram)}
+                    className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                      showInstagram
+                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
+                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                    }`}
+                  >
+                    {showInstagram ? '● Ativo' : '○ Não'}
+                  </button>
+                </div>
+
+                {/* Toggle YouTube */}
+                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between gap-3">
+                  <div>
+                    <span className="text-xs font-mono uppercase text-zinc-200 block font-semibold">
+                      Botão do YouTube
+                    </span>
+                    <span className="text-[11px] text-zinc-400 block">
+                      {showYouTube ? 'Exibindo no evento' : 'Oculto'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowYouTube(!showYouTube)}
+                    className={`px-3 py-1 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                      showYouTube
+                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/80 hover:bg-emerald-900/80'
+                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                    }`}
+                  >
+                    {showYouTube ? '● Ativo' : '○ Não'}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Seção Inscrições para Graduação (Exclusiva para categoria 'graduation') */}
           {category === 'graduation' && (
@@ -926,24 +1010,26 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
         </form>
       </div>
 
-      {/* Seção de Chaveamentos de Lutas (Opcional, com relacionamento obrigatório com o evento) */}
-      {isEditing && eventId ? (
-        <div className="mt-8">
-          <EventBracketsManager
-            eventId={eventId}
-            eventTitle={title || 'Evento'}
-            eventDate={eventDate}
-            category={category}
-          />
-        </div>
-      ) : (
-        <div className="mt-8 p-6 rounded-2xl bg-[#0c0c10] border border-zinc-800 text-center">
-          <Trophy size={28} className="text-zinc-600 mx-auto mb-2" />
-          <h3 className="font-fight text-base text-zinc-300 uppercase">Chaveamentos de Competição</h3>
-          <p className="text-xs text-zinc-500 mt-1 max-w-md mx-auto">
-            Ao salvar este evento, você poderá criar chaveamentos de lutas (GP, superlutas, etc.), definir vencedores e baixar as imagens oficiais em alta resolução.
-          </p>
-        </div>
+      {/* Seção de Chaveamentos de Lutas (Exclusivo para eventos do tipo competição) */}
+      {category === 'competition' && (
+        isEditing && eventId ? (
+          <div className="mt-8">
+            <EventBracketsManager
+              eventId={eventId}
+              eventTitle={title || 'Evento'}
+              eventDate={eventDate}
+              category={category}
+            />
+          </div>
+        ) : (
+          <div className="mt-8 p-6 rounded-2xl bg-[#0c0c10] border border-zinc-800 text-center">
+            <Trophy size={28} className="text-zinc-600 mx-auto mb-2" />
+            <h3 className="font-fight text-base text-zinc-300 uppercase">Chaveamentos de Competição</h3>
+            <p className="text-xs text-zinc-500 mt-1 max-w-md mx-auto">
+              Ao salvar este evento, você poderá criar chaveamentos de lutas (GP, superlutas, etc.), definir vencedores e baixar as imagens oficiais em alta resolução.
+            </p>
+          </div>
+        )
       )}
     </div>
   );
