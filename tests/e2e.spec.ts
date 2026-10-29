@@ -995,4 +995,10 @@ test.describe('Inscrições e Gestão de Graduações', () => {
     const whatsappUrl = `https://wa.me/55${GRADUATION_PIX.key}`;
     expect(whatsappUrl).toContain('5512991746964');
   });
+
+  test('16. Validação do fluxo de conversão de candidato manual para aluno oficial', async () => {
+    await expect(
+      graduationRegistrationsService.convertManualRegistrationToStudent('non-existent-id')
+    ).rejects.toThrow();
+  });
 });

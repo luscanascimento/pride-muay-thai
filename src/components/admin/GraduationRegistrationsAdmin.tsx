@@ -17,6 +17,7 @@ import {
   UserCheck,
   Check,
   Pencil,
+  UserPlus,
 } from 'lucide-react';
 import {
   graduationRegistrationsService,
@@ -41,6 +42,38 @@ import {
 interface GraduationRegistrationsAdminProps {
   initialSearchParams?: URLSearchParams;
 }
+
+/**
+ * Componente leve de tooltip acessível em CSS puro
+ */
+const Tooltip: React.FC<{
+  content: string;
+  children: React.ReactNode;
+  position?: 'top' | 'bottom';
+}> = ({ content, children, position = 'top' }) => {
+  return (
+    <div className="relative group inline-flex items-center">
+      {children}
+      <div
+        role="tooltip"
+        className={`pointer-events-none absolute left-1/2 -translate-x-1/2 z-50 px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-700/90 text-[11px] font-sans font-normal text-zinc-100 shadow-2xl whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-150 transform ${
+          position === 'top'
+            ? 'bottom-full mb-1.5 translate-y-0.5 group-hover:translate-y-0'
+            : 'top-full mt-1.5 -translate-y-0.5 group-hover:translate-y-0'
+        }`}
+      >
+        <span>{content}</span>
+        <div
+          className={`absolute left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-zinc-900 border-zinc-700/90 transform rotate-45 ${
+            position === 'top'
+              ? 'top-full -mt-1 border-b border-r'
+              : 'bottom-full -mb-1 border-t border-l'
+          }`}
+        />
+      </div>
+    </div>
+  );
+};
 
 export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdminProps> = ({
   initialSearchParams,
@@ -82,6 +115,12 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
   const [editPaymentStatus, setEditPaymentStatus] = useState<GraduationPaymentStatus>('pending');
   const [isSavingEdit, setIsSavingEdit] = useState<boolean>(false);
   const [editError, setEditError] = useState<string | null>(null);
+
+  // Estados para conversão manual -> aluno cadastrado
+  const [candidateToConvert, setCandidateToConvert] = useState<GraduationRegistrationWithEvent | null>(null);
+  const [convertInitialKhan, setConvertInitialKhan] = useState<number>(1);
+  const [isConverting, setIsConverting] = useState<boolean>(false);
+  const [convertError, setConvertError] = useState<string | null>(null);
 
   // Carrega lista de eventos da categoria 'graduation'
   useEffect(() => {
@@ -217,6 +256,45 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
     }
   };
 
+  // Abrir modal para cadastrar candidato como aluno oficial no sistema
+  const handleOpenConvertModal = (reg: GraduationRegistrationWithEvent) => {
+    setCandidateToConvert(reg);
+    setConvertInitialKhan(reg.current_khan_at_registration || 1);
+    setConvertError(null);
+  };
+
+  const handleCloseConvertModal = () => {
+    if (isConverting) return;
+    setCandidateToConvert(null);
+    setConvertError(null);
+  };
+
+  const handleConfirmConvert = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!candidateToConvert) return;
+
+    setIsConverting(true);
+    setConvertError(null);
+
+    try {
+      const newStudent = await graduationRegistrationsService.convertManualRegistrationToStudent(
+        candidateToConvert.id,
+        convertInitialKhan
+      );
+
+      setSuccessFeedback(
+        `"${newStudent.name}" foi cadastrado como aluno com sucesso e vinculado à inscrição!`
+      );
+      setTimeout(() => setSuccessFeedback(null), 4000);
+      setCandidateToConvert(null);
+      await fetchRegistrations();
+    } catch (err: unknown) {
+      setConvertError(err instanceof Error ? err.message : 'Erro ao cadastrar aluno.');
+    } finally {
+      setIsConverting(false);
+    }
+  };
+
   // Prepara opções de exportação
   const getExportOptions = () => {
     const selectedEvt = graduationEvents.find((e) => e.id === selectedEventId);
@@ -299,52 +377,58 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
           </p>
         </div>
 
-        {/* Botões de Exportação */}
+        {/* Botões de Exportação com Tooltips */}
         <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            disabled={isExporting}
-            onClick={() => handleExport('word')}
-            aria-label="Exportar para documento Word"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm bg-blue-950/60 border border-blue-800/80 hover:bg-blue-900/60 text-blue-200 text-xs font-mono uppercase font-semibold transition-colors disabled:opacity-50"
-          >
-            {isExporting && exportType === 'word' ? (
-              <RefreshCw size={14} className="animate-spin text-blue-400" />
-            ) : (
-              <FileText size={14} className="text-blue-400" />
-            )}
-            <span>Word (.docx)</span>
-          </button>
+          <Tooltip content="Gera documento oficial do Word (.docx) editável com ata de graduação">
+            <button
+              type="button"
+              disabled={isExporting}
+              onClick={() => handleExport('word')}
+              aria-label="Exportar para documento Word"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm bg-blue-950/60 border border-blue-800/80 hover:bg-blue-900/60 text-blue-200 text-xs font-mono uppercase font-semibold transition-colors disabled:opacity-50"
+            >
+              {isExporting && exportType === 'word' ? (
+                <RefreshCw size={14} className="animate-spin text-blue-400" />
+              ) : (
+                <FileText size={14} className="text-blue-400" />
+              )}
+              <span>Word (.docx)</span>
+            </button>
+          </Tooltip>
 
-          <button
-            type="button"
-            disabled={isExporting}
-            onClick={() => handleExport('pdf')}
-            aria-label="Exportar para documento PDF"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm bg-red-950/60 border border-red-800/80 hover:bg-red-900/60 text-red-200 text-xs font-mono uppercase font-semibold transition-colors disabled:opacity-50"
-          >
-            {isExporting && exportType === 'pdf' ? (
-              <RefreshCw size={14} className="animate-spin text-red-400" />
-            ) : (
-              <FileDown size={14} className="text-red-400" />
-            )}
-            <span>PDF (.pdf)</span>
-          </button>
+          <Tooltip content="Gera documento PDF (.pdf) formatado com cabeçalho oficial e tabela de inscritos">
+            <button
+              type="button"
+              disabled={isExporting}
+              onClick={() => handleExport('pdf')}
+              aria-label="Exportar para documento PDF"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm bg-red-950/60 border border-red-800/80 hover:bg-red-900/60 text-red-200 text-xs font-mono uppercase font-semibold transition-colors disabled:opacity-50"
+            >
+              {isExporting && exportType === 'pdf' ? (
+                <RefreshCw size={14} className="animate-spin text-red-400" />
+              ) : (
+                <FileDown size={14} className="text-red-400" />
+              )}
+              <span>PDF (.pdf)</span>
+            </button>
+          </Tooltip>
 
-          <button
-            type="button"
-            disabled={isExporting}
-            onClick={() => handleExport('excel')}
-            aria-label="Exportar para planilha Excel"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm bg-emerald-950/60 border border-emerald-800/80 hover:bg-emerald-900/60 text-emerald-200 text-xs font-mono uppercase font-semibold transition-colors disabled:opacity-50"
-          >
-            {isExporting && exportType === 'excel' ? (
-              <RefreshCw size={14} className="animate-spin text-emerald-400" />
-            ) : (
-              <FileSpreadsheet size={14} className="text-emerald-400" />
-            )}
-            <span>Excel (.xlsx)</span>
-          </button>
+          <Tooltip content="Gera planilha Excel (.xlsx) completa com todos os registros e filtros aplicados">
+            <button
+              type="button"
+              disabled={isExporting}
+              onClick={() => handleExport('excel')}
+              aria-label="Exportar para planilha Excel"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm bg-emerald-950/60 border border-emerald-800/80 hover:bg-emerald-900/60 text-emerald-200 text-xs font-mono uppercase font-semibold transition-colors disabled:opacity-50"
+            >
+              {isExporting && exportType === 'excel' ? (
+                <RefreshCw size={14} className="animate-spin text-emerald-400" />
+              ) : (
+                <FileSpreadsheet size={14} className="text-emerald-400" />
+              )}
+              <span>Excel (.xlsx)</span>
+            </button>
+          </Tooltip>
         </div>
       </div>
 
@@ -581,14 +665,30 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
             <thead>
               <tr className="border-b border-zinc-800 bg-zinc-900/60 text-[11px] font-mono uppercase tracking-wider text-zinc-400">
                 <th scope="col" className="py-3 px-4">Candidato</th>
-                <th scope="col" className="py-3 px-4">Origem</th>
-                <th scope="col" className="py-3 px-4">Khan Atual</th>
-                <th scope="col" className="py-3 px-4">Khan Pretendido</th>
+                <th scope="col" className="py-3 px-4">
+                  <Tooltip content="Indica se o aluno já existia no sistema ou se fez inscrição avulsa">
+                    <span className="cursor-help">Origem</span>
+                  </Tooltip>
+                </th>
+                <th scope="col" className="py-3 px-4">
+                  <Tooltip content="Nível do aluno no momento da realização da inscrição">
+                    <span className="cursor-help">Khan Atual</span>
+                  </Tooltip>
+                </th>
+                <th scope="col" className="py-3 px-4">
+                  <Tooltip content="Nível que o aluno prestará no exame de graduação">
+                    <span className="cursor-help">Khan Pretendido</span>
+                  </Tooltip>
+                </th>
                 <th scope="col" className="py-3 px-4">Evento</th>
                 <th scope="col" className="py-3 px-4 whitespace-nowrap">Data do Evento</th>
                 <th scope="col" className="py-3 px-4 whitespace-nowrap">Data Inscrição</th>
-                <th scope="col" className="py-3 px-4">Status Pagamento</th>
-                <th scope="col" className="py-3 px-4 text-right">Ação</th>
+                <th scope="col" className="py-3 px-4">
+                  <Tooltip content="Controle manual da confirmação do recebimento do PIX">
+                    <span className="cursor-help">Status Pagamento</span>
+                  </Tooltip>
+                </th>
+                <th scope="col" className="py-3 px-4 text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/60 text-sm">
@@ -602,22 +702,26 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
                 return (
                   <tr key={reg.id} className="hover:bg-zinc-800/20 transition-colors">
                     {/* Nome do Candidato */}
-                    <td className="py-3.5 px-4 font-semibold text-white">
+                    <td className="py-3.5 px-4 font-semibold text-white whitespace-nowrap sm:whitespace-normal">
                       <span>{reg.full_name}</span>
                     </td>
 
-                    {/* Origem: Aluno cadastrado vs Manual */}
+                    {/* Origem: Aluno cadastrado vs Manual com Tooltip */}
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       {reg.student_id ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-950/60 border border-blue-800/60 text-[10px] font-mono uppercase text-blue-300">
-                          <UserCheck size={11} />
-                          <span>Aluno Cadastrado</span>
-                        </span>
+                        <Tooltip content="Aluno já vinculado ao cadastro oficial da Pride Muay Thai">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-blue-950/60 border border-blue-800/60 text-[10px] font-mono uppercase text-blue-300 cursor-default">
+                            <UserCheck size={11} />
+                            <span>Aluno Cadastrado</span>
+                          </span>
+                        </Tooltip>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[10px] font-mono uppercase text-zinc-400">
-                          <User size={11} />
-                          <span>Nome Manual</span>
-                        </span>
+                        <Tooltip content="Candidato informou que seu nome não constava na lista de alunos">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[10px] font-mono uppercase text-zinc-400 cursor-default">
+                            <User size={11} />
+                            <span>Nome Manual</span>
+                          </span>
+                        </Tooltip>
                       )}
                     </td>
 
@@ -640,7 +744,7 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
                     </td>
 
                     {/* Evento */}
-                    <td className="py-3.5 px-4 text-xs text-zinc-300 max-w-[180px] truncate">
+                    <td className="py-3.5 px-4 text-xs text-zinc-300 max-w-[220px] 2xl:max-w-[360px] truncate">
                       {reg.event?.title || 'Graduação'}
                     </td>
 
@@ -672,45 +776,58 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
                       )}
                     </td>
 
-                    {/* Ação: Editar e Alternar Pagamento */}
+                    {/* Ações: Cadastrar Aluno, Editar e Alternar Pagamento */}
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEditModal(reg)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-mono uppercase font-semibold border border-zinc-700/80 bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 hover:border-zinc-600 transition-colors"
-                          title="Editar candidatura (corrigir Khan, nome ou status)"
-                        >
-                          <Pencil size={12} className="text-zinc-400" />
-                          <span>Editar</span>
-                        </button>
+                        {/* Botão de Cadastrar Aluno (apenas para inscrições de nome manual) */}
+                        {!reg.student_id && (
+                          <Tooltip content="Cadastrar este candidato como aluno oficial da equipe e vincular a inscrição">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenConvertModal(reg)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-mono uppercase font-semibold border border-blue-700/80 bg-blue-950/70 text-blue-200 hover:bg-blue-900/80 hover:text-white transition-colors"
+                            >
+                              <UserPlus size={12} className="text-blue-400" />
+                              <span className="hidden sm:inline">Cadastrar Aluno</span>
+                              <span className="sm:hidden">Cadastrar</span>
+                            </button>
+                          </Tooltip>
+                        )}
 
-                        <button
-                          type="button"
-                          onClick={() => handleTogglePayment(reg)}
-                          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
-                            isPaid
-                              ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800'
-                              : 'bg-emerald-900/40 border-emerald-700/80 text-emerald-300 hover:bg-emerald-800/60'
-                          }`}
-                          title={
-                            isPaid
-                              ? 'Desmarcar pagamento (voltar para pendente)'
-                              : 'Confirmar pagamento manualmente'
-                          }
-                        >
-                          {isPaid ? (
-                            <>
-                              <XCircle size={13} />
-                              <span>Desmarcar</span>
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle size={13} />
-                              <span>Marcar Pago</span>
-                            </>
-                          )}
-                        </button>
+                        <Tooltip content="Corrigir Khan pretendido, nome ou Khan atual">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEditModal(reg)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-mono uppercase font-semibold border border-zinc-700/80 bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 hover:border-zinc-600 transition-colors"
+                          >
+                            <Pencil size={12} className="text-zinc-400" />
+                            <span>Editar</span>
+                          </button>
+                        </Tooltip>
+
+                        <Tooltip content={isPaid ? 'Desmarcar pagamento confirmado' : 'Confirmar recebimento do PIX manualmente'}>
+                          <button
+                            type="button"
+                            onClick={() => handleTogglePayment(reg)}
+                            className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-mono uppercase font-semibold border transition-colors ${
+                              isPaid
+                                ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800'
+                                : 'bg-emerald-900/40 border-emerald-700/80 text-emerald-300 hover:bg-emerald-800/60'
+                            }`}
+                          >
+                            {isPaid ? (
+                              <>
+                                <XCircle size={13} />
+                                <span>Desmarcar</span>
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle size={13} />
+                                <span>Marcar Pago</span>
+                              </>
+                            )}
+                          </button>
+                        </Tooltip>
                       </div>
                     </td>
                   </tr>
@@ -880,6 +997,110 @@ export const GraduationRegistrationsAdmin: React.FC<GraduationRegistrationsAdmin
                     <>
                       <Check size={14} />
                       <span>Salvar Alterações</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Conversão: Nome Manual -> Aluno Cadastrado Oficial */}
+      {candidateToConvert && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-convert-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+        >
+          <div className="w-full max-w-md bg-[#0e0e14] border border-blue-900/60 rounded-2xl shadow-2xl overflow-hidden p-6 relative">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-zinc-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-lg bg-blue-950 border border-blue-800 flex items-center justify-center text-blue-400">
+                  <UserPlus size={18} />
+                </div>
+                <div>
+                  <h3 id="modal-convert-title" className="font-fight text-lg text-white uppercase tracking-wider">
+                    Cadastrar Aluno
+                  </h3>
+                  <span className="text-xs text-zinc-400 font-mono">
+                    Transformar inscrição manual em cadastro oficial
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleCloseConvertModal}
+                disabled={isConverting}
+                className="p-1 rounded text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                aria-label="Fechar modal"
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            {convertError && (
+              <div className="mb-4 p-3 rounded-lg bg-red-950/60 border border-red-800 text-red-200 text-xs flex items-center gap-2">
+                <AlertCircle size={15} className="flex-shrink-0" />
+                <span>{convertError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleConfirmConvert} className="space-y-4">
+              <div>
+                <span className="text-[11px] font-mono uppercase text-zinc-400 block mb-1">
+                  Nome do Aluno
+                </span>
+                <p className="font-semibold text-white text-base bg-zinc-950 border border-zinc-800 rounded-sm py-2 px-3">
+                  {candidateToConvert.full_name}
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="convert-initial-khan" className="block text-xs font-mono uppercase text-zinc-300 mb-1">
+                  Khan Inicial de Cadastro *
+                </label>
+                <select
+                  id="convert-initial-khan"
+                  value={convertInitialKhan}
+                  onChange={(e) => setConvertInitialKhan(Number(e.target.value))}
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-sm text-sm text-zinc-200 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                >
+                  {ALL_KHANS_SYSTEM.map((k) => (
+                    <option key={k.level} value={k.level}>
+                      {k.level}º Khan — {k.colorName} ({k.title})
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[11px] text-zinc-500 font-mono mt-1">
+                  O aluno será cadastrado como ativo e publicado no site, e esta inscrição de graduação ficará vinculada automaticamente ao perfil dele.
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-zinc-800 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={handleCloseConvertModal}
+                  disabled={isConverting}
+                  className="px-4 py-2 rounded-sm border border-zinc-800 bg-zinc-900 text-zinc-300 hover:text-white font-mono text-xs uppercase transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isConverting}
+                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-sm bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs uppercase font-semibold transition-colors disabled:opacity-50"
+                >
+                  {isConverting ? (
+                    <>
+                      <RefreshCw size={14} className="animate-spin" />
+                      <span>Cadastrando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus size={14} />
+                      <span>Confirmar Cadastro</span>
                     </>
                   )}
                 </button>

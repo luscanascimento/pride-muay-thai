@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { LogOut, Calendar, Users, LayoutDashboard, Globe, RefreshCw, KeyRound, ShieldCheck } from 'lucide-react';
+import {
+  LogOut,
+  Calendar,
+  Users,
+  LayoutDashboard,
+  Globe,
+  RefreshCw,
+  KeyRound,
+  ShieldCheck,
+  GraduationCap,
+} from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { AdminLoginPage } from '../pages/AdminLoginPage';
 import { navigateTo } from '../../utils/routes';
@@ -34,7 +44,7 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = 
     <div className="min-h-screen pt-20 pb-16 bg-[#080809] text-zinc-100">
       {/* Admin Top Bar */}
       <div className="border-b border-zinc-800 bg-[#0d0d12]/95 backdrop-blur-md sticky top-16 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+        <div className="max-w-[1780px] 2xl:max-w-[1880px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 py-3 flex flex-wrap items-center justify-between gap-4">
           {/* Admin Identity & Sub-nav */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <div className="flex items-center gap-2">
@@ -85,6 +95,19 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = 
               >
                 <Users size={14} />
                 <span>Alunos</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigateTo('/admin/graduacoes')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-colors ${
+                  currentPath.startsWith('/admin/graduacoes')
+                    ? 'bg-zinc-800 text-white font-semibold'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <GraduationCap size={14} className="text-red-400" />
+                <span>Graduações</span>
               </button>
 
               {isInitialSuperAdmin(session.user.id) && (
@@ -139,7 +162,7 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = 
       </div>
 
       {/* Main Admin Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-[1780px] 2xl:max-w-[1880px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 py-8">
         {children}
       </div>
 

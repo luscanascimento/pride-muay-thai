@@ -3,8 +3,11 @@ import {
   DbGraduationRegistration,
   GraduationPaymentStatus,
   DbEvent,
+  DbStudent,
 } from '../types/database';
 import { PaginatedResult } from './eventsService';
+import { studentsService } from './studentsService';
+import { generateSlug } from '../utils/slug';
 
 export interface GraduationRegistrationWithEvent extends DbGraduationRegistration {
   event?: Pick<DbEvent, 'id' | 'title' | 'slug' | 'category' | 'event_date'> | null;
@@ -258,5 +261,77 @@ export const graduationRegistrationsService = {
     }
 
     return true;
+  },
+
+  /**
+   * Converte uma inscrição de nome manual em aluno cadastrado oficial no sistema
+   * Cria o registro em students e vincula o student_id na inscrição
+   */
+  async convertManualRegistrationToStudent(
+    registrationId: string,
+    initialKhan?: number
+  ): Promise<DbStudent> {
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase não configurado.');
+    }
+
+    // Busca os dados da inscrição
+    const { data: reg, error: fetchErr } = await supabase
+      .from('graduation_registrations')
+      .select('id, full_name, current_khan_at_registration, student_id')
+      .eq('id', registrationId)
+      .single();
+
+    if (fetchErr || !reg) {
+      throw new Error('Inscrição não encontrada.');
+    }
+
+    if (reg.student_id) {
+      throw new Error('Esta inscrição já está vinculada a um aluno cadastrado.');
+    }
+
+    const candidateName = reg.full_name.trim();
+    if (!candidateName) {
+      throw new Error('Nome do candidato inválido.');
+    }
+
+    const resolvedKhan =
+      initialKhan !== undefined && initialKhan >= 1 && initialKhan <= 16
+        ? initialKhan
+        : reg.current_khan_at_registration &&
+          reg.current_khan_at_registration >= 1 &&
+          reg.current_khan_at_registration <= 16
+        ? reg.current_khan_at_registration
+        : 1;
+
+    // Gera slug único com sufixo alfanumérico para evitar conflitos
+    const baseSlug = generateSlug(candidateName);
+    const uniqueSlug = `${baseSlug}-${Math.random().toString(36).substring(2, 6)}`;
+
+    // Cria o novo aluno no sistema
+    const newStudent = await studentsService.createStudent({
+      name: candidateName,
+      slug: uniqueSlug,
+      current_khan: resolvedKhan,
+      is_active: true,
+      is_published: true,
+    });
+
+    // Atualiza a inscrição vinculando ao novo aluno e gravando o snapshot do Khan atual caso estivesse vazio
+    const { error: updateErr } = await supabase
+      .from('graduation_registrations')
+      .update({
+        student_id: newStudent.id,
+        current_khan_at_registration: resolvedKhan,
+      })
+      .eq('id', registrationId);
+
+    if (updateErr) {
+      throw new Error(
+        `Aluno cadastrado com sucesso, mas ocorreu um erro ao vincular a inscrição: ${updateErr.message}`
+      );
+    }
+
+    return newStudent;
   },
 };
