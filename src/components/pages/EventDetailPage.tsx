@@ -27,7 +27,7 @@ import { Button } from '../ui/Button';
 import { InstagramIcon, YoutubeIcon } from '../ui/Icons';
 import { BRAND } from '../../constants/brand';
 import { formatDateTime } from '../../utils/date';
-import { navigateTo } from '../../utils/routes';
+import { navigateTo, isSafeHttpUrl } from '../../utils/routes';
 import { getGoogleMapsSearchUrl } from '../../utils/maps';
 import { formatDisplayPrice } from '../../utils/currency';
 import { GraduationInfo } from '../graduation/GraduationInfo';
@@ -356,7 +356,7 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = ({ slug, onBack }
           )}
 
           <div className="flex flex-wrap items-center gap-3">
-            {event.registration_url && (
+            {event.registration_url && isSafeHttpUrl(event.registration_url) && (
               <Button
                 as="a"
                 href={event.registration_url}

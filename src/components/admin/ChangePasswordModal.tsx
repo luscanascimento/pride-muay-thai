@@ -17,8 +17,8 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ onClos
     e.preventDefault();
     setError(null);
 
-    if (newPassword.length < 6) {
-      setError('A nova senha deve ter no mínimo 6 caracteres.');
+    if (newPassword.length < 12) {
+      setError('A nova senha deve ter no mínimo 12 caracteres.');
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -89,7 +89,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ onClos
 
           <div>
             <label className="block text-xs font-mono uppercase text-zinc-300 mb-1.5">
-              Nova Senha (mínimo 6 caracteres)
+              Nova Senha (mínimo 12 caracteres)
             </label>
             <input
               type="password"

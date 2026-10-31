@@ -4,14 +4,18 @@ import { MapPin, RotateCcw, Loader2 } from 'lucide-react';
 import { Gym } from '../../types/gymsAndTeam';
 import { getGymWhatsAppUrl, getGymExternalMapsUrl } from '../../data/gymsAndTeamData';
 
-// Public Mapbox access token: uses environment variable when set, or safe public fallback
-const FALLBACK_PUBLIC_TOKEN = [
-  'pk',
-  'eyJ1IjoibHVzY2FuYXNjaW1lbnRvIiwiYSI6ImNtdjFwNHRlOTA4bHgyeW92YzR6ZXV5eHMifQ',
-  'zO7_4hVnxjLLhU0JAc7Z9A',
-].join('.');
+// Public Mapbox access token: uses environment variable when set
+const MAPBOX_TOKEN = (import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '').trim();
+const isMapboxConfigured = Boolean(MAPBOX_TOKEN && MAPBOX_TOKEN.startsWith('pk.'));
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || FALLBACK_PUBLIC_TOKEN;
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 interface GymsMapProps {
   gyms: Gym[];
@@ -57,7 +61,7 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
 
   // Initialize Mapbox map instance ONCE when visible - strictly decoupled from state updates to prevent re-renders
   useEffect(() => {
-    if (!isNearViewport || !mapElementRef.current || mapInstanceRef.current) return;
+    if (!isMapboxConfigured || !isNearViewport || !mapElementRef.current || mapInstanceRef.current) return;
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
 
@@ -118,27 +122,30 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
         </div>
       `;
 
-      // Build popup content
+      // Build popup content com sanitização segura
       const whatsappUrl = getGymWhatsAppUrl(gym);
       const mapsUrl = getGymExternalMapsUrl(gym);
+      const safeCity = escapeHtml(gym.city || '');
+      const safeName = escapeHtml(gym.name || '');
+      const safeAddress = gym.address ? escapeHtml(gym.address) : '';
       const schedulesSummary = gym.schedules
-        .map((s) => `<div class="text-xs text-zinc-300"><strong class="text-zinc-200">${s.days}:</strong> ${s.hours}</div>`)
+        .map((s) => `<div class="text-xs text-zinc-300"><strong class="text-zinc-200">${escapeHtml(s.days)}:</strong> ${escapeHtml(s.hours)}</div>`)
         .join('');
 
       const popupHtml = `
         <div class="p-4 bg-[#121217] text-zinc-100 rounded-xl min-w-[240px] max-w-[290px]">
           <div class="flex items-center gap-1.5 text-[11px] font-mono text-red-400 uppercase tracking-wider font-semibold mb-1">
             <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-            ${gym.city}
+            ${safeCity}
           </div>
           <h4 class="font-fight text-xl uppercase tracking-wide text-white leading-tight mb-2">
-            ${gym.name}
+            ${safeName}
           </h4>
           ${
-            gym.address
+            safeAddress
               ? `<p class="text-xs text-zinc-400 mb-3 leading-snug flex items-start gap-1">
                   <span class="text-red-500 mt-0.5">•</span>
-                  ${gym.address}
+                  ${safeAddress}
                 </p>`
               : ''
           }
@@ -152,7 +159,7 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
             ${
               whatsappUrl
                 ? `<a
-                    href="${whatsappUrl}"
+                    href="${escapeHtml(whatsappUrl)}"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="w-full inline-flex items-center justify-center gap-2 py-2 px-3 rounded bg-red-600 hover:bg-red-700 text-white text-xs font-semibold uppercase tracking-wider transition-colors shadow-md text-center"
@@ -164,7 +171,7 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
             ${
               mapsUrl
                 ? `<a
-                    href="${mapsUrl}"
+                    href="${escapeHtml(mapsUrl)}"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="inline-flex items-center justify-center gap-1.5 text-[11px] text-zinc-400 hover:text-zinc-200 transition-colors py-1"
@@ -258,7 +265,7 @@ export const GymsMap: React.FC<GymsMapProps> = ({ gyms, selectedGymId, onMarkerS
     Object.values(markersRef.current).forEach((m) => m.popup.remove());
   };
 
-  if (!MAPBOX_TOKEN) {
+  if (!isMapboxConfigured) {
     return (
       <div className="relative w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl bg-[#0e0e12] p-8 text-center flex flex-col items-center justify-center min-h-[340px]">
         <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-800/60 flex items-center justify-center text-red-500 mb-3">

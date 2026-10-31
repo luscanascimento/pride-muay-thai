@@ -173,6 +173,21 @@ export const GYMS_DATA: Gym[] = [
     ],
     notes: 'Unidade no bairro Monte Castelo com turmas às segundas e quartas.',
   },
+  {
+    id: 'ct-fabrica-de-monstro',
+    name: 'CT Fábrica de Monstro',
+    alias: 'Fábrica de Monstros',
+    city: 'Jacareí',
+    address: 'Av. Edouard Six, 333 — Jardim Paraíba, Jacareí - SP',
+    cep: '12327-673',
+    coordinates: { lat: -23.29818, lng: -45.97322 },
+    phoneDisplay: '(12) 98878-2112',
+    phoneRaw: '5512988782112',
+    schedules: [
+      { days: 'Segunda e quarta', hours: '21h' },
+    ],
+    notes: 'Unidade no Jardim Paraíba com turmas de Muay Thai às segundas e quartas às 21h.',
+  },
 ];
 
 const basePath = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) ? import.meta.env.BASE_URL : './';
@@ -409,7 +424,9 @@ export const PROFESSORS_DATA: Professor[] = [
     name: 'Augusto',
     nickname: null,
     photoUrl: resolvePhotoUrl('augusto.jpeg'),
-    gymIds: [],
+    gymIds: [
+      'ct-fabrica-de-monstro',
+    ],
     roleTitle: 'Instrutor de Muay Thai • 7º Khan',
     khan: 7,
     bio: 'Em setembro de 2022, Augusto decidiu mudar, venceu a insegurança e iniciou no Muay Thai. Com dedicação e evolução constante, tornou-se instrutor na Fábrica de Monstros em Jacareí, inspirando pessoas a superarem seus limites.',

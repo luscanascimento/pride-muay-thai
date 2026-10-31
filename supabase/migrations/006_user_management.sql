@@ -197,7 +197,19 @@ create policy "events_delete"
     )
   );
 
--- Grants
+-- ==============================================================================
+-- Segurança e Permissões (Princípio do menor privilégio)
+-- Garante que funções administrativas jamais sejam executáveis por visitantes anônimos (anon/public)
+-- ==============================================================================
+alter default privileges in schema public revoke execute on functions from public;
+alter default privileges in schema public revoke execute on functions from anon;
+
+revoke all on function public.is_super_admin() from public, anon;
+revoke all on function public.admin_reset_user_password(uuid, text) from public, anon;
+revoke all on function public.admin_create_user(text, text, text) from public, anon;
+revoke all on function public.admin_delete_user(uuid) from public, anon;
+
+-- Concede execução estritamente a usuários autenticados (a validação de super_admin ocorre no corpo da função)
 grant execute on function public.is_super_admin() to authenticated;
 grant execute on function public.admin_reset_user_password(uuid, text) to authenticated;
 grant execute on function public.admin_create_user(text, text, text) to authenticated;

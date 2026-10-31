@@ -17,7 +17,7 @@ import { canUserEditEvent } from '../../utils/superAdmins';
 import { eventsService, CreateEventInput } from '../../services/eventsService';
 import { EventCategory, EventStatus } from '../../types/database';
 import { generateSlug } from '../../utils/slug';
-import { navigateTo } from '../../utils/routes';
+import { navigateTo, isSafeHttpUrl } from '../../utils/routes';
 import { maskCurrencyInput, normalizeCurrencyBrl } from '../../utils/currency';
 import { EventBracketsManager } from './EventBracketsManager';
 import {
@@ -235,6 +235,14 @@ export const EventForm: React.FC<EventFormProps> = ({ eventId }) => {
     }
     if (location.length > 200) {
       setFeedback({ type: 'error', message: 'O local não pode exceder 200 caracteres.' });
+      return;
+    }
+
+    if (category !== 'graduation' && registrationUrl.trim() && !isSafeHttpUrl(registrationUrl.trim())) {
+      setFeedback({
+        type: 'error',
+        message: 'A URL de inscrição externa deve ser válida e iniciar com http:// ou https://',
+      });
       return;
     }
 

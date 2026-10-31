@@ -1,0 +1,61 @@
+name: CI Security & Quality Gate
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Lint, Typecheck, Test & Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Code Quality (Lint)
+        run: npm run lint
+
+      - name: Static Type Verification (Typecheck)
+        run: npm run typecheck
+
+      - name: Production Build
+        run: npm run build
+
+      - name: Automated Unit & Security Tests
+        run: |
+          npx playwright install --with-deps chromium
+          npm test
+
+      - name: Dependency Security Audit (Production Dependencies)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Secret Leak Scanner
+        run: |
+          # Verifica se alguma chave de service_role ou private key foi acidentalmente commitada
+          if grep -rn "SUPABASE_SERVICE_ROLE_KEY" src/ 2>/dev/null; then
+            echo "::error::SUPABASE_SERVICE_ROLE_KEY detectada em arquivos do frontend!"
+            exit 1
+          fi
+          if grep -rn "service_role" src/ 2>/dev/null; then
+            echo "::error::Referência a service_role detectada em arquivos do frontend!"
+            exit 1
+          fi
+          echo "Secret scanning concluído com sucesso."

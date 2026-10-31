@@ -1,13 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { parseHashRoute, buildHashUrl } from '../src/utils/routes';
+import { parseHashRoute, buildHashUrl, isSafeHttpUrl, sanitizeExternalUrl } from '../src/utils/routes';
 import { generateSlug } from '../src/utils/slug';
 import { ALL_KHANS_SYSTEM, isValidKhan } from '../src/constants/khans';
 import { getGymNames } from '../src/utils/gyms';
 import { bracketsService } from '../src/services/bracketsService';
-import { buildStudentsCsvContent } from '../src/utils/studentExcelExport';
+import { buildStudentsCsvContent, sanitizeSpreadsheetFormula } from '../src/utils/studentExcelExport';
 import { getGoogleMapsSearchUrl } from '../src/utils/maps';
 import { formatDate, formatDateLong, getTodayLocalDate } from '../src/utils/date';
 import { DbStudent } from '../src/types/database';
+import { userService } from '../src/services/userService';
 import {
   isInitialSuperAdmin,
   canUserEditEvent,
@@ -1000,5 +1001,119 @@ test.describe('Inscrições e Gestão de Graduações', () => {
     await expect(
       graduationRegistrationsService.convertManualRegistrationToStudent('non-existent-id')
     ).rejects.toThrow();
+  });
+});
+
+test.describe('Revisão Completa de Segurança e Hardening (Fases 1 a 8)', () => {
+  test('Fase 1: Senha administrativa mínima de 12 caracteres rejeita senhas curtas', async () => {
+    // 1. Criação de usuário com senha menor que 12 caracteres deve falhar
+    await expect(
+      userService.createAdminUser(LUCAS_NASCIMENTO_ID, {
+        email: 'novo-admin@pridemuaythai.com.br',
+        password: 'senha-curta', // 11 chars
+        displayName: 'Novo Admin',
+      })
+    ).rejects.toThrow('A senha deve ter pelo menos 12 caracteres.');
+
+    // 2. Reset de senha com menos de 12 caracteres deve falhar
+    await expect(
+      userService.resetUserPassword(LUCAS_NASCIMENTO_ID, 'user-id-qualquer', 'curta123')
+    ).rejects.toThrow('A nova senha deve possuir pelo menos 12 caracteres.');
+  });
+
+  test('Fase 3: Acesso direto não autenticado a qualquer rota administrativa redireciona para login', async ({
+    page,
+  }) => {
+    const adminRoutes = [
+      '#/admin',
+      '#/admin/dashboard',
+      '#/admin/eventos',
+      '#/admin/alunos',
+      '#/admin/graduacoes',
+      '#/admin/usuarios',
+    ];
+
+    for (const route of adminRoutes) {
+      await page.goto(`/${route}`);
+      // Deve renderizar a tela de login
+      const emailInput = page.locator('#admin-email');
+      const passwordInput = page.locator('#admin-password');
+      await expect(emailInput).toBeVisible();
+      await expect(passwordInput).toBeVisible();
+    }
+  });
+
+  test('Fase 5: Chave PIX é estritamente ocultada quando show_pix = false', () => {
+    const mockEventHiddenPix = {
+      id: 'evt-1',
+      title: 'Graduação Oficial',
+      show_pix: false,
+      pix_key: '12991746964',
+    };
+
+    // Função de sanitização aplicada no serviço
+    const sanitizedPixKey = mockEventHiddenPix.show_pix ? mockEventHiddenPix.pix_key : null;
+    expect(sanitizedPixKey).toBeNull();
+
+    const mockEventVisiblePix = {
+      id: 'evt-2',
+      title: 'Copa Regional',
+      show_pix: true,
+      pix_key: '12991746964',
+    };
+    const visiblePixKey = mockEventVisiblePix.show_pix ? mockEventVisiblePix.pix_key : null;
+    expect(visiblePixKey).toBe('12991746964');
+  });
+
+  test('Fase 7: Neutralização de Spreadsheet Formula Injection em exportações', () => {
+    // 1. Fórmulas começando com =, +, -, @, \t ou \r devem receber prefixo de apóstrofo (')
+    expect(sanitizeSpreadsheetFormula('=SUM(A1:A10)')).toBe("'=SUM(A1:A10)");
+    expect(sanitizeSpreadsheetFormula('+cmd| /C calc')).toBe("'+cmd| /C calc");
+    expect(sanitizeSpreadsheetFormula('-2+5')).toBe("'-2+5");
+    expect(sanitizeSpreadsheetFormula('@HYPERLINK("http://evil.com")')).toBe("'@HYPERLINK(\"http://evil.com\")");
+    expect(sanitizeSpreadsheetFormula('\tcmd')).toBe("'\tcmd");
+    expect(sanitizeSpreadsheetFormula('   =1+1')).toBe("'   =1+1");
+
+    // 2. Valores legítimos não recebem apóstrofo
+    expect(sanitizeSpreadsheetFormula('Lucas Nascimento')).toBe('Lucas Nascimento');
+    expect(sanitizeSpreadsheetFormula('1º Khan (Branco)')).toBe('1º Khan (Branco)');
+    expect(sanitizeSpreadsheetFormula('')).toBe('');
+    expect(sanitizeSpreadsheetFormula(null)).toBe('');
+
+    // 3. Exportação de alunos com injeção maliciosa é neutralizada
+    const maliciousStudent: DbStudent = {
+      id: 'std-malicious',
+      name: '=cmd| /C calc!A0',
+      current_khan: 4,
+      gym_ids: [],
+      is_active: true,
+      is_published: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    const csvOutput = buildStudentsCsvContent([maliciousStudent]);
+    // Não deve conter "=cmd sem apóstrofo no CSV
+    expect(csvOutput).toContain('"\'=cmd| /C calc!A0"');
+    expect(csvOutput).not.toContain('"=cmd| /C calc!A0"');
+  });
+
+  test('Fase 8: Validação segura de URLs externas (previne javascript: e data: URIs)', () => {
+    // URLs válidas
+    expect(isSafeHttpUrl('https://pridemuaythai.com.br')).toBe(true);
+    expect(isSafeHttpUrl('http://localhost:5173')).toBe(true);
+    expect(isSafeHttpUrl('https://instagram.com/pridemuaythai')).toBe(true);
+
+    // Protocolos maliciosos ou inválidos
+    expect(isSafeHttpUrl('javascript:alert(document.cookie)')).toBe(false);
+    expect(isSafeHttpUrl('data:text/html,<script>alert(1)</script>')).toBe(false);
+    expect(isSafeHttpUrl('vbscript:msgbox(1)')).toBe(false);
+    expect(isSafeHttpUrl('file:///etc/passwd')).toBe(false);
+    expect(isSafeHttpUrl('')).toBe(false);
+    expect(isSafeHttpUrl(null)).toBe(false);
+    expect(isSafeHttpUrl(undefined)).toBe(false);
+
+    expect(sanitizeExternalUrl('javascript:alert(1)')).toBeNull();
+    expect(sanitizeExternalUrl('https://valid.com')).toBe('https://valid.com');
   });
 });

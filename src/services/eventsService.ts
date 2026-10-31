@@ -54,6 +54,9 @@ export interface UpdateEventInput extends Partial<CreateEventInput> {
   id: string;
 }
 
+export const PUBLIC_EVENT_COLUMNS =
+  'id, slug, category, title, summary, description, event_date, end_date, location, requirements, registration_info, registration_url, contact, status, published_at, image_url, price, show_pix, pix_key, show_instagram, show_youtube, graduation_registration_enabled, graduation_registration_deadline, created_at, updated_at';
+
 export const eventsService = {
   /**
    * Lista eventos para visualização pública com paginação server-side
@@ -70,7 +73,7 @@ export const eventsService = {
 
     let query = supabase
       .from('events')
-      .select('*', { count: 'exact' });
+      .select(PUBLIC_EVENT_COLUMNS, { count: 'exact' });
 
     // Filtragem temporal (próximos vs passados)
     const nowIso = new Date().toISOString();
@@ -106,8 +109,13 @@ export const eventsService = {
     const totalCount = count || 0;
     const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
+    const sanitizedEvents = ((data || []) as DbEvent[]).map((ev) => ({
+      ...ev,
+      pix_key: ev.show_pix ? ev.pix_key : null,
+    }));
+
     return {
-      data: data || [],
+      data: sanitizedEvents,
       count: totalCount,
       page,
       pageSize,
@@ -123,7 +131,7 @@ export const eventsService = {
 
     const { data, error } = await supabase
       .from('events')
-      .select('*')
+      .select(PUBLIC_EVENT_COLUMNS)
       .eq('slug', slug)
       .maybeSingle();
 
@@ -131,7 +139,13 @@ export const eventsService = {
       throw new Error(`Erro ao buscar detalhe do evento: ${error.message}`);
     }
 
-    return data;
+    if (!data) return null;
+
+    const event = data as DbEvent;
+    return {
+      ...event,
+      pix_key: event.show_pix ? event.pix_key : null,
+    };
   },
 
   /**

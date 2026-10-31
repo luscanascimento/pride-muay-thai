@@ -1,6 +1,7 @@
 import { GraduationRegistrationWithEvent } from '../services/graduationRegistrationsService';
 import { getKhanRank } from '../constants/khans';
 import { formatDateTime } from './date';
+import { sanitizeSpreadsheetFormula } from './studentExcelExport';
 
 export interface FormattedGraduationExportRow {
   name: string;
@@ -135,65 +136,71 @@ export async function exportGraduationToExcel(
   }
 
   const dataset = transformGraduationRegistrationsForExport(registrations, options);
-  const XLSX = await import('xlsx');
+  const writeExcelFile = (await import('write-excel-file/browser')).default;
 
-  // Montagem do cabeçalho editorial na planilha
-  const sheetData: (string | number)[][] = [
-    [dataset.title],
+  const HEADER_STYLE = {
+    fontWeight: 'bold' as const,
+    backgroundColor: '#1E1E24',
+    textColor: '#FFFFFF',
+  };
+
+  const sheetData = [
+    [{ value: sanitizeSpreadsheetFormula(dataset.title), fontWeight: 'bold' as const, fontSize: 13 }],
     [
-      dataset.eventName
-        ? `Evento: ${dataset.eventName} (${dataset.eventDateText || ''})`
-        : 'Evento: Todos os eventos',
+      {
+        value: sanitizeSpreadsheetFormula(
+          dataset.eventName
+            ? `Evento: ${dataset.eventName} (${dataset.eventDateText || ''})`
+            : 'Evento: Todos os eventos'
+        ),
+      },
     ],
-    [`Filtros aplicados: ${dataset.filtersSummary}`],
-    [`Data de geração: ${dataset.generatedAtText}`],
-    [`Total de inscritos: ${dataset.stats.total} | Pagos: ${dataset.stats.paid} | Pendentes: ${dataset.stats.pending}`],
+    [{ value: sanitizeSpreadsheetFormula(`Filtros aplicados: ${dataset.filtersSummary}`) }],
+    [{ value: sanitizeSpreadsheetFormula(`Data de geração: ${dataset.generatedAtText}`) }],
+    [
+      {
+        value: sanitizeSpreadsheetFormula(
+          `Total de inscritos: ${dataset.stats.total} | Pagos: ${dataset.stats.paid} | Pendentes: ${dataset.stats.pending}`
+        ),
+      },
+    ],
     [], // linha em branco
     [
-      'Nome',
-      'Khan Atual',
-      'Khan Pretendido',
-      'Evento',
-      'Data da Graduação',
-      'Status do Pagamento',
-      'Data da Inscrição',
+      { value: 'Nome', ...HEADER_STYLE },
+      { value: 'Khan Atual', ...HEADER_STYLE },
+      { value: 'Khan Pretendido', ...HEADER_STYLE },
+      { value: 'Evento', ...HEADER_STYLE },
+      { value: 'Data da Graduação', ...HEADER_STYLE },
+      { value: 'Status do Pagamento', ...HEADER_STYLE },
+      { value: 'Data da Inscrição', ...HEADER_STYLE },
     ],
   ];
 
   for (const r of dataset.rows) {
     sheetData.push([
-      r.name,
-      r.currentKhanText,
-      r.targetKhanText,
-      r.eventName,
-      r.eventDateText,
-      r.paymentStatusText,
-      r.registrationDateText,
+      { value: sanitizeSpreadsheetFormula(r.name) },
+      { value: sanitizeSpreadsheetFormula(r.currentKhanText) },
+      { value: sanitizeSpreadsheetFormula(r.targetKhanText) },
+      { value: sanitizeSpreadsheetFormula(r.eventName) },
+      { value: sanitizeSpreadsheetFormula(r.eventDateText) },
+      { value: sanitizeSpreadsheetFormula(r.paymentStatusText) },
+      { value: sanitizeSpreadsheetFormula(r.registrationDateText) },
     ]);
   }
 
-  const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-
-  // Ajuste de largura das colunas
-  worksheet['!cols'] = [
-    { wch: 30 }, // Nome
-    { wch: 26 }, // Khan Atual
-    { wch: 26 }, // Khan Pretendido
-    { wch: 30 }, // Evento
-    { wch: 20 }, // Data da Graduação
-    { wch: 18 }, // Status Pagamento
-    { wch: 20 }, // Data Inscrição
-  ];
-
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Inscritos');
-
-  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  const blob = new Blob([excelBuffer], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  });
-
   const filename = buildGraduationExportFilename('xlsx', eventSlug);
+  const blob = await writeExcelFile(sheetData, {
+    columns: [
+      { width: 30 },
+      { width: 26 },
+      { width: 26 },
+      { width: 30 },
+      { width: 20 },
+      { width: 18 },
+      { width: 20 },
+    ],
+  }).toBlob();
+
   downloadBlob(blob, filename);
 }
 

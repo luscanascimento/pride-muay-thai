@@ -8,21 +8,29 @@ import {
   RefreshCw,
   KeyRound,
   ShieldCheck,
+  ShieldAlert,
   GraduationCap,
+  ArrowLeft,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { AdminLoginPage } from '../pages/AdminLoginPage';
 import { navigateTo } from '../../utils/routes';
-import { isInitialSuperAdmin } from '../../utils/superAdmins';
 import { ChangePasswordModal } from './ChangePasswordModal';
+
+export type RequiredAdminRole = 'admin' | 'super_admin';
 
 interface AdminRouteProps {
   children: React.ReactNode;
   currentPath?: string;
+  requiredRole?: RequiredAdminRole;
 }
 
-export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = '/admin' }) => {
-  const { session, isInitialLoading, isAdmin, signOut } = useAuth();
+export const AdminRoute: React.FC<AdminRouteProps> = ({
+  children,
+  currentPath = '/admin',
+  requiredRole = 'admin',
+}) => {
+  const { session, isInitialLoading, isAdmin, isSuperAdmin, signOut } = useAuth();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   if (isInitialLoading) {
@@ -36,6 +44,35 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = 
 
   if (!session || !isAdmin) {
     return <AdminLoginPage />;
+  }
+
+  // Verificação declarativa de papel de acesso (RBAC)
+  if (requiredRole === 'super_admin' && !isSuperAdmin) {
+    return (
+      <div className="min-h-screen pt-24 pb-16 bg-[#080809] text-zinc-100 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-[#0d0d12] border border-red-900/50 rounded-xl p-6 sm:p-8 text-center shadow-2xl">
+          <div className="w-14 h-14 mx-auto rounded-full bg-red-950/60 border border-red-800/80 flex items-center justify-center text-red-400 mb-4">
+            <ShieldAlert size={28} />
+          </div>
+          <h2 className="font-fight text-xl text-white uppercase tracking-wider mb-2">
+            Acesso Restrito
+          </h2>
+          <p className="text-zinc-400 text-sm mb-6 font-sans leading-relaxed">
+            Esta seção é restrita aos <strong className="text-red-400">Super Administradores Fundadores</strong>. Seu usuário atual possui privilégio de <span className="text-zinc-200 font-mono text-xs">Administrador Delegado</span>.
+          </p>
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => navigateTo('/admin')}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded font-mono text-xs uppercase tracking-wider transition-colors"
+            >
+              <ArrowLeft size={14} />
+              <span>Voltar ao Início do Painel</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const displayName = session.adminUser.display_name;
@@ -110,7 +147,7 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children, currentPath = 
                 <span>Graduações</span>
               </button>
 
-              {isInitialSuperAdmin(session.user.id) && (
+              {isSuperAdmin && (
                 <button
                   type="button"
                   onClick={() => navigateTo('/admin/usuarios')}

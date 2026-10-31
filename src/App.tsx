@@ -134,7 +134,7 @@ export const App: React.FC = () => {
                 <GraduationRegistrationsAdmin initialSearchParams={currentRoute.searchParams} />
               </AdminRoute>
             ) : currentRoute.type === 'admin-users-list' ? (
-              <AdminRoute currentPath="/admin/usuarios">
+              <AdminRoute currentPath="/admin/usuarios" requiredRole="super_admin">
                 <UsersAdmin />
               </AdminRoute>
             ) : currentRoute.type === 'admin-student-create' ? (

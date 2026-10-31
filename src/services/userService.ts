@@ -1,5 +1,4 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { createClient } from '@supabase/supabase-js';
 import { DbAdminUser } from '../types/database';
 import {
   isInitialSuperAdmin,
@@ -39,10 +38,6 @@ export const userService = {
     currentUserId: string,
     input: CreateAdminUserInput
   ): Promise<{ user_id: string; email: string; display_name: string }> {
-    if (!isSupabaseConfigured) {
-      throw new Error('Supabase não configurado.');
-    }
-
     if (!isInitialSuperAdmin(currentUserId)) {
       throw new Error('Apenas os administradores fundadores possuem permissão para criar usuários.');
     }
@@ -54,75 +49,61 @@ export const userService = {
     if (!email || !email.includes('@')) {
       throw new Error('Informe um e-mail válido.');
     }
-    if (!password || password.length < 6) {
-      throw new Error('A senha deve ter pelo menos 6 caracteres.');
+    if (!password || password.length < 12) {
+      throw new Error('A senha deve ter pelo menos 12 caracteres.');
     }
     if (!displayName) {
       throw new Error('Informe o nome de exibição do usuário.');
     }
 
-    // 1. Tentar criar via RPC seguro no banco de dados
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase não configurado.');
+    }
+
+    // 1. Tentar via Edge Function server-side (service_role isolada em backend)
     try {
-      const { data: rpcData, error: rpcError } = await supabase.rpc('admin_create_user', {
-        new_email: email,
-        new_password: password,
-        new_display_name: displayName,
+      const { data: edgeData, error: edgeError } = await supabase.functions.invoke('admin-users', {
+        body: {
+          action: 'create',
+          email,
+          password,
+          displayName,
+        },
       });
 
-      if (!rpcError && rpcData) {
-        return rpcData as unknown as { user_id: string; email: string; display_name: string };
+      if (!edgeError && edgeData && edgeData.user_id) {
+        return edgeData as { user_id: string; email: string; display_name: string };
       }
-    } catch {
-      // Continua para fallback resiliente
+      if (edgeError && !edgeError.message.includes('Failed to send') && !edgeError.message.includes('404')) {
+        throw new Error(edgeData?.error || edgeError.message);
+      }
+    } catch (err: unknown) {
+      if (
+        err instanceof Error &&
+        !err.message.includes('Failed to send') &&
+        !err.message.includes('FunctionsFetchError') &&
+        !err.message.includes('404')
+      ) {
+        throw err;
+      }
     }
 
-    // 2. Fallback resiliente: cria o usuário usando cliente desacoplado (sem alterar a sessão local do admin)
-    const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || '';
-    const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || '';
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error('Credenciais do Supabase indisponíveis.');
-    }
-
-    const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-        detectSessionInUrl: false,
-      },
+    // 2. Transição segura: invoca RPC segura com validação no PostgreSQL
+    const { data: rpcData, error: rpcError } = await supabase.rpc('admin_create_user', {
+      new_email: email,
+      new_password: password,
+      new_display_name: displayName,
     });
 
-    const { data: signUpData, error: signUpError } = await tempClient.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { display_name: displayName },
-      },
-    });
-
-    if (signUpError || !signUpData.user) {
-      throw new Error(`Erro ao cadastrar novo usuário: ${signUpError?.message || 'Falha ao registrar'}`);
+    if (rpcError) {
+      throw new Error(`Erro ao cadastrar novo usuário: ${rpcError.message}`);
     }
 
-    const newUserId = signUpData.user.id;
-
-    // Registra na tabela public.admin_users
-    const { error: insertError } = await supabase.from('admin_users').insert({
-      user_id: newUserId,
-      display_name: displayName,
-      email,
-      role: 'admin',
-    });
-
-    if (insertError) {
-      throw new Error(`Usuário criado na autenticação, mas erro ao registrar no painel: ${insertError.message}`);
+    if (!rpcData) {
+      throw new Error('Falha ao cadastrar novo usuário.');
     }
 
-    return {
-      user_id: newUserId,
-      email,
-      display_name: displayName,
-    };
+    return rpcData as unknown as { user_id: string; email: string; display_name: string };
   },
 
   /**
@@ -133,21 +114,48 @@ export const userService = {
     targetUserId: string,
     newPassword: string
   ): Promise<void> {
-    if (!isSupabaseConfigured) {
-      throw new Error('Supabase não configurado.');
-    }
-
     if (!canResetUserPassword(currentUserId, targetUserId)) {
       throw new Error(
         'Permissão negada: as contas dos fundadores são fixas e não podem ter a senha alterada por outros administradores.'
       );
     }
 
-    if (!newPassword || newPassword.length < 6) {
-      throw new Error('A nova senha deve possuir pelo menos 6 caracteres.');
+    if (!newPassword || newPassword.length < 12) {
+      throw new Error('A nova senha deve possuir pelo menos 12 caracteres.');
     }
 
-    // Invoca RPC segura com validação no PostgreSQL
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase não configurado.');
+    }
+
+    // 1. Tentar via Edge Function server-side
+    try {
+      const { data: edgeData, error: edgeError } = await supabase.functions.invoke('admin-users', {
+        body: {
+          action: 'reset_password',
+          targetUserId,
+          newPassword,
+        },
+      });
+
+      if (!edgeError && edgeData?.success) {
+        return;
+      }
+      if (edgeError && !edgeError.message.includes('Failed to send') && !edgeError.message.includes('404')) {
+        throw new Error(edgeData?.error || edgeError.message);
+      }
+    } catch (err: unknown) {
+      if (
+        err instanceof Error &&
+        !err.message.includes('Failed to send') &&
+        !err.message.includes('FunctionsFetchError') &&
+        !err.message.includes('404')
+      ) {
+        throw err;
+      }
+    }
+
+    // 2. Transição segura: RPC segura com validação no PostgreSQL
     const { error } = await supabase.rpc('admin_reset_user_password', {
       target_user_id: targetUserId,
       new_password: newPassword,
@@ -172,21 +180,39 @@ export const userService = {
       );
     }
 
-    // Tentar via RPC
+    // 1. Tentar via Edge Function server-side
+    try {
+      const { data: edgeData, error: edgeError } = await supabase.functions.invoke('admin-users', {
+        body: {
+          action: 'delete',
+          targetUserId,
+        },
+      });
+
+      if (!edgeError && edgeData?.success) {
+        return;
+      }
+      if (edgeError && !edgeError.message.includes('Failed to send') && !edgeError.message.includes('404')) {
+        throw new Error(edgeData?.error || edgeError.message);
+      }
+    } catch (err: unknown) {
+      if (
+        err instanceof Error &&
+        !err.message.includes('Failed to send') &&
+        !err.message.includes('FunctionsFetchError') &&
+        !err.message.includes('404')
+      ) {
+        throw err;
+      }
+    }
+
+    // 2. Transição segura: RPC no banco
     const { error: rpcError } = await supabase.rpc('admin_delete_user', {
       target_user_id: targetUserId,
     });
 
     if (rpcError) {
-      // Fallback: remove da tabela admin_users
-      const { error: deleteError } = await supabase
-        .from('admin_users')
-        .delete()
-        .eq('user_id', targetUserId);
-
-      if (deleteError) {
-        throw new Error(`Erro ao excluir usuário: ${deleteError.message}`);
-      }
+      throw new Error(`Erro ao excluir usuário: ${rpcError.message}`);
     }
   },
 };

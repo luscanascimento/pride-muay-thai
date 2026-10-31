@@ -3,6 +3,25 @@ import { getKhanRank } from '../constants/khans';
 import { getGymNames } from './gyms';
 
 /**
+ * Neutraliza ataques de Spreadsheet Formula Injection (CSV/Excel Injection).
+ * Valores que iniciam (mesmo após whitespace) por '=', '+', '-', '@', '\t' ou '\r'
+ * são prefixados com um apóstrofo (') para garantir que softwares de planilha os
+ * interpretem estritamente como texto literal.
+ */
+export function sanitizeSpreadsheetFormula(value: string | number | null | undefined): string {
+  if (value === null || value === undefined) return '';
+  const str = String(value);
+  if (/^[=+\-@\t\r]/.test(str)) {
+    return `'${str}`;
+  }
+  const trimmedSpaces = str.replace(/^[ \uFEFF\xA0]+/, '');
+  if (/^[=+\-@\t\r]/.test(trimmedSpaces)) {
+    return `'${str}`;
+  }
+  return str;
+}
+
+/**
  * Constrói o conteúdo CSV compatível com Microsoft Excel (RFC 4180 + UTF-8 BOM + delimitador ponto e vírgula).
  *
  * Colunas estritamente delimitadas:
@@ -22,10 +41,14 @@ export function buildStudentsCsvContent(students: DbStudent[]): string {
     const khanText = `${student.current_khan}º Khan (${rank.colorName})`;
     const gymsText = getGymNames(student.gym_ids).join(', ') || 'Não informada';
 
-    // Escapar aspas duplas dentro dos valores conforme RFC 4180
-    const escapedName = (student.name || '').replace(/"/g, '""');
-    const escapedKhan = khanText.replace(/"/g, '""');
-    const escapedGyms = gymsText.replace(/"/g, '""');
+    // Neutralização contra injeção de fórmulas e escape conforme RFC 4180
+    const safeName = sanitizeSpreadsheetFormula(student.name || '');
+    const safeKhan = sanitizeSpreadsheetFormula(khanText);
+    const safeGyms = sanitizeSpreadsheetFormula(gymsText);
+
+    const escapedName = safeName.replace(/"/g, '""');
+    const escapedKhan = safeKhan.replace(/"/g, '""');
+    const escapedGyms = safeGyms.replace(/"/g, '""');
 
     return `"${escapedName}";"${escapedKhan}";"${escapedGyms}"`;
   });

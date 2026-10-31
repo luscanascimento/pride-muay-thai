@@ -139,3 +139,26 @@ export function navigateTo(hash: string, options?: { replace?: boolean; smoothSc
     }
   }
 }
+
+/**
+ * Valida se uma URL externa é estritamente HTTP ou HTTPS,
+ * prevenindo ataques de execução de script via javascript: ou data: URIs.
+ */
+export function isSafeHttpUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url.trim());
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+export function sanitizeExternalUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  if (isSafeHttpUrl(trimmed)) {
+    return trimmed;
+  }
+  return null;
+}
